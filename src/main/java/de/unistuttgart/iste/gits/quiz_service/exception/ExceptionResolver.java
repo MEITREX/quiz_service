@@ -1,8 +1,6 @@
-package de.unistuttgart.iste.gits.courseservice.exception;
+package de.unistuttgart.iste.gits.quiz_service.exception;
 
-import graphql.ErrorType;
-import graphql.GraphQLError;
-import graphql.GraphqlErrorBuilder;
+import graphql.*;
 import graphql.schema.DataFetchingEnvironment;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
@@ -25,7 +23,7 @@ public class ExceptionResolver extends DataFetcherExceptionResolverAdapter {
     @Override
     protected GraphQLError resolveToSingleError(@NonNull Throwable ex, @NonNull DataFetchingEnvironment env) {
         log.error("Exception occurred during data fetching. Class: {}, Message: {}", ex.getClass().getSimpleName(), ex.getMessage());
-        log.debug("Exception trace: ", ex);
+        log.error("Exception trace: ", ex);
 
         return GraphqlErrorBuilder.newError()
                 .extensions(buildExtensions(ex))
