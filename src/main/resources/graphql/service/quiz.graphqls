@@ -76,7 +76,7 @@ interface Question {
     """
     Optional hint for the question, can be markdown.
     """
-    hint: String
+    hint: ResourceMarkdown
 }
 
 """
@@ -86,7 +86,7 @@ type MultipleChoiceQuestion implements Question {
     """
     Text of the question, can be markdown.
     """
-    text: String!
+    text: ResourceMarkdown!
     """
     List of answers.
     """
@@ -116,14 +116,14 @@ type MultipleChoiceQuestion implements Question {
     """
     Optional hint for the question, can be markdown.
     """
-    hint: String
+    hint: ResourceMarkdown
 }
 
 type MultipleChoiceAnswer {
     """
     Text of the answer, can be markdown.
     """
-    text: String!
+    answerText: ResourceMarkdown!
     """
     Whether the answer is correct or not.
     """
@@ -131,7 +131,244 @@ type MultipleChoiceAnswer {
     """
     Feedback for when the user selects this answer, can be markdown.
     """
-    feedback: String
+    feedback: ResourceMarkdown
+}
+
+type ClozeQuestion implements Question {
+    """
+    The elements of the cloze question.
+    """
+    clozeElements: [ClozeElement!]!
+    """
+    Addtional wrong answers for the blanks.
+    """
+    additionalWrongAnswers: [String!]!
+    """
+    All selectable answers for the blanks (computed). This contains the correct answers as well as wrong answers.
+    """
+    allBlanks: [String!]!
+    """
+    Whether the blanks must be answered in free text or by selecting the correct answer from a list.
+    """
+    showBlanksList: Boolean!
+
+    # inherited from Question
+    """
+    Unique identifier of the question.
+    """
+    id: UUID!
+    """
+    Number of the question, i.e., the position of the question in the list of questions.
+    Only relevant if questionPoolingMode is ORDERED.
+    """
+    number: Int!
+    """
+    Type of the question.
+    """
+    type: QuestionType!
+    """
+    Optional hint for the question, can be markdown.
+    """
+    hint: ResourceMarkdown
+}
+
+union ClozeElement = ClozeTextElement | ClozeBlankElement
+
+type ClozeTextElement {
+    """
+    Text of the element, can be markdown.
+    """
+    text: ResourceMarkdown!
+}
+
+type ClozeBlankElement {
+    """
+    The correct answer for the blank.
+    """
+    correctAnswer: String!
+    """
+    Feedback for the blank when the user selects a wrong answer, can be markdown.
+    """
+    feedback: ResourceMarkdown
+}
+
+enum ClozeElementType {
+    TEXT
+    BLANK
+}
+
+"""
+Association question, i.e., a question where the user has to assign the correct right side to each left side.
+"""
+type AssociationQuestion implements Question {
+    """
+    Text to display above the association question, can be markdown.
+    """
+    text: ResourceMarkdown!
+    """
+    List of correct associations.
+    """
+    correctAssociations: [SingleAssociation!]!
+    """
+    Computed list of all the left sides of the associations, shuffled.
+    """
+    leftSide: [String!]!
+    """
+    Computed list of all the right sides of the associations, shuffled.
+    """
+    rightSide: [String!]!
+
+    # inherited from Question
+    """
+    Unique identifier of the question.
+    """
+    id: UUID!
+    """
+    Number of the question, i.e., the position of the question in the list of questions.
+    Only relevant if questionPoolingMode is ORDERED.
+    """
+    number: Int!
+    """
+    Type of the question.
+    """
+    type: QuestionType!
+    """
+    Optional hint for the question, can be markdown.
+    """
+    hint: ResourceMarkdown
+}
+
+type SingleAssociation {
+    """
+    The left side of the association.
+    """
+    left: String!
+    """
+    The right side of the association.
+    """
+    right: String!
+
+    """
+    Feedback for the association when the user assigns a wrong answer, can be markdown.
+    """
+    feedback: ResourceMarkdown
+}
+
+"""
+A question with a clear, correct answer that can be automatically checked.
+Differs from self-assessment questions in that the user has to enter one of the correct answers and
+the answer is checked automatically.
+"""
+type ExactAnswerQuestion implements Question {
+    """
+    Text of the question, can be markdown.
+    """
+    text: ResourceMarkdown!
+    """
+    A list of possible correct answers. The user has to enter one of these answers.
+    """
+    correctAnswers: [String!]!
+    """
+    If the answer is case sensitive. If true, the answer is checked case sensitive.
+    """
+    caseSensitive: Boolean!
+    """
+    Feedback for the question when the user enters a wrong answer, can be markdown.
+    """
+    feedback: ResourceMarkdown
+
+    # inherited from Question
+    """
+    Unique identifier of the question.
+    """
+    id: UUID!
+    """
+    Number of the question, i.e., the position of the question in the list of questions.
+    Only relevant if questionPoolingMode is ORDERED.
+    """
+    number: Int!
+    """
+    Type of the question.
+    """
+    type: QuestionType!
+    """
+    Optional hint for the question, can be markdown.
+    """
+    hint: ResourceMarkdown
+}
+
+type NumericQuestion implements Question {
+    """
+    Text of the question, can be markdown.
+    """
+    text: ResourceMarkdown!
+    """
+    The correct answer to the question.
+    """
+    correctAnswer: Float!
+    """
+    The tolerance for the correct answer. The user's answer is correct if it is within the tolerance of the correct answer.
+    """
+    tolerance: Float!
+
+    """
+    Feedback for the question when the user enters a wrong answer, can be markdown.
+    """
+    feedback: ResourceMarkdown
+
+    # inherited from Question
+    """
+    Unique identifier of the question.
+    """
+    id: UUID!
+    """
+    Number of the question, i.e., the position of the question in the list of questions.
+    Only relevant if questionPoolingMode is ORDERED.
+    """
+    number: Int!
+    """
+    Type of the question.
+    """
+    type: QuestionType!
+    """
+    Optional hint for the question, can be markdown.
+    """
+    hint: ResourceMarkdown
+}
+
+"""
+A single question with a free text answer field, where the answer is not automatically checked.
+The user has to enter a solution and self-assess whether it is correct or not.
+This is useful for questions where the answer is not clear-cut, e.g. when the user should explain a concept.
+"""
+type SelfAssessmentQuestion implements Question {
+    """
+    Text of the question, can be markdown.
+    """
+    text: ResourceMarkdown!
+    """
+    A possible correct answer to the question.
+    """
+    solutionSuggestion: ResourceMarkdown!
+
+    # inherited from Question
+    """
+    Unique identifier of the question.
+    """
+    id: UUID!
+    """
+    Number of the question, i.e., the position of the question in the list of questions.
+    Only relevant if questionPoolingMode is ORDERED.
+    """
+    number: Int!
+    """
+    Type of the question.
+    """
+    type: QuestionType!
+    """
+    Optional hint for the question, can be markdown.
+    """
+    hint: ResourceMarkdown
 }
 
 """
@@ -139,5 +376,10 @@ The type of a question.
 """
 enum QuestionType {
     MULTIPLE_CHOICE
+    CLOZE
+    ASSOCIATION
+    EXACT_ANSWER
+    NUMERIC
+    SELF_ASSESSMENT
     # add more types here
 }

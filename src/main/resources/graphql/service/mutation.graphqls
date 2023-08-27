@@ -35,6 +35,50 @@ type QuizMutation {
     """
     updateMultipleChoiceQuestion(input: UpdateMultipleChoiceQuestionInput!): Quiz!
 
+    """
+    Add a cloze question to the quiz questions, at the end of the list.
+    """
+    addClozeQuestion(input: CreateClozeQuestionInput!): Quiz!
+    """
+    Update a cloze question in the quiz questions.
+    """
+    updateClozeQuestion(input: UpdateClozeQuestionInput!): Quiz!
+
+    """
+    Add an association question to the quiz questions, at the end of the list.
+    """
+    addAssociationQuestion(input: CreateAssociationQuestionInput!): Quiz! @deprecated(reason: "Not implemented yet")
+    """
+    Update an association question in the quiz questions.
+    """
+    updateAssociationQuestion(input: UpdateAssociationQuestionInput!): Quiz! @deprecated(reason: "Not implemented yet")
+
+    """
+    Add an free text question with exact answer to the quiz questions, at the end of the list.
+    """
+    addExactAnswerQuestion(input: CreateExactAnswerQuestionInput!): Quiz! @deprecated(reason: "Not implemented yet")
+    """
+    Update an free text question with exact answer in the quiz questions.
+    """
+    updateExactAnswerQuestion(input: UpdateExactAnswerQuestionInput!): Quiz! @deprecated(reason: "Not implemented yet")
+    """
+    Add a numeric question to the quiz questions, at the end of the list.
+    """
+    addNumericQuestion(input: CreateNumericQuestionInput!): Quiz! @deprecated(reason: "Not implemented yet")
+    """
+    Update a numeric question in the quiz questions.
+    """
+    updateNumericQuestion(input: UpdateNumericQuestionInput!): Quiz! @deprecated(reason: "Not implemented yet")
+
+    """
+    Add a self assessment question to the quiz questions, at the end of the list.
+    """
+    addSelfAssessmentQuestion(input: CreateSelfAssessmentQuestionInput!): Quiz! @deprecated(reason: "Not implemented yet")
+    """
+    Update a self assessment question in the quiz questions.
+    """
+    updateSelfAssessmentQuestion(input: UpdateSelfAssessmentQuestionInput!): Quiz! @deprecated(reason: "Not implemented yet")
+
     # add other types of questions here
 
     """
@@ -89,13 +133,6 @@ input CreateQuizInput {
     If this is null or not set, the behavior is the same as if it was equal to the number of questions.
     """
     numberOfRandomlySelectedQuestions: Int @Positive
-
-    """
-    List of multiple choice questions.
-    """
-    multipleChoiceQuestions: [CreateMultipleChoiceQuestionInput!]! = []
-
-    # other types of questions
 }
 
 input CreateMultipleChoiceQuestionInput {
@@ -107,7 +144,7 @@ input CreateMultipleChoiceQuestionInput {
     """
     Text of the question, can be markdown.
     """
-    text: String! @Size(max: 1000)
+    text: ResourceMarkdownInput!
     """
     List of answers.
     """
@@ -115,7 +152,7 @@ input CreateMultipleChoiceQuestionInput {
     """
     Optional hint for the question, can be markdown.
     """
-    hint: String @Size(max: 1000)
+    hint: ResourceMarkdownInput
 }
 
 input UpdateMultipleChoiceQuestionInput {
@@ -126,7 +163,7 @@ input UpdateMultipleChoiceQuestionInput {
     """
     Text of the question, can be markdown.
     """
-    text: String! @Size(max: 1000)
+    text: ResourceMarkdownInput!
     """
     List of answers.
     """
@@ -134,7 +171,7 @@ input UpdateMultipleChoiceQuestionInput {
     """
     Optional hint for the question, can be markdown.
     """
-    hint: String @Size(max: 1000)
+    hint: ResourceMarkdownInput
 
 }
 
@@ -142,7 +179,7 @@ input MultipleChoiceAnswerInput {
     """
     Text of the answer, can be markdown.
     """
-    text: String! @Size(max: 1000)
+    answerText: ResourceMarkdownInput!
     """
     Whether the answer is correct or not.
     """
@@ -150,7 +187,278 @@ input MultipleChoiceAnswerInput {
     """
     Feedback for when the user selects this answer, can be markdown.
     """
-    feedback: String @Size(max: 1000)
+    feedback: ResourceMarkdownInput
+}
+
+input CreateClozeQuestionInput {
+    """
+    Number of the question, used for ordering.
+    This can be omitted, in which case a number, one higher than the highest number of the existing questions, will be used.
+    """
+    number: Int @Positive
+    """
+    List of cloze elements.
+    """
+    clozeElements: [ClozeElementInput!]! @ContainerSize(min: 1)
+    """
+    List of additional wrong answers.
+    """
+    additionalWrongAnswers: [String!]! = [] @ContainerSize(min: 0) @Size(max: 255)
+    """
+    If true, the list of possible answers will be shown to the user.
+    """
+    showBlanksList: Boolean! = true
+    """
+    Optional hint for the question, can be markdown.
+    """
+    hint: ResourceMarkdownInput @Size(max: 1000)
+}
+
+input UpdateClozeQuestionInput {
+    """
+    UUID of the question to update.
+    """
+    id: UUID!
+    """
+    List of cloze elements.
+    """
+    clozeElements: [ClozeElementInput!]! @ContainerSize(min: 1)
+    """
+    List of additional wrong answers.
+    """
+    additionalWrongAnswers: [String!]! @ContainerSize(min: 0) @Size(max: 255)
+    """
+    If true, the list of possible answers will be shown to the user.
+    """
+    showBlanksList: Boolean! = true
+    """
+    Optional hint for the question, can be markdown.
+    """
+    hint: ResourceMarkdownInput @Size(max: 1000)
+}
+
+input ClozeElementInput {
+    """
+    Type of the element.
+    """
+    type: ClozeElementType!
+
+    """
+    Text of the element. Only used for TEXT type.
+    """
+    text: ResourceMarkdownInput
+
+    """
+    The correct answer for the blank. Only used for BLANK type.
+    """
+    correctAnswer: String @Size(max: 255)
+    """
+    Feedback for the blank when the user selects a wrong answer, can be markdown. Only used for BLANK type.
+    """
+    feedback: ResourceMarkdownInput
+}
+
+input CreateAssociationQuestionInput {
+    """
+    Number of the question, used for ordering.
+    This can be omitted, in which case a number, one higher than the highest number of the existing questions, will be used.
+    """
+    number: Int @Positive
+    """
+    Text of the question, can be markdown.
+    """
+    text: ResourceMarkdownInput! @Size(max: 1000)
+    """
+    List of associations.
+    """
+    associations: [AssociationInput!]! @ContainerSize(min: 2)
+    """
+    Optional hint for the question, can be markdown.
+    """
+    hint: ResourceMarkdownInput @Size(max: 1000)
+}
+
+input UpdateAssociationQuestionInput {
+    """
+    UUID of the question to update.
+    """
+    id: UUID!
+    """
+    Text of the question, can be markdown.
+    """
+    text: ResourceMarkdownInput! @Size(max: 1000)
+    """
+    List of associations.
+    """
+    associations: [AssociationInput!]! @ContainerSize(min: 2)
+    """
+    Optional hint for the question, can be markdown.
+    """
+    hint: ResourceMarkdownInput @Size(max: 1000)
+}
+
+input AssociationInput {
+    """
+    Text of the left side of the association, can be markdown.
+    """
+    left: String! @Size(max: 255)
+    """
+    Text of the right side of the association, can be markdown.
+    """
+    right: String! @Size(max: 255)
+    """
+    Feedback for the association when the user selects a wrong answer, can be markdown.
+    """
+    feedback: ResourceMarkdownInput @Size(max: 1000)
+}
+
+input CreateExactAnswerQuestionInput {
+    """
+    Number of the question, used for ordering.
+    This can be omitted, in which case a number, one higher than the highest number of the existing questions, will be used.
+    """
+    number: Int @Positive
+    """
+    Text of the question, can be markdown.
+    """
+    text: ResourceMarkdownInput! @Size(max: 1000)
+    """
+    If the answer is case sensitive. If true, the answer is checked case sensitive.
+    """
+    caseSensitive: Boolean! = false
+    """
+    A list of possible correct answers.
+    """
+    correctAnswers: [String!]! @ContainerSize(min: 1) @Size(max: 255)
+    """
+    Feedback for the question when the user enters a wrong answer, can be markdown.
+    """
+    feedback: ResourceMarkdownInput @Size(max: 1000)
+    """
+    Optional hint for the question, can be markdown.
+    """
+    hint: ResourceMarkdownInput @Size(max: 1000)
+}
+
+input UpdateExactAnswerQuestionInput {
+    """
+    UUID of the question to update.
+    """
+    id: UUID!
+    """
+    Text of the question, can be markdown.
+    """
+    text: ResourceMarkdownInput! @Size(max: 1000)
+    """
+    A list of possible correct answers.
+    """
+    correctAnswers: [String!]! @ContainerSize(min: 1) @Size(max: 255)
+    """
+    If the answer is case sensitive. If true, the answer is checked case sensitive.
+    """
+    caseSensitive: Boolean! = false
+    """
+    Feedback for the question when the user enters a wrong answer, can be markdown.
+    """
+    feedback: ResourceMarkdownInput @Size(max: 1000)
+    """
+    Optional hint for the question, can be markdown.
+    """
+    hint: ResourceMarkdownInput @Size(max: 1000)
+}
+
+input CreateNumericQuestionInput {
+    """
+    Number of the question, used for ordering.
+    This can be omitted, in which case a number, one higher than the highest number of the existing questions, will be used.
+    """
+    number: Int @Positive
+    """
+    Text of the question, can be markdown.
+    """
+    text: ResourceMarkdownInput! @Size(max: 1000)
+    """
+    The correct answer for the question.
+    """
+    correctAnswer: Float!
+    """
+    The allowed deviation from the correct answer.
+    """
+    tolerance: Float! @Positive
+    """
+    Feedback for the question when the user enters a wrong answer, can be markdown.
+    """
+    feedback: ResourceMarkdownInput @Size(max: 1000)
+    """
+    Optional hint for the question, can be markdown.
+    """
+    hint: ResourceMarkdownInput @Size(max: 1000)
+}
+
+input UpdateNumericQuestionInput {
+    """
+    UUID of the question to update.
+    """
+    id: UUID!
+    """
+    Text of the question, can be markdown.
+    """
+    text: ResourceMarkdownInput! @Size(max: 1000)
+    """
+    The correct answer for the question.
+    """
+    correctAnswer: Float!
+    """
+    The allowed deviation from the correct answer.
+    """
+    tolerance: Float! @Positive
+    """
+    Feedback for the question when the user enters a wrong answer, can be markdown.
+    """
+    feedback: ResourceMarkdownInput @Size(max: 1000)
+    """
+    Optional hint for the question, can be markdown.
+    """
+    hint: ResourceMarkdownInput @Size(max: 1000)
+}
+
+input CreateSelfAssessmentQuestionInput {
+    """
+    Number of the question, used for ordering.
+    This can be omitted, in which case a number, one higher than the highest number of the existing questions, will be used.
+    """
+    number: Int @Positive
+    """
+    Text of the question, can be markdown.
+    """
+    text: ResourceMarkdownInput! @Size(max: 1000)
+    """
+    A possible correct answer to the question.
+    """
+    solutionSuggestion: ResourceMarkdownInput! @Size(max: 1000)
+    """
+    Optional hint for the question, can be markdown.
+    """
+    hint: ResourceMarkdownInput @Size(max: 1000)
+}
+
+input UpdateSelfAssessmentQuestionInput {
+    """
+    UUID of the question to update.
+    """
+    id: UUID!
+    """
+    Text of the question, can be markdown.
+    """
+    text: ResourceMarkdownInput! @Size(max: 1000)
+    """
+    A possible correct answer to the question.
+    """
+    solutionSuggestion: ResourceMarkdownInput! @Size(max: 1000)
+    """
+    Optional hint for the question, can be markdown.
+    """
+    hint: ResourceMarkdownInput @Size(max: 1000)
 }
 
 input QuizCompletedInput {

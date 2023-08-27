@@ -1,14 +1,11 @@
 package de.unistuttgart.iste.gits.quiz_service.service;
 
-import de.unistuttgart.iste.gits.common.event.ContentChangeEvent;
-import de.unistuttgart.iste.gits.common.event.CrudOperation;
-import de.unistuttgart.iste.gits.common.event.UserProgressLogEvent;
+import de.unistuttgart.iste.gits.common.event.*;
+import de.unistuttgart.iste.gits.common.resource_markdown.ResourceMarkdownEmbeddable;
+import de.unistuttgart.iste.gits.common.resource_markdown.ResourceMarkdownEntity;
 import de.unistuttgart.iste.gits.generated.dto.*;
 import de.unistuttgart.iste.gits.quiz_service.dapr.TopicPublisher;
-import de.unistuttgart.iste.gits.quiz_service.persistence.dao.MultipleChoiceAnswerEmbeddable;
-import de.unistuttgart.iste.gits.quiz_service.persistence.dao.MultipleChoiceQuestionEntity;
-import de.unistuttgart.iste.gits.quiz_service.persistence.dao.QuestionEntity;
-import de.unistuttgart.iste.gits.quiz_service.persistence.dao.QuizEntity;
+import de.unistuttgart.iste.gits.quiz_service.persistence.dao.*;
 import de.unistuttgart.iste.gits.quiz_service.persistence.mapper.QuizMapper;
 import de.unistuttgart.iste.gits.quiz_service.persistence.repository.QuizRepository;
 import de.unistuttgart.iste.gits.quiz_service.validation.QuizValidator;
@@ -16,10 +13,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 
 
@@ -233,6 +230,43 @@ class QuizServiceTest {
 
     }
 
+    @Test
+    void testCalculateCorrectnessEdgeCases() {
+
+        var actualWithZeroCorrectAnswers = quizService.calcCorrectness(0.0, QuizEntity.builder().build());
+        assertThat(actualWithZeroCorrectAnswers, is(0.0));
+
+        var quizEntityWithZeroQuestions = QuizEntity.builder()
+                .questionPool(new ArrayList<>())
+                .questionPoolingMode(QuestionPoolingMode.ORDERED)
+                .build();
+
+        var actualWithZeroQuestions = quizService.calcCorrectness(1.0, quizEntityWithZeroQuestions);
+        assertThat(actualWithZeroQuestions, is(1.0));
+
+        var quizEntityWithRandomlySelectedQuestionsZero = QuizEntity.builder()
+                .questionPool(List.of(MultipleChoiceQuestionEntity.builder().build()))
+                .questionPoolingMode(QuestionPoolingMode.RANDOM)
+                .numberOfRandomlySelectedQuestions(0)
+                .build();
+        var actualWithRandomlySelectedQuestionsZero
+                = quizService.calcCorrectness(1.0, quizEntityWithRandomlySelectedQuestionsZero);
+
+        assertThat(actualWithRandomlySelectedQuestionsZero, is(1.0));
+
+        var quizEntityWithRandomlySelectedQuestionsNull = QuizEntity.builder()
+                .questionPool(List.of(MultipleChoiceQuestionEntity.builder().build(),
+                        MultipleChoiceQuestionEntity.builder().build()))
+                .questionPoolingMode(QuestionPoolingMode.RANDOM)
+                .numberOfRandomlySelectedQuestions(null)
+                .build();
+
+        var actualWithRandomlySelectedQuestionsNull
+                = quizService.calcCorrectness(1.0, quizEntityWithRandomlySelectedQuestionsNull);
+
+        assertThat(actualWithRandomlySelectedQuestionsNull, is(0.5));
+    }
+
     /**
      * creates some dummy multiple choice questions
      *
@@ -241,30 +275,30 @@ class QuizServiceTest {
     private List<QuestionEntity> createDummyQuestions() {
         List<QuestionEntity> questions = new ArrayList<>();
         MultipleChoiceAnswerEmbeddable wrongAnswer = MultipleChoiceAnswerEmbeddable.builder()
-                .text("Pick me! Pick Me!")
+                .answerText(new ResourceMarkdownEntity("Pick me! Pick Me!"))
                 .correct(false)
-                .feedback("Fell for it")
+                .feedback(new ResourceMarkdownEntity("Fell for it"))
                 .build();
         MultipleChoiceAnswerEmbeddable correctAnswer = MultipleChoiceAnswerEmbeddable.builder()
-                .text("No me!")
+                .answerText(new ResourceMarkdownEntity("No me!"))
                 .correct(true)
-                .feedback("Well done!")
+                .feedback(new ResourceMarkdownEntity("Well done!"))
                 .build();
         MultipleChoiceQuestionEntity questionEntity = MultipleChoiceQuestionEntity.builder()
                 .id(UUID.randomUUID())
                 .number(0)
                 .type(QuestionType.MULTIPLE_CHOICE)
-                .text("This is a question")
+                .text(new ResourceMarkdownEmbeddable("This is a question"))
                 .answers(List.of(wrongAnswer, correctAnswer))
-                .hint("Wink Wink")
+                .hint(new ResourceMarkdownEntity("Wink Wink"))
                 .build();
         MultipleChoiceQuestionEntity questionEntity2 = MultipleChoiceQuestionEntity.builder()
                 .id(UUID.randomUUID())
                 .number(0)
                 .type(QuestionType.MULTIPLE_CHOICE)
-                .text("This is a question")
+                .text(new ResourceMarkdownEmbeddable("This is a question"))
                 .answers(List.of(wrongAnswer, correctAnswer))
-                .hint("Wink Wink")
+                .hint(new ResourceMarkdownEntity("Wink Wink"))
                 .build();
 
         questions.add(questionEntity);

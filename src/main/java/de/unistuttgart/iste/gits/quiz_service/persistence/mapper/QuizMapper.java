@@ -7,9 +7,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Stream;
-
-import static java.util.Comparator.comparing;
 
 @Component
 @RequiredArgsConstructor
@@ -34,31 +31,103 @@ public class QuizMapper {
 
     private Question questionEntityToDto(QuestionEntity questionEntity) {
         if (questionEntity instanceof MultipleChoiceQuestionEntity multipleChoiceQuestionEntity) {
-            return mapper.map(multipleChoiceQuestionEntity, MultipleChoiceQuestion.class);
+            return multipleChoiceQuestionEntityToDto(multipleChoiceQuestionEntity);
+        }
+        if (questionEntity instanceof AssociationQuestionEntity associationQuestionEntity) {
+            return associationQuestionEntityToDto(associationQuestionEntity);
+        }
+        if (questionEntity instanceof SelfAssessmentQuestionEntity selfAssessmentQuestionEntity) {
+            return selfAssessmentQuestionEntityToDto(selfAssessmentQuestionEntity);
+        }
+        if (questionEntity instanceof ClozeQuestionEntity clozeQuestionEntity) {
+            return clozeQuestionEntityToDto(clozeQuestionEntity);
+        }
+        if (questionEntity instanceof NumericQuestionEntity numericQuestionEntity) {
+            return numericQuestionEntityToDto(numericQuestionEntity);
+        }
+        if (questionEntity instanceof ExactAnswerQuestionEntity exactAnswerQuestionEntity) {
+            return exactAnswerQuestionEntityToDto(exactAnswerQuestionEntity);
         }
 
         // add other question types here
         throw new IllegalArgumentException("Unknown question type: " + questionEntity.getType());
     }
 
+    public MultipleChoiceQuestion multipleChoiceQuestionEntityToDto(MultipleChoiceQuestionEntity multipleChoiceQuestionEntity) {
+        return mapper.map(multipleChoiceQuestionEntity, MultipleChoiceQuestion.class);
+    }
+
+    public ClozeQuestion clozeQuestionEntityToDto(ClozeQuestionEntity clozeQuestionEntity) {
+        ClozeQuestion result = ClozeQuestion.builder()
+                .setType(QuestionType.CLOZE)
+                .setNumber(clozeQuestionEntity.getNumber())
+                .setId(clozeQuestionEntity.getId())
+                .setShowBlanksList(clozeQuestionEntity.isShowBlanksList())
+                .setAdditionalWrongAnswers(clozeQuestionEntity.getAdditionalWrongAnswers())
+                .setClozeElements(clozeQuestionEntity.getClozeElements().stream()
+                        .map(this::clozeElementEntityToDto)
+                        .toList())
+                .build();
+
+        if (clozeQuestionEntity.getHint() != null) {
+            result.setHint(mapper.map(clozeQuestionEntity.getHint(), ResourceMarkdown.class));
+        }
+
+        List<String> allBlanks = new ArrayList<>(result.getAdditionalWrongAnswers().size() + result.getClozeElements().size());
+        allBlanks.addAll(result.getAdditionalWrongAnswers());
+        result.getClozeElements().stream()
+                .filter(ClozeBlankElement.class::isInstance)
+                .map(ClozeBlankElement.class::cast)
+                .map(ClozeBlankElement::getCorrectAnswer)
+                .forEach(allBlanks::add);
+
+        Collections.shuffle(allBlanks);
+        result.setAllBlanks(allBlanks);
+
+        return result;
+    }
+
+    private ClozeElement clozeElementEntityToDto(ClozeElementEmbeddable clozeElementEmbeddable) {
+        if (clozeElementEmbeddable.getType() == ClozeElementType.TEXT) {
+            return mapper.map(clozeElementEmbeddable, ClozeTextElement.class);
+        }
+        return mapper.map(clozeElementEmbeddable, ClozeBlankElement.class);
+    }
+
+    private AssociationQuestion associationQuestionEntityToDto(AssociationQuestionEntity associationQuestionEntity) {
+        AssociationQuestion result = mapper.map(associationQuestionEntity, AssociationQuestion.class);
+
+        List<String> leftSide = new ArrayList<>(result.getCorrectAssociations().size());
+        List<String> rightSide = new ArrayList<>(result.getCorrectAssociations().size());
+
+        for (SingleAssociation association : result.getCorrectAssociations()) {
+            leftSide.add(association.getLeft());
+            rightSide.add(association.getRight());
+        }
+
+        Collections.shuffle(leftSide);
+        Collections.shuffle(rightSide);
+
+        result.setLeftSide(leftSide);
+        result.setRightSide(rightSide);
+
+        return result;
+    }
+
+    private NumericQuestion numericQuestionEntityToDto(NumericQuestionEntity numericQuestionEntity) {
+        return mapper.map(numericQuestionEntity, NumericQuestion.class);
+    }
+
+    private ExactAnswerQuestion exactAnswerQuestionEntityToDto(ExactAnswerQuestionEntity exactAnswerQuestionEntity) {
+        return mapper.map(exactAnswerQuestionEntity, ExactAnswerQuestion.class);
+    }
+
+    public SelfAssessmentQuestion selfAssessmentQuestionEntityToDto(SelfAssessmentQuestionEntity selfAssessmentQuestionEntity) {
+        return mapper.map(selfAssessmentQuestionEntity, SelfAssessmentQuestion.class);
+    }
+
     public QuizEntity createQuizInputToEntity(CreateQuizInput createQuizInput) {
-        List<CreateMultipleChoiceQuestionInput> multipleChoiceQuestions = createQuizInput.getMultipleChoiceQuestions();
-        // add other questions types here
-
-        assignNumbersIfNull(multipleChoiceQuestions);
-
-        List<QuestionEntity> allQuestions =
-                Stream.concat(
-                                multipleChoiceQuestions.stream().map(this::multipleChoiceQuestionInputToEntity),
-                                // add other questions types here
-                                Stream.empty())
-                        .sorted(comparing(QuestionEntity::getNumber))
-                        .toList();
-
-        QuizEntity entity = mapper.map(createQuizInput, QuizEntity.class);
-        entity.setQuestionPool(allQuestions);
-
-        return entity;
+        return mapper.map(createQuizInput, QuizEntity.class);
     }
 
     public QuestionEntity multipleChoiceQuestionInputToEntity(CreateMultipleChoiceQuestionInput input) {
@@ -73,20 +142,15 @@ public class QuizMapper {
         return result;
     }
 
-    private void assignNumbersIfNull(List<CreateMultipleChoiceQuestionInput> createMultipleChoiceQuestionInputs) {
-        OptionalInt maxNumber = createMultipleChoiceQuestionInputs.stream()
-                .map(CreateMultipleChoiceQuestionInput::getNumber)
-                .filter(Objects::nonNull)
-                .mapToInt(Integer::intValue)
-                .max();
+    public QuestionEntity clozeQuestionInputToEntity(CreateClozeQuestionInput input) {
+        var result = mapper.map(input, ClozeQuestionEntity.class);
+        result.setType(QuestionType.CLOZE);
+        return result;
+    }
 
-        for (CreateMultipleChoiceQuestionInput createMultipleChoiceQuestionInput : createMultipleChoiceQuestionInputs) {
-            if (createMultipleChoiceQuestionInput.getNumber() == null) {
-                int newNumber = maxNumber.orElse(0) + 1;
-                createMultipleChoiceQuestionInput.setNumber(newNumber);
-                maxNumber = OptionalInt.of(newNumber);
-            }
-        }
-
+    public QuestionEntity clozeQuestionInputToEntity(UpdateClozeQuestionInput input) {
+        var result = mapper.map(input, ClozeQuestionEntity.class);
+        result.setType(QuestionType.CLOZE);
+        return result;
     }
 }

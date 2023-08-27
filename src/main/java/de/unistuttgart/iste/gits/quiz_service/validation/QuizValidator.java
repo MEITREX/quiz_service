@@ -6,17 +6,13 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static de.unistuttgart.iste.gits.generated.dto.ClozeElementType.BLANK;
+import static de.unistuttgart.iste.gits.generated.dto.ClozeElementType.TEXT;
+
 @Component
 public class QuizValidator {
     public void validateCreateQuizInput(CreateQuizInput input) {
-        input.getMultipleChoiceQuestions().forEach(this::validateCreateMultipleChoiceQuestionInput);
-
-        List<Integer> allQuestionsNumbers = input.getMultipleChoiceQuestions()
-                .stream()
-                .map(CreateMultipleChoiceQuestionInput::getNumber)
-                .toList();
-
-        validateNumbersUnique(allQuestionsNumbers);
+        // no validation needed
     }
 
     public void validateCreateMultipleChoiceQuestionInput(CreateMultipleChoiceQuestionInput input) {
@@ -33,13 +29,40 @@ public class QuizValidator {
         }
     }
 
-    private void validateNumbersUnique(List<Integer> numbers) {
-        if (numbers.size() != numbers.stream().distinct().count()) {
-            List<Integer> duplicateNumbers = numbers.stream()
-                    .filter(number -> numbers.stream().filter(number::equals).count() > 1)
-                    .toList();
-            throw new ValidationException("Question numbers must be unique, but the following numbers are used multiple times: "
-                                          + duplicateNumbers);
+    public void validateCreateClozeQuestionInput(CreateClozeQuestionInput input) {
+        validateClozeElements(input.getClozeElements());
+    }
+
+    public void validateUpdateClozeQuestionInput(UpdateClozeQuestionInput input) {
+        validateClozeElements(input.getClozeElements());
+    }
+
+    private void validateClozeElements(List<ClozeElementInput> clozeElements) {
+        if (clozeElements.stream().map(ClozeElementInput::getType).noneMatch(BLANK::equals)) {
+            throw new ValidationException("Cloze quiz most contain at least one blank");
+        }
+        clozeElements.forEach(this::validateClozeElement);
+    }
+
+    private void validateClozeElement(ClozeElementInput clozeElement) {
+        if (clozeElement.getType() == BLANK) {
+            if (clozeElement.getCorrectAnswer() == null) {
+                throw new ValidationException("correct answer is required for cloze blank elements");
+            }
+            if (clozeElement.getText() != null) {
+                throw new ValidationException("text is not allowed for cloze blank elements");
+            }
+        }
+        if (clozeElement.getType() == TEXT) {
+            if (clozeElement.getCorrectAnswer() != null) {
+                throw new ValidationException("correct answer is not allowed for text elements");
+            }
+            if (clozeElement.getText() == null) {
+                throw new ValidationException("text is required for cloze text elements");
+            }
+            if (clozeElement.getFeedback() != null) {
+                throw new ValidationException("text elements cannot have feedback");
+            }
         }
     }
 }
