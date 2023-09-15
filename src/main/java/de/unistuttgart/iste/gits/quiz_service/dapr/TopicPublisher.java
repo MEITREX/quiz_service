@@ -26,6 +26,7 @@ public class TopicPublisher {
      * @param userProgressLogEvent event to publish
      */
     public void notifyUserWorkedOnContent(UserProgressLogEvent userProgressLogEvent) {
+        log.info("Publishing user progress log event {} to topic {}", userProgressLogEvent, USER_PROGRESS_LOG_TOPIC);
         client.publishEvent(PUBSUB_NAME, USER_PROGRESS_LOG_TOPIC, userProgressLogEvent).block();
     }
 
