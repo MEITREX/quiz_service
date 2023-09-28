@@ -2,6 +2,8 @@ type Query {
     """
     Get quiz by assessment ID.
     If any of the assessment IDs are not found, the corresponding quiz will be null.
+    🔒 The user must be enrolled in the course the quizzes belong to to access them. Otherwise null is returned for
+    an quiz if the user has no access to it.
     """
     findQuizzesByAssessmentIds(assessmentIds: [UUID!]!): [Quiz]!
 }
