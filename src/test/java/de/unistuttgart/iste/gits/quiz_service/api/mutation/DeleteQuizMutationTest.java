@@ -28,9 +28,10 @@ class DeleteQuizMutationTest {
      * Then the quiz is deleted
      */
     @Test
-    void testDeleteQuiz(final GraphQlTester graphQlTester) {
+    void testDeleteQuiz(GraphQlTester graphQlTester) {
         // create quiz in database
-        final QuizEntity quizEntity = QuizEntity.builder()
+        QuizEntity quizEntity = QuizEntity.builder()
+                .courseId(UUID.randomUUID())
                 .assessmentId(UUID.randomUUID())
                 .questionPoolingMode(QuestionPoolingMode.RANDOM)
                 .numberOfRandomlySelectedQuestions(1)
@@ -54,7 +55,7 @@ class DeleteQuizMutationTest {
                 .build();
         quizRepository.save(quizEntity);
 
-        final String query = "mutation { deleteQuiz(assessmentId: \"" + quizEntity.getAssessmentId() + "\") }";
+        String query = "mutation { deleteQuiz(assessmentId: \"" + quizEntity.getAssessmentId() + "\") }";
 
         graphQlTester.document(query)
                 .execute()
@@ -71,8 +72,8 @@ class DeleteQuizMutationTest {
      * Then an error is returned
      */
     @Test
-    void testDeleteNonExistingQuiz(final GraphQlTester graphQlTester) {
-        final String query = "mutation { deleteQuiz(assessmentId: \"" + UUID.randomUUID() + "\") }";
+    void testDeleteNonExistingQuiz(GraphQlTester graphQlTester) {
+        String query = "mutation { deleteQuiz(assessmentId: \"" + UUID.randomUUID() + "\") }";
 
         graphQlTester.document(query)
                 .execute()

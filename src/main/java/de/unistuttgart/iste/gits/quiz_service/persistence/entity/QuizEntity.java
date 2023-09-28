@@ -16,6 +16,9 @@ public class QuizEntity {
     @Id
     private UUID assessmentId;
 
+    @Column(name = "course_id", nullable = false)
+    private UUID courseId;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("number ASC")
     @Builder.Default

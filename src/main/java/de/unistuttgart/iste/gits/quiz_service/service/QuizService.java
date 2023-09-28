@@ -52,16 +52,20 @@ public class QuizService {
     /**
      * Creates a new quiz.
      *
-     * @param input the quiz to create
+     * @param courseId     the id of the course the quiz belongs to
+     *                     (must be the same as the course id of the assessment)
+     * @param assessmentId the id of the assessment the quiz belongs to
+     * @param input        the quiz to create
      * @return the created quiz
      * @throws ValidationException if the quiz is invalid according to
      *                             {@link QuizValidator#validateCreateQuizInput(CreateQuizInput)}.
      */
-    public Quiz createQuiz(final UUID assessmentId, final CreateQuizInput input) {
+    public Quiz createQuiz(final UUID courseId, final UUID assessmentId, final CreateQuizInput input) {
         quizValidator.validateCreateQuizInput(input);
 
         final QuizEntity entity = quizMapper.createQuizInputToEntity(input);
         entity.setAssessmentId(assessmentId);
+        entity.setCourseId(courseId);
 
         final QuizEntity savedEntity = quizRepository.save(entity);
         return quizMapper.entityToDto(savedEntity);

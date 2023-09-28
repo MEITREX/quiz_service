@@ -25,9 +25,9 @@ public class QuizController {
         return quizService.findQuizzesByAssessmentIds(assessmentIds);
     }
 
-    @MutationMapping
-    public Quiz createQuiz(@Argument final UUID assessmentId, @Argument final CreateQuizInput input) {
-        return quizService.createQuiz(assessmentId, input);
+    @MutationMapping(name = "_internal_createQuiz")
+    public Quiz createQuiz(@Argument UUID courseId, @Argument final UUID assessmentId, @Argument final CreateQuizInput input) {
+        return quizService.createQuiz(courseId, assessmentId, input);
     }
 
     @MutationMapping

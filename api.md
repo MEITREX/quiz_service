@@ -119,6 +119,11 @@ Create a quiz.
 </td>
 </tr>
 <tr>
+<td colspan="2" align="right" valign="top">courseId</td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td></td>
+</tr>
+<tr>
 <td colspan="2" align="right" valign="top">assessmentId</td>
 <td valign="top"><a href="#uuid">UUID</a>!</td>
 <td></td>
@@ -154,7 +159,8 @@ Delete a quiz.
 <p>⚠️ <strong>DEPRECATED</strong></p>
 <blockquote>
 
-Only for development, will be removed in production. Use deleteAssessment in contents service instead.
+Only use if you specifically only want to delete the quiz and not the whole assessment. Otherwise, use deleteAssessment
+in contents service instead.
 
 </blockquote>
 </td>
