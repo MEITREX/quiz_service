@@ -1,11 +1,14 @@
 type Mutation {
     """
-    Create a quiz.
+    Create a new quiz.
+    ⚠️ This query is only accessible internally in the system and allows the caller to create a Quiz without
+    any permissions check and should not be called without any validation of the caller's permissions. ⚠️
     """
-    _internal_createQuiz(courseId: UUID!, assessmentId: UUID!, input: CreateQuizInput!): Quiz!
+    _internal_noauth_createQuiz(courseId: UUID!, assessmentId: UUID!, input: CreateQuizInput!): Quiz!
 
     """
     Modify a quiz.
+    🔒 The user must be an admin the course the quiz is in to perform this action.
     """
     mutateQuiz(assessmentId: UUID!): QuizMutation!
 
@@ -17,6 +20,7 @@ type Mutation {
 
     """
     Log that a multiple choice quiz is completed.
+    🔒 The user must be enrolled in the course the quiz is in to perform this action.
     """
     logQuizCompleted(input: QuizCompletedInput!): QuizCompletionFeedback!
 }

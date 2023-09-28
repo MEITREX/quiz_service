@@ -40,6 +40,11 @@ type Quiz {
     This will be different each time it is queried if questionPoolingMode is RANDOM.
     """
     selectedQuestions: [Question!]!
+
+    """
+    Id of the course this quiz belongs to.
+    """
+    courseId: UUID!
 }
 
 enum QuestionPoolingMode {

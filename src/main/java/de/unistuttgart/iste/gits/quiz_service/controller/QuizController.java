@@ -1,8 +1,11 @@
 package de.unistuttgart.iste.gits.quiz_service.controller;
 
+import de.unistuttgart.iste.gits.common.exception.NoAccessToCourseException;
 import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
+import de.unistuttgart.iste.gits.common.user_handling.UserCourseAccessValidator;
 import de.unistuttgart.iste.gits.generated.dto.*;
 import de.unistuttgart.iste.gits.quiz_service.service.QuizService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.*;
@@ -21,17 +24,38 @@ public class QuizController {
     private final QuizService quizService;
 
     @QueryMapping
-    public List<Quiz> findQuizzesByAssessmentIds(@Argument final List<UUID> assessmentIds) {
-        return quizService.findQuizzesByAssessmentIds(assessmentIds);
+    public List<Quiz> findQuizzesByAssessmentIds(@Argument final List<UUID> assessmentIds,
+                                                 @ContextValue final LoggedInUser currentUser) {
+        return quizService.findQuizzesByAssessmentIds(assessmentIds).stream()
+                .map(quiz -> {
+                    try {
+                        UserCourseAccessValidator.validateUserHasAccessToCourse(currentUser,
+                                LoggedInUser.UserRoleInCourse.STUDENT,
+                                quiz.getCourseId());
+                        return quiz;
+                    } catch (NoAccessToCourseException ex) {
+                        return null;
+                    }
+                })
+                .toList();
     }
 
-    @MutationMapping(name = "_internal_createQuiz")
+    @MutationMapping(name = "_internal_noauth_createQuiz")
     public Quiz createQuiz(@Argument UUID courseId, @Argument final UUID assessmentId, @Argument final CreateQuizInput input) {
         return quizService.createQuiz(courseId, assessmentId, input);
     }
 
     @MutationMapping
-    public QuizMutation mutateQuiz(@Argument final UUID assessmentId) {
+    public QuizMutation mutateQuiz(@Argument final UUID assessmentId,
+                                   @ContextValue final LoggedInUser currentUser) {
+        final Quiz quiz = quizService.findQuizzesByAssessmentIds(List.of(assessmentId)).stream()
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("No quiz found for assessment id " + assessmentId));
+
+        UserCourseAccessValidator.validateUserHasAccessToCourse(currentUser,
+                LoggedInUser.UserRoleInCourse.ADMINISTRATOR,
+                quiz.getCourseId());
+
         // this is basically an empty object, only serving as a parent for the nested mutations
         return new QuizMutation(assessmentId);
     }
@@ -127,7 +151,18 @@ public class QuizController {
     }
 
     @MutationMapping
-    public QuizCompletionFeedback logQuizCompleted(@Argument final QuizCompletedInput input, @ContextValue final LoggedInUser currentUser) {
+    public QuizCompletionFeedback logQuizCompleted(@Argument final QuizCompletedInput input,
+                                                   @ContextValue final LoggedInUser currentUser) {
+        final UUID courseId = quizService.findQuizzesByAssessmentIds(List.of(input.getQuizId())).stream()
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("No quiz found for quiz id " + input.getQuizId()))
+                .getCourseId();
+
+
+        UserCourseAccessValidator.validateUserHasAccessToCourse(currentUser,
+                LoggedInUser.UserRoleInCourse.STUDENT,
+                courseId);
+
         return quizService.publishProgress(input, currentUser.getId());
     }
 
