@@ -21,6 +21,7 @@ public class QuizMapper {
         // manual mapping necessary because of QuestionInterface
         // which cannot automatically be mapped by model mapper
         final Quiz result = Quiz.builder()
+                .setCourseId(entity.getCourseId())
                 .setAssessmentId(entity.getAssessmentId())
                 .setQuestionPoolingMode(entity.getQuestionPoolingMode())
                 .setNumberOfRandomlySelectedQuestions(entity.getNumberOfRandomlySelectedQuestions())

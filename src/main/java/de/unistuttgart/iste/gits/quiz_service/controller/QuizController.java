@@ -32,12 +32,10 @@ public class QuizController {
                         UserCourseAccessValidator.validateUserHasAccessToCourse(currentUser,
                                 LoggedInUser.UserRoleInCourse.STUDENT,
                                 quiz.getCourseId());
-                        //return quiz;
+                        return quiz;
                     } catch (NoAccessToCourseException ex) {
-                        //return null;
-                        log.error("", ex);
+                        return null;
                     }
-                    return quiz;
                 })
                 .toList();
     }
