@@ -86,6 +86,8 @@
 
 Get quiz by assessment ID.
 If any of the assessment IDs are not found, the corresponding quiz will be null.
+🔒 The user must be enrolled in the course the quizzes belong to to access them. Otherwise null is returned for
+an quiz if the user has no access to it.
 
 </td>
 </tr>
@@ -109,12 +111,14 @@ If any of the assessment IDs are not found, the corresponding quiz will be null.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>createQuiz</strong></td>
+<td colspan="2" valign="top"><strong>_internal_noauth_createQuiz</strong></td>
 <td valign="top"><a href="#quiz">Quiz</a>!</td>
 <td>
 
 
-Create a quiz.
+Create a new quiz.
+⚠️ This query is only accessible internally in the system and allows the caller to create a Quiz without
+any permissions check and should not be called without any validation of the caller's permissions. ⚠️
 
 </td>
 </tr>
@@ -140,6 +144,7 @@ Create a quiz.
 
 
 Modify a quiz.
+🔒 The user must be an admin the course the quiz is in to perform this action.
 
 </td>
 </tr>
@@ -177,6 +182,7 @@ in contents service instead.
 
 
 Log that a multiple choice quiz is completed.
+🔒 The user must be enrolled in the course the quiz is in to perform this action.
 
 </td>
 </tr>
@@ -447,6 +453,7 @@ Text of the element, in SlateJS JSON format.
 
 ### ExactAnswerQuestion
 
+
 A question with a clear, correct answer that can be automatically checked.
 Differs from self-assessment questions in that the user has to enter one of the correct answers and
 the answer is checked automatically.
@@ -591,6 +598,7 @@ Feedback for when the user selects this answer, in SlateJS JSON format.
 </table>
 
 ### MultipleChoiceQuestion
+
 
 Multiple choice question, i.e., a question with multiple answers of which the user has to select the correct ones.
 
@@ -776,6 +784,7 @@ Optional hint for the question, in SlateJS JSON format.
 
 ### PaginationInfo
 
+
 Return type for information about paginated results.
 
 <table>
@@ -843,6 +852,7 @@ Whether there is a next page.
 
 ### Quiz
 
+
 A quiz is a set of questions that the user has to answer correctly to pass the quiz.
 Questions can be of different types, e.g., multiple choice, clozes, or open questions.
 
@@ -903,6 +913,7 @@ Question pooling mode of the quiz.
 <td valign="top"><a href="#int">Int</a></td>
 <td>
 
+
     Number of questions that are randomly selected from the list of questions.
     Will only be considered if questionPoolingMode is RANDOM.
 
@@ -922,6 +933,16 @@ Question pooling mode of the quiz.
 The selected questions of the question pool.
 This is identical to the list of questions if questionPoolingMode is ORDERED.
 This will be different each time it is queried if questionPoolingMode is RANDOM.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>courseId</strong></td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td>
+
+
+Id of the course this quiz belongs to.
 
 </td>
 </tr>
@@ -1356,21 +1377,21 @@ Optional hint for the question, in SlateJS JSON format.
 <tbody>
 <tr>
 <td colspan="2" valign="top"><strong>left</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
+<td valign="top"><a href="#json">JSON</a>!</td>
 <td>
 
 
-The left side of the association.
+The left side of the association, in SlateJS JSON format.
 
 </td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>right</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
+<td valign="top"><a href="#json">JSON</a>!</td>
 <td>
 
 
-The right side of the association.
+The right side of the association, in SlateJS JSON format.
 
 </td>
 </tr>
