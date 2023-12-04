@@ -2,7 +2,7 @@
 
 
 
-The Quiz Service in GITS offers a variety of quiz types to facilitate learning and assessment. These quizzes include:
+The Quiz Service in MEITREX offers a variety of quiz types to facilitate learning and assessment. These quizzes include:
 
 ### Multiple Choice Quiz
 
