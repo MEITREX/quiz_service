@@ -1,6 +1,6 @@
 package de.unistuttgart.iste.gits.quiz_service.matcher;
 
-import de.unistuttgart.iste.gits.generated.dto.*;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
@@ -23,8 +23,8 @@ public class MultipleChoiceQuestionDtoToUpdateInputMatcher extends TypeSafeDiagn
 
     @Override
     protected boolean matchesSafely(final MultipleChoiceQuestion item, final Description mismatchDescription) {
-        if (!Objects.equals(item.getId(), expected.getId())) {
-            mismatchDescription.appendText("id was ").appendValue(item.getId());
+        if (!Objects.equals(item.getItemId(), expected.getItemId())) {
+            mismatchDescription.appendText("id was ").appendValue(item.getItemId());
             return false;
         }
         if (!Objects.equals(item.getType(), QuestionType.MULTIPLE_CHOICE)) {

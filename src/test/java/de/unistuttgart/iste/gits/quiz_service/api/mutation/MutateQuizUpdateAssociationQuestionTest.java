@@ -1,16 +1,17 @@
 package de.unistuttgart.iste.gits.quiz_service.api.mutation;
 
-import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.gits.common.testutil.InjectCurrentUserHeader;
-import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
-import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
-import de.unistuttgart.iste.gits.generated.dto.*;
 import de.unistuttgart.iste.gits.quiz_service.TestData;
 import de.unistuttgart.iste.gits.quiz_service.api.QuizFragments;
 import de.unistuttgart.iste.gits.quiz_service.persistence.entity.AssociationQuestionEntity;
 import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.gits.quiz_service.persistence.repository.QuizRepository;
+import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
+import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
+import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import jakarta.transaction.Transactional;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.test.tester.GraphQlTester;
@@ -19,9 +20,8 @@ import org.springframework.test.annotation.Commit;
 import java.util.List;
 import java.util.UUID;
 
-import static de.unistuttgart.iste.gits.common.testutil.TestUsers.userWithMembershipInCourseWithId;
+import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 import static de.unistuttgart.iste.gits.quiz_service.TestData.association;
-import static de.unistuttgart.iste.gits.quiz_service.TestData.createAssociationQuestion;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -42,17 +42,17 @@ class MutateQuizUpdateAssociationQuestionTest {
     void testUpdateAssociationQuestion(final GraphQlTester graphQlTester) {
         QuizEntity quizEntity = TestData.exampleQuizBuilder(courseId)
                 .questionPool(List.of(
-                        createAssociationQuestion(1, association("a", "b"), association("c", "d"))))
+                        TestData.createAssociationQuestion(1, TestData.association("a", "b"), TestData.association("c", "d"))))
                 .build();
         quizEntity = quizRepository.save(quizEntity);
 
         final UpdateAssociationQuestionInput input = UpdateAssociationQuestionInput.builder()
-                .setId(quizEntity.getQuestionPool().get(0).getId())
+                .setItemId(quizEntity.getQuestionPool().get(0).getItemId())
                 .setHint("new hint")
                 .setText("new question")
                 .setCorrectAssociations(List.of(
-                        new AssociationInput("newA", "newC", "new feedback1"),
-                        new AssociationInput("newB", "newD", "new feedback2")))
+                        new AssociationInput(UUID.randomUUID(),"newA", "newC", "new feedback1"),
+                        new AssociationInput(UUID.randomUUID(),"newB", "newD", "new feedback2")))
                 .build();
 
         final String query = QuizFragments.FRAGMENT_DEFINITION + """
@@ -83,9 +83,9 @@ class MutateQuizUpdateAssociationQuestionTest {
         assertThat(updatedQuestion.getText(), is("new question"));
         assertThat(updatedQuestion.getHint(), is("new hint"));
         assertThat(updatedQuestion.getCorrectAssociations(), hasSize(2));
-        assertThat(updatedQuestion.getCorrectAssociations(), containsInAnyOrder(
-                association("newA", "newC", "new feedback1"),
-                association("newB", "newD", "new feedback2")));
+        assertThat(updatedQuestion.getCorrectAssociations(), Matchers.containsInAnyOrder(
+                TestData.association("newA", "newC", "new feedback1"),
+                TestData.association("newB", "newD", "new feedback2")));
 
 
     }

@@ -1,13 +1,16 @@
 package de.unistuttgart.iste.gits.quiz_service.api.mutation;
 
-import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.gits.common.testutil.InjectCurrentUserHeader;
-import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
-import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
-import de.unistuttgart.iste.gits.generated.dto.*;
+import de.unistuttgart.iste.gits.quiz_service.persistence.entity.AssociationEmbeddable;
+import de.unistuttgart.iste.gits.quiz_service.persistence.entity.AssociationQuestionEntity;
+import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuestionEntity;
+import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuizEntity;
+import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
+import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
+import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.gits.quiz_service.TestData;
 import de.unistuttgart.iste.gits.quiz_service.api.QuizFragments;
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.*;
 import de.unistuttgart.iste.gits.quiz_service.persistence.repository.QuizRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -21,7 +24,7 @@ import java.util.UUID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-import static de.unistuttgart.iste.gits.common.testutil.TestUsers.userWithMembershipInCourseWithId;
+import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 
 
 @GraphQlApiTest
@@ -59,13 +62,14 @@ class MutateQuizAddAssociationQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-
+        UUID itemId=UUID.randomUUID();
         final CreateAssociationQuestionInput input = CreateAssociationQuestionInput.builder()
+                .setItemId(itemId)
                 .setHint("hint")
                 .setText("question")
                 .setCorrectAssociations(List.of(
-                        new AssociationInput("a", "b", "feedback1"),
-                        new AssociationInput("c", "d", "feedback2")))
+                        new AssociationInput(UUID.randomUUID(),"a", "b", "feedback1"),
+                        new AssociationInput(UUID.randomUUID(),"c", "d", "feedback2")))
                 .build();
 
 
@@ -84,6 +88,10 @@ class MutateQuizAddAssociationQuestionTest {
                 .path("mutateQuiz.addAssociationQuestion.questionPool[0].hint")
                 .entity(String.class)
                 .isEqualTo("hint")
+
+                .path("mutateQuiz.addAssociationQuestion.questionPool[0].itemId")
+                .entity(UUID.class)
+                .isEqualTo(itemId)
 
                 .path("mutateQuiz.addAssociationQuestion.questionPool[0].correctAssociations")
                 .entityList(SingleAssociation.class)
@@ -109,6 +117,7 @@ class MutateQuizAddAssociationQuestionTest {
 
         assertThat(associationQuestionEntity.getHint(), is("hint"));
         assertThat(associationQuestionEntity.getText(), is("question"));
+        assertThat(associationQuestionEntity.getItemId(), is(itemId));
         assertThat(associationQuestionEntity.getCorrectAssociations(), hasSize(2));
         assertThat(associationQuestionEntity.getCorrectAssociations(), containsInAnyOrder(
                 new AssociationEmbeddable("a", "b", "feedback1"),
@@ -128,14 +137,15 @@ class MutateQuizAddAssociationQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-
+        UUID itemId=UUID.randomUUID();
         final CreateAssociationQuestionInput input = CreateAssociationQuestionInput.builder()
+                .setItemId(itemId)
                 .setNumber(2)
                 .setHint("hint")
                 .setText("question")
                 .setCorrectAssociations(List.of(
-                        new AssociationInput("a", "b", "feedback1"),
-                        new AssociationInput("c", "b", "feedback2")))
+                        new AssociationInput(UUID.randomUUID(),"a", "b", "feedback1"),
+                        new AssociationInput(UUID.randomUUID(),"c", "b", "feedback2")))
                 .build();
 
         graphQlTester.document(ADD_ASSOCIATION_QUESTION_MUTATION)

@@ -1,7 +1,8 @@
 package de.unistuttgart.iste.gits.quiz_service;
 
-import de.unistuttgart.iste.gits.generated.dto.*;
 import de.unistuttgart.iste.gits.quiz_service.persistence.entity.*;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
+
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -49,6 +50,7 @@ public class TestData {
 
     public static ClozeQuestionEntity createClozeQuestion(final int number, final ClozeElementEmbeddable... clozeElements) {
         return ClozeQuestionEntity.builder()
+                .itemId(UUID.randomUUID())
                 .type(QuestionType.CLOZE)
                 .number(number)
                 .showBlanksList(true)
@@ -97,6 +99,7 @@ public class TestData {
 
     public static ExactAnswerQuestionEntity createExactAnswerQuestion(final int number, final String question, final String answer) {
         return ExactAnswerQuestionEntity.builder()
+                .itemId(UUID.randomUUID())
                 .type(QuestionType.EXACT_ANSWER)
                 .number(number)
                 .text(question)
@@ -109,6 +112,7 @@ public class TestData {
 
     public static NumericQuestionEntity createNumericQuestion(final int number, final String question, final double answer) {
         return NumericQuestionEntity.builder()
+                .itemId(UUID.randomUUID())
                 .type(QuestionType.NUMERIC)
                 .number(number)
                 .text(question)
@@ -147,7 +151,7 @@ public class TestData {
                 .feedback("Well done!")
                 .build();
         final MultipleChoiceQuestionEntity questionEntity = MultipleChoiceQuestionEntity.builder()
-                .id(UUID.randomUUID())
+                .itemId(UUID.randomUUID())
                 .number(0)
                 .type(QuestionType.MULTIPLE_CHOICE)
                 .text("This is a question")
@@ -155,7 +159,7 @@ public class TestData {
                 .hint("Wink Wink")
                 .build();
         final MultipleChoiceQuestionEntity questionEntity2 = MultipleChoiceQuestionEntity.builder()
-                .id(UUID.randomUUID())
+                .itemId(UUID.randomUUID())
                 .number(0)
                 .type(QuestionType.MULTIPLE_CHOICE)
                 .text("This is a question")

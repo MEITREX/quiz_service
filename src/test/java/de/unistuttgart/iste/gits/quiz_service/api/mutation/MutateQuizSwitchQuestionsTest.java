@@ -1,16 +1,18 @@
 package de.unistuttgart.iste.gits.quiz_service.api.mutation;
 
-import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.gits.common.testutil.InjectCurrentUserHeader;
-import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
-import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
-import de.unistuttgart.iste.gits.generated.dto.MultipleChoiceQuestion;
 import de.unistuttgart.iste.gits.quiz_service.TestData;
 import de.unistuttgart.iste.gits.quiz_service.api.QuizFragments;
+import de.unistuttgart.iste.gits.quiz_service.matcher.MultipleChoiceQuestionDtoToEntityMatcher;
 import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuestionEntity;
 import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.gits.quiz_service.persistence.repository.QuizRepository;
+import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
+import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
+import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
+import de.unistuttgart.iste.meitrex.generated.dto.MultipleChoiceQuestion;
 import jakarta.transaction.Transactional;
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.test.tester.GraphQlTester;
@@ -19,9 +21,7 @@ import org.springframework.test.annotation.Commit;
 import java.util.List;
 import java.util.UUID;
 
-import static de.unistuttgart.iste.gits.common.testutil.TestUsers.userWithMembershipInCourseWithId;
-import static de.unistuttgart.iste.gits.quiz_service.TestData.createMultipleChoiceQuestion;
-import static de.unistuttgart.iste.gits.quiz_service.matcher.MultipleChoiceQuestionDtoToEntityMatcher.matchesEntity;
+import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -48,9 +48,9 @@ class MutateQuizSwitchQuestionsTest {
         // store questions in separate variable because spring apparently caches the quiz entity instance
         // so the following quiz entity instance is updated during the mutation
         final List<QuestionEntity> questionEntities = List.of(
-                createMultipleChoiceQuestion(1, "what is the capital of Germany?", "Berlin", "Paris"),
-                createMultipleChoiceQuestion(2, "what is the capital of France?", "Paris", "Madrid"),
-                createMultipleChoiceQuestion(3, "what is the capital of Spain?", "Madrid", "Berlin"));
+                TestData.createMultipleChoiceQuestion(1, "what is the capital of Germany?", "Berlin", "Paris"),
+                TestData.createMultipleChoiceQuestion(2, "what is the capital of France?", "Paris", "Madrid"),
+                TestData.createMultipleChoiceQuestion(3, "what is the capital of Spain?", "Madrid", "Berlin"));
 
         QuizEntity quizEntity = TestData.exampleQuizBuilder(courseId)
                 .questionPool(questionEntities)
@@ -76,18 +76,15 @@ class MutateQuizSwitchQuestionsTest {
         assertThat(questions, hasSize(3));
 
         final QuestionEntity expectedFirstEntity = questionEntities.get(0);
-        expectedFirstEntity.setId(quizEntity.getQuestionPool().get(0).getId());
-        assertThat(questions.get(0), matchesEntity(expectedFirstEntity));
+        MatcherAssert.assertThat(questions.get(0), MultipleChoiceQuestionDtoToEntityMatcher.matchesEntity(expectedFirstEntity));
 
         final QuestionEntity expectedSecondEntity = questionEntities.get(2);
         expectedSecondEntity.setNumber(2);
-        expectedSecondEntity.setId(quizEntity.getQuestionPool().get(1).getId());
-        assertThat(questions.get(1), matchesEntity(expectedSecondEntity));
+        MatcherAssert.assertThat(questions.get(1), MultipleChoiceQuestionDtoToEntityMatcher.matchesEntity(expectedSecondEntity));
 
         final QuestionEntity expectedThirdEntity = questionEntities.get(1);
         expectedThirdEntity.setNumber(3);
-        expectedThirdEntity.setId(quizEntity.getQuestionPool().get(2).getId());
-        assertThat(questions.get(2), matchesEntity(expectedThirdEntity));
+        MatcherAssert.assertThat(questions.get(2), MultipleChoiceQuestionDtoToEntityMatcher.matchesEntity(expectedThirdEntity));
 
         final QuizEntity newQuizEntity = quizRepository.findById(quizEntity.getAssessmentId()).orElseThrow();
         assertThat(newQuizEntity.getQuestionPool(), hasSize(3));
@@ -106,8 +103,8 @@ class MutateQuizSwitchQuestionsTest {
     void testSwotchQuestionNonExisting(final GraphQlTester graphQlTester) {
         QuizEntity quizEntity = TestData.exampleQuizBuilder(courseId)
                 .questionPool(List.of(
-                        createMultipleChoiceQuestion(1, "what is the capital of Germany?", "Berlin", "Paris"),
-                        createMultipleChoiceQuestion(2, "what is the capital of France?", "Paris", "Madrid")))
+                        TestData.createMultipleChoiceQuestion(1, "what is the capital of Germany?", "Berlin", "Paris"),
+                        TestData.createMultipleChoiceQuestion(2, "what is the capital of France?", "Paris", "Madrid")))
                 .build();
         quizEntity = quizRepository.save(quizEntity);
 

@@ -1,12 +1,12 @@
 package de.unistuttgart.iste.gits.quiz_service.api.mutation;
 
-import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.gits.common.testutil.InjectCurrentUserHeader;
-import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
-import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
-import de.unistuttgart.iste.gits.generated.dto.UpdateExactAnswerQuestionInput;
-import de.unistuttgart.iste.gits.quiz_service.TestData;
 import de.unistuttgart.iste.gits.quiz_service.api.QuizFragments;
+import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
+import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
+import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
+import de.unistuttgart.iste.meitrex.generated.dto.UpdateExactAnswerQuestionInput;
+import de.unistuttgart.iste.gits.quiz_service.TestData;
 import de.unistuttgart.iste.gits.quiz_service.persistence.entity.ExactAnswerQuestionEntity;
 import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.gits.quiz_service.persistence.repository.QuizRepository;
@@ -19,7 +19,7 @@ import org.springframework.test.annotation.Commit;
 import java.util.List;
 import java.util.UUID;
 
-import static de.unistuttgart.iste.gits.common.testutil.TestUsers.userWithMembershipInCourseWithId;
+import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 import static de.unistuttgart.iste.gits.quiz_service.TestData.createExactAnswerQuestion;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -46,7 +46,7 @@ class MutateQuizUpdateExactAnswerQuestionTest {
         quizEntity = quizRepository.save(quizEntity);
 
         final UpdateExactAnswerQuestionInput input = UpdateExactAnswerQuestionInput.builder()
-                .setId(quizEntity.getQuestionPool().get(0).getId())
+                .setItemId(quizEntity.getQuestionPool().get(0).getItemId())
                 .setHint("new hint")
                 .setText("new question")
                 .setFeedback("new feedback")

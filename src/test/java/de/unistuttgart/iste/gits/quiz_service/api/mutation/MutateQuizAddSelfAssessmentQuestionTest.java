@@ -1,11 +1,13 @@
 package de.unistuttgart.iste.gits.quiz_service.api.mutation;
 
-import de.unistuttgart.iste.gits.common.testutil.*;
-import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
-import de.unistuttgart.iste.gits.generated.dto.CreateSelfAssessmentQuestionInput;
-import de.unistuttgart.iste.gits.quiz_service.TestData;
 import de.unistuttgart.iste.gits.quiz_service.api.QuizFragments;
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.*;
+import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuestionEntity;
+import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuizEntity;
+import de.unistuttgart.iste.gits.quiz_service.persistence.entity.SelfAssessmentQuestionEntity;
+import de.unistuttgart.iste.meitrex.common.testutil.*;
+import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
+import de.unistuttgart.iste.meitrex.generated.dto.CreateSelfAssessmentQuestionInput;
+import de.unistuttgart.iste.gits.quiz_service.TestData;
 import de.unistuttgart.iste.gits.quiz_service.persistence.repository.QuizRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -16,7 +18,7 @@ import org.springframework.test.annotation.Commit;
 import java.util.List;
 import java.util.UUID;
 
-import static de.unistuttgart.iste.gits.common.testutil.TestUsers.userWithMembershipInCourseWithId;
+import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -55,8 +57,9 @@ class MutateQuizAddSelfAssessmentQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-
+        UUID itemId=UUID.randomUUID();
         final CreateSelfAssessmentQuestionInput input = CreateSelfAssessmentQuestionInput.builder()
+                .setItemId(itemId)
                 .setHint("hint")
                 .setText("question")
                 .setSolutionSuggestion("solution suggestion")
@@ -68,6 +71,9 @@ class MutateQuizAddSelfAssessmentQuestionTest {
                 .execute()
                 .path("mutateQuiz.addSelfAssessmentQuestion.questionPool[0].number")
                 .entity(Integer.class).isEqualTo(1)
+
+                .path("mutateQuiz.addSelfAssessmentQuestion.questionPool[0].itemId")
+                .entity(UUID.class).isEqualTo(itemId)
 
                 .path("mutateQuiz.addSelfAssessmentQuestion.questionPool[0].hint")
                 .entity(String.class).isEqualTo("hint")
@@ -86,6 +92,7 @@ class MutateQuizAddSelfAssessmentQuestionTest {
         assertThat(questionEntity, instanceOf(SelfAssessmentQuestionEntity.class));
         final SelfAssessmentQuestionEntity selfAssessmentQuestionEntity = (SelfAssessmentQuestionEntity) questionEntity;
 
+        assertThat(selfAssessmentQuestionEntity.getItemId(), is(itemId));
         assertThat(selfAssessmentQuestionEntity.getHint(), is("hint"));
         assertThat(selfAssessmentQuestionEntity.getText(), is("question"));
         assertThat(selfAssessmentQuestionEntity.getSolutionSuggestion(), is("solution suggestion"));

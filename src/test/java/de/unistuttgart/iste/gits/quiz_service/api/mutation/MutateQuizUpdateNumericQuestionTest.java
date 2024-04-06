@@ -1,15 +1,15 @@
 package de.unistuttgart.iste.gits.quiz_service.api.mutation;
 
-import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.gits.common.testutil.InjectCurrentUserHeader;
-import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
-import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
-import de.unistuttgart.iste.gits.generated.dto.UpdateNumericQuestionInput;
 import de.unistuttgart.iste.gits.quiz_service.TestData;
 import de.unistuttgart.iste.gits.quiz_service.api.QuizFragments;
 import de.unistuttgart.iste.gits.quiz_service.persistence.entity.NumericQuestionEntity;
 import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.gits.quiz_service.persistence.repository.QuizRepository;
+import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
+import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
+import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
+import de.unistuttgart.iste.meitrex.generated.dto.UpdateNumericQuestionInput;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +19,7 @@ import org.springframework.test.annotation.Commit;
 import java.util.List;
 import java.util.UUID;
 
-import static de.unistuttgart.iste.gits.common.testutil.TestUsers.userWithMembershipInCourseWithId;
-import static de.unistuttgart.iste.gits.quiz_service.TestData.createNumericQuestion;
+import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -42,12 +41,12 @@ class MutateQuizUpdateNumericQuestionTest {
     void testUpdateNumericQuestion(final GraphQlTester graphQlTester) {
         QuizEntity quizEntity = TestData.exampleQuizBuilder(courseId)
                 .questionPool(List.of(
-                        createNumericQuestion(1, "question", 2.0)))
+                        TestData.createNumericQuestion(1, "question", 2.0)))
                 .build();
         quizEntity = quizRepository.save(quizEntity);
 
         final UpdateNumericQuestionInput input = UpdateNumericQuestionInput.builder()
-                .setId(quizEntity.getQuestionPool().get(0).getId())
+                .setItemId(quizEntity.getQuestionPool().get(0).getItemId())
                 .setHint("new hint")
                 .setText("new question")
                 .setCorrectAnswer(3.0)

@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.gits.quiz_service.controller;
 
-import de.unistuttgart.iste.gits.common.event.ContentChangeEvent;
 import de.unistuttgart.iste.gits.quiz_service.service.QuizService;
+import de.unistuttgart.iste.meitrex.common.event.ContentChangeEvent;
 import io.dapr.Topic;
 import io.dapr.client.domain.CloudEvent;
 import lombok.RequiredArgsConstructor;

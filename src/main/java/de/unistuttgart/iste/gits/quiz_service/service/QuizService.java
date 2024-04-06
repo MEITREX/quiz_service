@@ -1,12 +1,14 @@
 package de.unistuttgart.iste.gits.quiz_service.service;
 
-import de.unistuttgart.iste.gits.common.dapr.TopicPublisher;
-import de.unistuttgart.iste.gits.common.event.*;
-import de.unistuttgart.iste.gits.common.exception.IncompleteEventMessageException;
-import de.unistuttgart.iste.gits.generated.dto.*;
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.*;
 import de.unistuttgart.iste.gits.quiz_service.persistence.mapper.QuizMapper;
 import de.unistuttgart.iste.gits.quiz_service.persistence.repository.QuizRepository;
+import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuestionEntity;
+import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuestionStatisticEntity;
+import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuizEntity;
+import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
+import de.unistuttgart.iste.meitrex.common.event.*;
+import de.unistuttgart.iste.meitrex.common.exception.IncompleteEventMessageException;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.gits.quiz_service.validation.QuizValidator;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -20,8 +22,8 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static de.unistuttgart.iste.gits.common.util.GitsCollectionUtils.count;
-import static de.unistuttgart.iste.gits.common.util.GitsCollectionUtils.countAsInt;
+import static de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils.count;
+import static de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils.countAsInt;
 
 @Service
 @RequiredArgsConstructor
@@ -80,7 +82,7 @@ public class QuizService {
      */
     public UUID deleteQuiz(final UUID id) {
         requireQuizExists(id);
-
+        publishQuizDeletion(id);
         quizRepository.deleteById(id);
 
         return id;
@@ -114,7 +116,7 @@ public class QuizService {
     public Quiz updateMultipleChoiceQuestion(final UUID quizId, final UpdateMultipleChoiceQuestionInput input) {
         quizValidator.validateUpdateMultipleChoiceQuestionInput(input);
 
-        return updateQuestion(quizId, input, input.getId(), quizMapper::multipleChoiceQuestionInputToEntity);
+        return updateQuestion(quizId, input, input.getItemId(), quizMapper::multipleChoiceQuestionInputToEntity);
     }
 
     /**
@@ -146,7 +148,7 @@ public class QuizService {
     public Quiz updateClozeQuestion(final UUID quizId, final UpdateClozeQuestionInput input) {
         quizValidator.validateUpdateClozeQuestionInput(input);
 
-        return updateQuestion(quizId, input, input.getId(), quizMapper::clozeQuestionInputToEntity);
+        return updateQuestion(quizId, input, input.getItemId(), quizMapper::clozeQuestionInputToEntity);
     }
 
     /**
@@ -176,7 +178,7 @@ public class QuizService {
     public Quiz updateAssociationQuestion(final UUID assessmentId, final UpdateAssociationQuestionInput input) {
         quizValidator.validateUpdateAssociationQuestionInput(input);
 
-        return updateQuestion(assessmentId, input, input.getId(), quizMapper::associationQuestionInputToEntity);
+        return updateQuestion(assessmentId, input, input.getItemId(), quizMapper::associationQuestionInputToEntity);
     }
 
     /**
@@ -200,7 +202,7 @@ public class QuizService {
      * @throws EntityNotFoundException if the quiz or the question does not exist
      */
     public Quiz updateExactAnswerQuestion(final UUID quizId, final UpdateExactAnswerQuestionInput input) {
-        return updateQuestion(quizId, input, input.getId(), quizMapper::exactAnswerQuestionInputToEntity);
+        return updateQuestion(quizId, input, input.getItemId(), quizMapper::exactAnswerQuestionInputToEntity);
     }
 
     /**
@@ -224,7 +226,7 @@ public class QuizService {
      * @throws EntityNotFoundException if the quiz or the question does not exist
      */
     public Quiz updateNumericQuestion(final UUID quizId, final UpdateNumericQuestionInput input) {
-        return updateQuestion(quizId, input, input.getId(), quizMapper::numericQuestionInputToEntity);
+        return updateQuestion(quizId, input, input.getItemId(), quizMapper::numericQuestionInputToEntity);
     }
 
     /**
@@ -248,7 +250,7 @@ public class QuizService {
      * @throws EntityNotFoundException if the quiz or the question does not exist
      */
     public Quiz updateSelfAssessmentQuestion(final UUID quizId, final UpdateSelfAssessmentQuestionInput input) {
-        return updateQuestion(quizId, input, input.getId(), quizMapper::selfAssessmentQuestionInputToEntity);
+        return updateQuestion(quizId, input, input.getItemId(), quizMapper::selfAssessmentQuestionInputToEntity);
     }
 
     /**
@@ -401,7 +403,7 @@ public class QuizService {
 
     private QuestionEntity getQuestionInQuizById(final QuizEntity quizEntity, final UUID questionId) {
         return quizEntity.getQuestionPool().stream()
-                .filter(q -> q.getId().equals(questionId))
+                .filter(q -> q.getItemId().equals(questionId))
                 .findFirst()
                 .orElseThrow(() ->
                         new EntityNotFoundException(MessageFormat.format(
@@ -468,7 +470,16 @@ public class QuizService {
         final boolean success = numbCorrectAnswers >= quizEntity.getRequiredCorrectAnswers();
         final double correctness = calculateCorrectness(numbCorrectAnswers, quizEntity);
         final int hintsUsed = countAsInt(input.getCompletedQuestions(), QuestionCompletedInput::getUsedHint);
+        List<Response>responses=new ArrayList<Response>();
+        for(QuestionCompletedInput question: input.getCompletedQuestions()){
+            float answer=0;
+            if(question.getCorrect()){
+                answer=1;
+            }
+            Response response=new Response(question.getQuestionId(),answer);
 
+            responses.add(response);
+        }
         // create new user progress event message
         final ContentProgressedEvent userProgressLogEvent = ContentProgressedEvent.builder()
                 .userId(userId)
@@ -477,6 +488,7 @@ public class QuizService {
                 .success(success)
                 .timeToComplete(null)
                 .correctness(correctness)
+                .responses(responses)
                 .build();
 
         // publish new user progress event message
@@ -505,7 +517,7 @@ public class QuizService {
 
             // create new Question Statistic
             final QuestionStatisticEntity newQuestionStatistic = QuestionStatisticEntity.builder()
-                    .questionId(questionEntity.getId())
+                    .questionId(questionEntity.getItemId())
                     .userId(userId)
                     .answeredCorrectly(completedQuestion.getCorrect())
                     .build();
@@ -552,5 +564,23 @@ public class QuizService {
             return correctAnswers / quizEntity.getQuestionPool().size();
         }
 
+    }
+    private void publishQuizDeletion(UUID quizId){
+        Optional<QuizEntity> quizEntity = quizRepository.findById(quizId);
+        if(quizEntity.isPresent()){
+            QuizEntity quiz=quizEntity.get();
+            List<QuestionEntity>questionPool=quiz.getQuestionPool();
+            for(QuestionEntity question:questionPool){
+                publishItemChangeEvent(question.getItemId());
+            }
+
+        }
+    }
+    /***
+     * helper function, that creates a ItemChange Event and publish it, when a flashcard was deleted
+     * @param itemId the id of the item
+     */
+    private void publishItemChangeEvent(final UUID itemId) {
+        topicPublisher.notifyItemChanges(itemId,CrudOperation.DELETE);
     }
 }

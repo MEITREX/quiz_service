@@ -1,14 +1,14 @@
 package de.unistuttgart.iste.gits.quiz_service.validation;
 
-import de.unistuttgart.iste.gits.generated.dto.*;
 import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuizEntity;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import jakarta.validation.ValidationException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static de.unistuttgart.iste.gits.generated.dto.ClozeElementType.BLANK;
-import static de.unistuttgart.iste.gits.generated.dto.ClozeElementType.TEXT;
+import static de.unistuttgart.iste.meitrex.generated.dto.ClozeElementType.BLANK;
+import static de.unistuttgart.iste.meitrex.generated.dto.ClozeElementType.TEXT;
 
 @Component
 public class QuizValidator {

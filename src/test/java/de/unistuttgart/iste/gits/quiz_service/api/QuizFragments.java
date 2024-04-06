@@ -11,7 +11,7 @@ public class QuizFragments {
     public static final String FRAGMENT_DEFINITION = """
                         
             fragment QuestionsAllFields on Question {
-                id
+                itemId
                 number
                 type
                 hint

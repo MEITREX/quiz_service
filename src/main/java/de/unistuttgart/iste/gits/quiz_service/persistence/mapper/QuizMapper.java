@@ -1,6 +1,7 @@
 package de.unistuttgart.iste.gits.quiz_service.persistence.mapper;
 
-import de.unistuttgart.iste.gits.generated.dto.*;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
+import de.unistuttgart.iste.gits.quiz_service.persistence.entity.*;
 import de.unistuttgart.iste.gits.quiz_service.persistence.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -94,7 +95,7 @@ public class QuizMapper {
         final ClozeQuestion result = ClozeQuestion.builder()
                 .setType(QuestionType.CLOZE)
                 .setNumber(clozeQuestionEntity.getNumber())
-                .setId(clozeQuestionEntity.getId())
+                .setItemId(clozeQuestionEntity.getItemId())
                 .setShowBlanksList(clozeQuestionEntity.isShowBlanksList())
                 .setAdditionalWrongAnswers(clozeQuestionEntity.getAdditionalWrongAnswers())
                 .setClozeElements(clozeQuestionEntity.getClozeElements().stream()

@@ -32,56 +32,80 @@ type QuizMutation {
     assessmentId: UUID!
     """
     Add a multiple choice question to the quiz questions, at the end of the list.
+    ️⚠️  This query is only accessible internally in the system and allows the caller to create a Question without
+    any permissions check and should not be called without any validation of the caller's permissions. ⚠️
     """
-    addMultipleChoiceQuestion(input: CreateMultipleChoiceQuestionInput!): Quiz!
+    _internal_noauth_addMultipleChoiceQuestion(input: CreateMultipleChoiceQuestionInput!): Quiz!
     """
     Update a multiple choice question in the quiz questions.
+    ️⚠️  This query is only accessible internally in the system and allows the caller to update a Question without
+    any permissions check and should not be called without any validation of the caller's permissions. ⚠️
     """
-    updateMultipleChoiceQuestion(input: UpdateMultipleChoiceQuestionInput!): Quiz!
+    _internal_noauth_updateMultipleChoiceQuestion(input: UpdateMultipleChoiceQuestionInput!): Quiz!
 
     """
     Add a cloze question to the quiz questions, at the end of the list.
+    ️⚠️  This query is only accessible internally in the system and allows the caller to create a Question without
+    any permissions check and should not be called without any validation of the caller's permissions. ⚠️
     """
-    addClozeQuestion(input: CreateClozeQuestionInput!): Quiz!
+    _internal_noauth_addClozeQuestion(input: CreateClozeQuestionInput!): Quiz!
     """
     Update a cloze question in the quiz questions.
+    ️⚠️  This query is only accessible internally in the system and allows the caller to update a Question without
+    any permissions check and should not be called without any validation of the caller's permissions. ⚠️
     """
-    updateClozeQuestion(input: UpdateClozeQuestionInput!): Quiz!
+    _internal_noauth_updateClozeQuestion(input: UpdateClozeQuestionInput!): Quiz!
 
     """
     Add an association question to the quiz questions, at the end of the list.
+    ️⚠️  This query is only accessible internally in the system and allows the caller to create a Question without
+    any permissions check and should not be called without any validation of the caller's permissions. ⚠️
     """
-    addAssociationQuestion(input: CreateAssociationQuestionInput!): Quiz!
+    _internal_noauth_addAssociationQuestion(input: CreateAssociationQuestionInput!): Quiz!
     """
     Update an association question in the quiz questions.
+    ️⚠️  This query is only accessible internally in the system and allows the caller to update a Question without
+    any permissions check and should not be called without any validation of the caller's permissions. ⚠️
     """
-    updateAssociationQuestion(input: UpdateAssociationQuestionInput!): Quiz!
+    _internal_noauth_updateAssociationQuestion(input: UpdateAssociationQuestionInput!): Quiz!
 
     """
     Add an free text question with exact answer to the quiz questions, at the end of the list.
+    ️⚠️  This query is only accessible internally in the system and allows the caller to create a Question without
+    any permissions check and should not be called without any validation of the caller's permissions. ⚠️
     """
-    addExactAnswerQuestion(input: CreateExactAnswerQuestionInput!): Quiz!
+    _internal_noauth_addExactAnswerQuestion(input: CreateExactAnswerQuestionInput!): Quiz!
     """
     Update an free text question with exact answer in the quiz questions.
+    ️⚠️  This query is only accessible internally in the system and allows the caller to update a Question without
+    any permissions check and should not be called without any validation of the caller's permissions. ⚠️
     """
-    updateExactAnswerQuestion(input: UpdateExactAnswerQuestionInput!): Quiz!
+    _internal_noauth_updateExactAnswerQuestion(input: UpdateExactAnswerQuestionInput!): Quiz!
     """
     Add a numeric question to the quiz questions, at the end of the list.
+    ️⚠️  This query is only accessible internally in the system and allows the caller to create a Question without
+    any permissions check and should not be called without any validation of the caller's permissions. ⚠️
     """
-    addNumericQuestion(input: CreateNumericQuestionInput!): Quiz!
+    _internal_noauth_addNumericQuestion(input: CreateNumericQuestionInput!): Quiz!
     """
     Update a numeric question in the quiz questions.
+    ️⚠️  This query is only accessible internally in the system and allows the caller to update a Question without
+    any permissions check and should not be called without any validation of the caller's permissions. ⚠️
     """
-    updateNumericQuestion(input: UpdateNumericQuestionInput!): Quiz!
+    _internal_noauth_updateNumericQuestion(input: UpdateNumericQuestionInput!): Quiz!
 
     """
     Add a self assessment question to the quiz questions, at the end of the list.
+    ️⚠️  This query is only accessible internally in the system and allows the caller to create a Question without
+    any permissions check and should not be called without any validation of the caller's permissions. ⚠️
     """
-    addSelfAssessmentQuestion(input: CreateSelfAssessmentQuestionInput!): Quiz!
+    _internal_noauth_addSelfAssessmentQuestion(input: CreateSelfAssessmentQuestionInput!): Quiz!
     """
     Update a self assessment question in the quiz questions.
+    ️⚠️  This query is only accessible internally in the system and allows the caller to update a Question without
+    any permissions check and should not be called without any validation of the caller's permissions. ⚠️
     """
-    updateSelfAssessmentQuestion(input: UpdateSelfAssessmentQuestionInput!): Quiz!
+    _internal_noauth_updateSelfAssessmentQuestion(input: UpdateSelfAssessmentQuestionInput!): Quiz!
 
     # add other types of questions here
 
@@ -141,6 +165,10 @@ input CreateQuizInput {
 
 input CreateMultipleChoiceQuestionInput {
     """
+    UUID of the question to update and the id of the corresponding item.
+    """
+    itemId: UUID!
+    """
     Number of the question, used for ordering.
     This can be omitted, in which case a number, one higher than the highest number of the existing questions, will be used.
     """
@@ -161,9 +189,9 @@ input CreateMultipleChoiceQuestionInput {
 
 input UpdateMultipleChoiceQuestionInput {
     """
-    UUID of the question to update.
+    UUID of the question to update and the id of the corresponding item.
     """
-    id: UUID!
+    itemId: UUID!
     """
     Text of the question, in SlateJS JSON format.
     """
@@ -196,6 +224,10 @@ input MultipleChoiceAnswerInput {
 
 input CreateClozeQuestionInput {
     """
+    id of the corresponding item
+    """
+    itemId:UUID
+    """
     Number of the question, used for ordering.
     This can be omitted, in which case a number, one higher than the highest number of the existing questions, will be used.
     """
@@ -220,9 +252,9 @@ input CreateClozeQuestionInput {
 
 input UpdateClozeQuestionInput {
     """
-    UUID of the question to update.
+    UUID of the question to update and the id of the corresponding item.
     """
-    id: UUID!
+    itemId: UUID!
     """
     List of cloze elements.
     """
@@ -242,6 +274,10 @@ input UpdateClozeQuestionInput {
 }
 
 input ClozeElementInput {
+    """
+    id of the corresponding item
+    """
+    itemId:UUID
     """
     Type of the element.
     """
@@ -264,6 +300,10 @@ input ClozeElementInput {
 
 input CreateAssociationQuestionInput {
     """
+    id of the corresponding item
+    """
+    itemId:UUID
+    """
     Number of the question, used for ordering.
     This can be omitted, in which case a number, one higher than the highest number of the existing questions, will be used.
     """
@@ -284,9 +324,9 @@ input CreateAssociationQuestionInput {
 
 input UpdateAssociationQuestionInput {
     """
-    UUID of the question to update.
+    UUID of the question to update and the id of the corresponding item.
     """
-    id: UUID!
+    itemId: UUID!
     """
     Text of the question, in SlateJS JSON format.
     """
@@ -303,6 +343,10 @@ input UpdateAssociationQuestionInput {
 
 input AssociationInput {
     """
+    id of the corresponding item
+    """
+    itemId:UUID
+    """
     Text of the left side of the association, in SlateJS JSON format.
     """
     left: String! @Size(max: 255)
@@ -317,6 +361,10 @@ input AssociationInput {
 }
 
 input CreateExactAnswerQuestionInput {
+    """
+    id of the corresponding item
+    """
+    itemId:UUID
     """
     Number of the question, used for ordering.
     This can be omitted, in which case a number, one higher than the highest number of the existing questions, will be used.
@@ -346,9 +394,9 @@ input CreateExactAnswerQuestionInput {
 
 input UpdateExactAnswerQuestionInput {
     """
-    UUID of the question to update.
+    UUID of the question to update and the id of the corresponding item.
     """
-    id: UUID!
+    itemId: UUID!
     """
     Text of the question, in SlateJS JSON format.
     """
@@ -372,6 +420,10 @@ input UpdateExactAnswerQuestionInput {
 }
 
 input CreateNumericQuestionInput {
+    """
+    id of the corresponding item
+    """
+    itemId:UUID
     """
     Number of the question, used for ordering.
     This can be omitted, in which case a number, one higher than the highest number of the existing questions, will be used.
@@ -401,9 +453,9 @@ input CreateNumericQuestionInput {
 
 input UpdateNumericQuestionInput {
     """
-    UUID of the question to update.
+    UUID of the question to update and the id of the corresponding item.
     """
-    id: UUID!
+    itemId: UUID!
     """
     Text of the question, in SlateJS JSON format.
     """
@@ -428,6 +480,10 @@ input UpdateNumericQuestionInput {
 
 input CreateSelfAssessmentQuestionInput {
     """
+    id of the corresponding item
+    """
+    itemId:UUID
+    """
     Number of the question, used for ordering.
     This can be omitted, in which case a number, one higher than the highest number of the existing questions, will be used.
     """
@@ -448,9 +504,9 @@ input CreateSelfAssessmentQuestionInput {
 
 input UpdateSelfAssessmentQuestionInput {
     """
-    UUID of the question to update.
+    UUID of the question to update and the id of the corresponding item.
     """
-    id: UUID!
+    itemId: UUID!
     """
     Text of the question, in SlateJS JSON format.
     """

@@ -1,6 +1,6 @@
 package de.unistuttgart.iste.gits.quiz_service.persistence.entity;
 
-import de.unistuttgart.iste.gits.generated.dto.QuestionType;
+import de.unistuttgart.iste.meitrex.generated.dto.QuestionType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -16,8 +16,7 @@ import java.util.*;
 public class QuestionEntity {
 
     @Id
-    @GeneratedValue
-    private UUID id;
+    private UUID itemId;
 
     @Column(nullable = false)
     private int number;
@@ -42,7 +41,7 @@ public class QuestionEntity {
         if (o == null || getClass() != o.getClass()) return false;
         final QuestionEntity that = (QuestionEntity) o;
         if (getNumber() != that.getNumber()) return false;
-        if (!Objects.equals(getId(), that.getId())) return false;
+        if (!Objects.equals(getItemId(), that.getItemId())) return false;
         if (getType() != that.getType()) return false;
         if (!(Objects.equals(getHint(), that.getHint()))) return false;
 
@@ -56,6 +55,6 @@ public class QuestionEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getNumber(), getType(), getHint(), getQuestionStatistics());
+        return Objects.hash(getItemId(), getNumber(), getType(), getHint(), getQuestionStatistics());
     }
 }

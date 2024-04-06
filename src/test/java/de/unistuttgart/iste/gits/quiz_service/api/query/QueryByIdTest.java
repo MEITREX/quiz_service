@@ -1,11 +1,11 @@
 package de.unistuttgart.iste.gits.quiz_service.api.query;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.gits.common.testutil.InjectCurrentUserHeader;
-import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
-import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
-import de.unistuttgart.iste.gits.generated.dto.*;
+import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
+import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
+import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.gits.quiz_service.api.QuizFragments;
 import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.gits.quiz_service.persistence.repository.QuizRepository;
@@ -16,7 +16,7 @@ import org.springframework.graphql.test.tester.GraphQlTester;
 import java.util.List;
 import java.util.UUID;
 
-import static de.unistuttgart.iste.gits.common.testutil.TestUsers.userWithMembershipInCourseWithId;
+import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 import static de.unistuttgart.iste.gits.quiz_service.TestData.*;
 import static de.unistuttgart.iste.gits.quiz_service.matcher.MultipleChoiceQuestionDtoToEntityMatcher.matchesEntity;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -118,7 +118,7 @@ class QueryByIdTest {
                         .setNumber(1)
                         .setText("What is the answer to life, the universe and everything?")
                         .setHint("hint")
-                        .setId(quizEntity.getQuestionPool().get(0).getId())
+                        .setItemId(quizEntity.getQuestionPool().get(0).getItemId())
                         .setAnswers(List.of(
                                 MultipleChoiceAnswer.builder()
                                         .setAnswerText("42")
@@ -135,10 +135,10 @@ class QueryByIdTest {
                         .build(),
                 AssociationQuestion.builder()
                         .setNumber(2)
-                        .setId(quizEntity.getQuestionPool().get(1).getId())
+                        .setItemId(quizEntity.getQuestionPool().get(1).getItemId())
                         .setText("text")
                         .setHint("hint")
-                        .setId(quizEntity.getQuestionPool().get(1).getId())
+                        .setItemId(quizEntity.getQuestionPool().get(1).getItemId())
                         .setType(QuestionType.ASSOCIATION)
                         .setCorrectAssociations(List.of(
                                 new SingleAssociation("A", "1", "feedback"),
@@ -149,7 +149,7 @@ class QueryByIdTest {
                 ClozeQuestion.builder()
                         .setNumber(3)
                         .setHint("hint")
-                        .setId(quizEntity.getQuestionPool().get(2).getId())
+                        .setItemId(quizEntity.getQuestionPool().get(2).getItemId())
                         .setType(QuestionType.CLOZE)
                         .setShowBlanksList(true)
                         .setAdditionalWrongAnswers(List.of("wrong1", "wrong2"))
@@ -166,7 +166,7 @@ class QueryByIdTest {
                 ExactAnswerQuestion.builder()
                         .setNumber(4)
                         .setHint("hint")
-                        .setId(quizEntity.getQuestionPool().get(3).getId())
+                        .setItemId(quizEntity.getQuestionPool().get(3).getItemId())
                         .setType(QuestionType.EXACT_ANSWER)
                         .setText("question")
                         .setCorrectAnswers(List.of("answer"))
@@ -176,7 +176,7 @@ class QueryByIdTest {
                 NumericQuestion.builder()
                         .setNumber(5)
                         .setHint("hint")
-                        .setId(quizEntity.getQuestionPool().get(4).getId())
+                        .setItemId(quizEntity.getQuestionPool().get(4).getItemId())
                         .setType(QuestionType.NUMERIC)
                         .setText("question")
                         .setCorrectAnswer(42)
@@ -186,7 +186,7 @@ class QueryByIdTest {
                 SelfAssessmentQuestion.builder()
                         .setNumber(6)
                         .setHint("hint")
-                        .setId(quizEntity.getQuestionPool().get(5).getId())
+                        .setItemId(quizEntity.getQuestionPool().get(5).getItemId())
                         .setType(QuestionType.SELF_ASSESSMENT)
                         .setText("question")
                         .setSolutionSuggestion("answer")

@@ -1,6 +1,6 @@
 package de.unistuttgart.iste.gits.quiz_service.persistence.entity;
 
-import de.unistuttgart.iste.gits.generated.dto.ClozeElementType;
+import de.unistuttgart.iste.meitrex.generated.dto.ClozeElementType;
 import jakarta.persistence.*;
 import lombok.*;
 

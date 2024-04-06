@@ -1,11 +1,11 @@
 package de.unistuttgart.iste.gits.quiz_service.controller;
 
-import de.unistuttgart.iste.gits.common.exception.NoAccessToCourseException;
-import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
-import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser.UserRoleInCourse;
-import de.unistuttgart.iste.gits.generated.dto.*;
 import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.gits.quiz_service.service.QuizService;
+import de.unistuttgart.iste.meitrex.common.exception.NoAccessToCourseException;
+import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
+import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser.UserRoleInCourse;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.*;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Controller;
 import java.util.List;
 import java.util.UUID;
 
-import static de.unistuttgart.iste.gits.common.user_handling.UserCourseAccessValidator.validateUserHasAccessToCourse;
+import static de.unistuttgart.iste.meitrex.common.user_handling.UserCourseAccessValidator.validateUserHasAccessToCourse;
 
 @Slf4j
 @Controller
@@ -67,62 +67,62 @@ public class QuizController {
     }
 
     @SchemaMapping(typeName = QUIZ_MUTATION_NAME)
-    public Quiz addMultipleChoiceQuestion(@Argument final CreateMultipleChoiceQuestionInput input, final QuizMutation quizMutation) {
+    public Quiz _internal_noauth_addMultipleChoiceQuestion(@Argument final CreateMultipleChoiceQuestionInput input, final QuizMutation quizMutation) {
         return quizService.addMultipleChoiceQuestion(quizMutation.getAssessmentId(), input);
     }
 
     @SchemaMapping(typeName = QUIZ_MUTATION_NAME)
-    public Quiz updateMultipleChoiceQuestion(@Argument final UpdateMultipleChoiceQuestionInput input, final QuizMutation quizMutation) {
+    public Quiz _internal_noauth_updateMultipleChoiceQuestion(@Argument final UpdateMultipleChoiceQuestionInput input, final QuizMutation quizMutation) {
         return quizService.updateMultipleChoiceQuestion(quizMutation.getAssessmentId(), input);
     }
 
     @SchemaMapping(typeName = QUIZ_MUTATION_NAME)
-    public Quiz addClozeQuestion(@Argument final CreateClozeQuestionInput input, final QuizMutation quizMutation) {
+    public Quiz _internal_noauth_addClozeQuestion(@Argument final CreateClozeQuestionInput input, final QuizMutation quizMutation) {
         return quizService.addClozeQuestion(quizMutation.getAssessmentId(), input);
     }
 
     @SchemaMapping(typeName = QUIZ_MUTATION_NAME)
-    public Quiz updateClozeQuestion(@Argument final UpdateClozeQuestionInput input, final QuizMutation quizMutation) {
+    public Quiz _internal_noauth_updateClozeQuestion(@Argument final UpdateClozeQuestionInput input, final QuizMutation quizMutation) {
         return quizService.updateClozeQuestion(quizMutation.getAssessmentId(), input);
     }
 
     @SchemaMapping(typeName = QUIZ_MUTATION_NAME)
-    public Quiz addAssociationQuestion(@Argument final CreateAssociationQuestionInput input, final QuizMutation quizMutation) {
+    public Quiz _internal_noauth_addAssociationQuestion(@Argument final CreateAssociationQuestionInput input, final QuizMutation quizMutation) {
         return quizService.addAssociationQuestion(quizMutation.getAssessmentId(), input);
     }
 
     @SchemaMapping(typeName = QUIZ_MUTATION_NAME)
-    public Quiz updateAssociationQuestion(@Argument final UpdateAssociationQuestionInput input, final QuizMutation quizMutation) {
+    public Quiz _internal_noauth_updateAssociationQuestion(@Argument final UpdateAssociationQuestionInput input, final QuizMutation quizMutation) {
         return quizService.updateAssociationQuestion(quizMutation.getAssessmentId(), input);
     }
 
     @SchemaMapping(typeName = QUIZ_MUTATION_NAME)
-    public Quiz addExactAnswerQuestion(@Argument final CreateExactAnswerQuestionInput input, final QuizMutation quizMutation) {
+    public Quiz _internal_noauth_addExactAnswerQuestion(@Argument final CreateExactAnswerQuestionInput input, final QuizMutation quizMutation) {
         return quizService.addExactAnswerQuestion(quizMutation.getAssessmentId(), input);
     }
 
     @SchemaMapping(typeName = QUIZ_MUTATION_NAME)
-    public Quiz updateExactAnswerQuestion(@Argument final UpdateExactAnswerQuestionInput input, final QuizMutation quizMutation) {
+    public Quiz _internal_noauth_updateExactAnswerQuestion(@Argument final UpdateExactAnswerQuestionInput input, final QuizMutation quizMutation) {
         return quizService.updateExactAnswerQuestion(quizMutation.getAssessmentId(), input);
     }
 
     @SchemaMapping(typeName = QUIZ_MUTATION_NAME)
-    public Quiz addNumericQuestion(@Argument final CreateNumericQuestionInput input, final QuizMutation quizMutation) {
+    public Quiz _internal_noauth_addNumericQuestion(@Argument final CreateNumericQuestionInput input, final QuizMutation quizMutation) {
         return quizService.addNumericQuestion(quizMutation.getAssessmentId(), input);
     }
 
     @SchemaMapping(typeName = QUIZ_MUTATION_NAME)
-    public Quiz updateNumericQuestion(@Argument final UpdateNumericQuestionInput input, final QuizMutation quizMutation) {
+    public Quiz _internal_noauth_updateNumericQuestion(@Argument final UpdateNumericQuestionInput input, final QuizMutation quizMutation) {
         return quizService.updateNumericQuestion(quizMutation.getAssessmentId(), input);
     }
 
     @SchemaMapping(typeName = QUIZ_MUTATION_NAME)
-    public Quiz addSelfAssessmentQuestion(@Argument final CreateSelfAssessmentQuestionInput input, final QuizMutation quizMutation) {
+    public Quiz _internal_noauth_addSelfAssessmentQuestion(@Argument final CreateSelfAssessmentQuestionInput input, final QuizMutation quizMutation) {
         return quizService.addSelfAssessmentQuestion(quizMutation.getAssessmentId(), input);
     }
 
     @SchemaMapping(typeName = QUIZ_MUTATION_NAME)
-    public Quiz updateSelfAssessmentQuestion(@Argument final UpdateSelfAssessmentQuestionInput input, final QuizMutation quizMutation) {
+    public Quiz _internal_noauth_updateSelfAssessmentQuestion(@Argument final UpdateSelfAssessmentQuestionInput input, final QuizMutation quizMutation) {
         return quizService.updateSelfAssessmentQuestion(quizMutation.getAssessmentId(), input);
     }
 

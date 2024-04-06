@@ -1,13 +1,15 @@
 package de.unistuttgart.iste.gits.quiz_service.api.mutation;
 
-import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.gits.common.testutil.InjectCurrentUserHeader;
-import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
-import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
-import de.unistuttgart.iste.gits.generated.dto.CreateExactAnswerQuestionInput;
-import de.unistuttgart.iste.gits.quiz_service.TestData;
 import de.unistuttgart.iste.gits.quiz_service.api.QuizFragments;
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.*;
+import de.unistuttgart.iste.gits.quiz_service.persistence.entity.ExactAnswerQuestionEntity;
+import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuestionEntity;
+import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuizEntity;
+import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
+import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
+import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
+import de.unistuttgart.iste.meitrex.generated.dto.CreateExactAnswerQuestionInput;
+import de.unistuttgart.iste.gits.quiz_service.TestData;
 import de.unistuttgart.iste.gits.quiz_service.persistence.repository.QuizRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -20,7 +22,7 @@ import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static de.unistuttgart.iste.gits.common.testutil.TestUsers.userWithMembershipInCourseWithId;
+import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 
 
 @GraphQlApiTest
@@ -57,8 +59,9 @@ class MutateQuizAddExactAnswerQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-
+        UUID itemId=UUID.randomUUID();
         final CreateExactAnswerQuestionInput input = CreateExactAnswerQuestionInput.builder()
+                .setItemId(itemId)
                 .setHint("hint")
                 .setText("question")
                 .setFeedback("feedback")
@@ -73,6 +76,9 @@ class MutateQuizAddExactAnswerQuestionTest {
                 .execute()
                 .path("mutateQuiz.addExactAnswerQuestion.questionPool[0].number")
                 .entity(Integer.class).isEqualTo(1)
+
+                .path("mutateQuiz.addExactAnswerQuestion.questionPool[0].itemId")
+                .entity(UUID.class).isEqualTo(itemId)
 
                 .path("mutateQuiz.addExactAnswerQuestion.questionPool[0].hint")
                 .entity(String.class).isEqualTo("hint")
@@ -96,7 +102,7 @@ class MutateQuizAddExactAnswerQuestionTest {
 
         assertThat(questionEntity, instanceOf(ExactAnswerQuestionEntity.class));
         final ExactAnswerQuestionEntity exactAnswerQuestionEntity = (ExactAnswerQuestionEntity) questionEntity;
-
+        assertThat(exactAnswerQuestionEntity.getItemId(),is("itemId"));
         assertThat(exactAnswerQuestionEntity.getHint(), is("hint"));
         assertThat(exactAnswerQuestionEntity.getText(), is("question"));
         assertThat(exactAnswerQuestionEntity.getFeedback(), is("feedback"));
