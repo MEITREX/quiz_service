@@ -57,7 +57,7 @@ class MutateQuizUpdateNumericQuestionTest {
         final String query = QuizFragments.FRAGMENT_DEFINITION + """
                 mutation($id: UUID!, $input: UpdateNumericQuestionInput!) {
                     mutateQuiz(assessmentId: $id) {
-                        updateNumericQuestion(input: $input) {
+                        _internal_noauth_updateNumericQuestion(input: $input) {
                             ...QuizAllFields
                         }
                     }
@@ -68,11 +68,11 @@ class MutateQuizUpdateNumericQuestionTest {
                 .variable("id", quizEntity.getAssessmentId())
                 .variable("input", input)
                 .execute()
-                .path("mutateQuiz.updateNumericQuestion.questionPool[0].number").entity(Integer.class).isEqualTo(1)
-                .path("mutateQuiz.updateNumericQuestion.questionPool[0].text").entity(String.class).isEqualTo("new question")
-                .path("mutateQuiz.updateNumericQuestion.questionPool[0].hint").entity(String.class).isEqualTo("new hint")
-                .path("mutateQuiz.updateNumericQuestion.questionPool[0].correctAnswer").entity(Double.class).isEqualTo(3.0)
-                .path("mutateQuiz.updateNumericQuestion.questionPool[0].tolerance").entity(Double.class).isEqualTo(0.1);
+                .path("mutateQuiz._internal_noauth_updateNumericQuestion.questionPool[0].number").entity(Integer.class).isEqualTo(1)
+                .path("mutateQuiz._internal_noauth_updateNumericQuestion.questionPool[0].text").entity(String.class).isEqualTo("new question")
+                .path("mutateQuiz._internal_noauth_updateNumericQuestion.questionPool[0].hint").entity(String.class).isEqualTo("new hint")
+                .path("mutateQuiz._internal_noauth_updateNumericQuestion.questionPool[0].correctAnswer").entity(Double.class).isEqualTo(3.0)
+                .path("mutateQuiz._internal_noauth_updateNumericQuestion.questionPool[0].tolerance").entity(Double.class).isEqualTo(0.1);
 
         final QuizEntity updatedQuiz = quizRepository.findById(quizEntity.getAssessmentId()).orElseThrow();
         assertThat(updatedQuiz.getQuestionPool(), hasSize(1));

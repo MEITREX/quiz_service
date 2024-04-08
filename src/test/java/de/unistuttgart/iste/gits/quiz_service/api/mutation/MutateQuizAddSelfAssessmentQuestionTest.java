@@ -37,7 +37,7 @@ class MutateQuizAddSelfAssessmentQuestionTest {
     private static final String ADD_SELF_ASSESSMENT_QUESTION_MUTATION = QuizFragments.FRAGMENT_DEFINITION + """
             mutation($id: UUID!, $input: CreateSelfAssessmentQuestionInput!) {
                 mutateQuiz(assessmentId: $id) {
-                    addSelfAssessmentQuestion(input: $input) {
+                    _internal_noauth_addSelfAssessmentQuestion(input: $input) {
                         ...QuizAllFields
                     }
                 }
@@ -69,19 +69,19 @@ class MutateQuizAddSelfAssessmentQuestionTest {
                 .variable("input", input)
                 .variable("id", quizEntity.getAssessmentId())
                 .execute()
-                .path("mutateQuiz.addSelfAssessmentQuestion.questionPool[0].number")
+                .path("mutateQuiz._internal_noauth_addSelfAssessmentQuestion.questionPool[0].number")
                 .entity(Integer.class).isEqualTo(1)
 
-                .path("mutateQuiz.addSelfAssessmentQuestion.questionPool[0].itemId")
+                .path("mutateQuiz._internal_noauth_addSelfAssessmentQuestion.questionPool[0].itemId")
                 .entity(UUID.class).isEqualTo(itemId)
 
-                .path("mutateQuiz.addSelfAssessmentQuestion.questionPool[0].hint")
+                .path("mutateQuiz._internal_noauth_addSelfAssessmentQuestion.questionPool[0].hint")
                 .entity(String.class).isEqualTo("hint")
 
-                .path("mutateQuiz.addSelfAssessmentQuestion.questionPool[0].text")
+                .path("mutateQuiz._internal_noauth_addSelfAssessmentQuestion.questionPool[0].text")
                 .entity(String.class).isEqualTo("question")
 
-                .path("mutateQuiz.addSelfAssessmentQuestion.questionPool[0].solutionSuggestion")
+                .path("mutateQuiz._internal_noauth_addSelfAssessmentQuestion.questionPool[0].solutionSuggestion")
                 .entity(String.class).isEqualTo("solution suggestion");
 
         final QuestionEntity questionEntity = quizRepository.findById(quizEntity.getAssessmentId())

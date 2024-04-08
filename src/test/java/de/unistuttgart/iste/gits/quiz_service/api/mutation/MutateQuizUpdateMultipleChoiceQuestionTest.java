@@ -63,7 +63,7 @@ class MutateQuizUpdateMultipleChoiceQuestionTest {
         final String query = QuizFragments.FRAGMENT_DEFINITION + """
                 mutation($id: UUID!, $input: UpdateMultipleChoiceQuestionInput!) {
                     mutateQuiz(assessmentId: $id) {
-                        updateMultipleChoiceQuestion(input: $input) {
+                        _internal_noauth_updateMultipleChoiceQuestion(input: $input) {
                             ...QuizAllFields
                         }
                     }
@@ -74,7 +74,7 @@ class MutateQuizUpdateMultipleChoiceQuestionTest {
                 .variable("input", input)
                 .variable("id", quizEntity.getAssessmentId())
                 .execute()
-                .path("mutateQuiz.updateMultipleChoiceQuestion.questionPool")
+                .path("mutateQuiz._internal_noauth_updateMultipleChoiceQuestion.questionPool")
                 .entityList(MultipleChoiceQuestion.class)
                 .get();
 

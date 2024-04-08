@@ -57,7 +57,7 @@ class MutateQuizUpdateExactAnswerQuestionTest {
         final String query = QuizFragments.FRAGMENT_DEFINITION + """
                 mutation($id: UUID!, $input: UpdateExactAnswerQuestionInput!) {
                     mutateQuiz(assessmentId: $id) {
-                        updateExactAnswerQuestion(input: $input) {
+                        _internal_noauth_updateExactAnswerQuestion(input: $input) {
                             ...QuizAllFields
                         }
                     }
@@ -68,12 +68,12 @@ class MutateQuizUpdateExactAnswerQuestionTest {
                 .variable("id", quizEntity.getAssessmentId())
                 .variable("input", input)
                 .execute()
-                .path("mutateQuiz.updateExactAnswerQuestion.questionPool[0].number").entity(Integer.class).isEqualTo(1)
-                .path("mutateQuiz.updateExactAnswerQuestion.questionPool[0].text").entity(String.class).isEqualTo("new question")
-                .path("mutateQuiz.updateExactAnswerQuestion.questionPool[0].hint").entity(String.class).isEqualTo("new hint")
-                .path("mutateQuiz.updateExactAnswerQuestion.questionPool[0].feedback").entity(String.class).isEqualTo("new feedback")
-                .path("mutateQuiz.updateExactAnswerQuestion.questionPool[0].caseSensitive").entity(Boolean.class).isEqualTo(false)
-                .path("mutateQuiz.updateExactAnswerQuestion.questionPool[0].correctAnswers").entityList(String.class).contains("newA", "newB");
+                .path("mutateQuiz._internal_noauth_updateExactAnswerQuestion.questionPool[0].number").entity(Integer.class).isEqualTo(1)
+                .path("mutateQuiz._internal_noauth_updateExactAnswerQuestion.questionPool[0].text").entity(String.class).isEqualTo("new question")
+                .path("mutateQuiz._internal_noauth_updateExactAnswerQuestion.questionPool[0].hint").entity(String.class).isEqualTo("new hint")
+                .path("mutateQuiz._internal_noauth_updateExactAnswerQuestion.questionPool[0].feedback").entity(String.class).isEqualTo("new feedback")
+                .path("mutateQuiz._internal_noauth_updateExactAnswerQuestion.questionPool[0].caseSensitive").entity(Boolean.class).isEqualTo(false)
+                .path("mutateQuiz._internal_noauth_updateExactAnswerQuestion.questionPool[0].correctAnswers").entityList(String.class).contains("newA", "newB");
 
         final QuizEntity updatedQuiz = quizRepository.findById(quizEntity.getAssessmentId()).orElseThrow();
         assertThat(updatedQuiz.getQuestionPool(), hasSize(1));

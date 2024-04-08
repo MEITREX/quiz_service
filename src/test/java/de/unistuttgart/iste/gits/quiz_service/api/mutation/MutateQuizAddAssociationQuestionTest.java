@@ -42,7 +42,7 @@ class MutateQuizAddAssociationQuestionTest {
     private static final String ADD_ASSOCIATION_QUESTION_MUTATION = QuizFragments.FRAGMENT_DEFINITION + """
             mutation($id: UUID!, $input: CreateAssociationQuestionInput!) {
                 mutateQuiz(assessmentId: $id) {
-                    addAssociationQuestion(input: $input) {
+                    _internal_noauth_addAssociationQuestion(input: $input) {
                         ...QuizAllFields
                     }
                 }
@@ -77,33 +77,33 @@ class MutateQuizAddAssociationQuestionTest {
                 .variable("input", input)
                 .variable("id", quizEntity.getAssessmentId())
                 .execute()
-                .path("mutateQuiz.addAssociationQuestion.questionPool[0].number")
+                .path("mutateQuiz._internal_noauth_addAssociationQuestion.questionPool[0].number")
                 .entity(Integer.class)
                 .isEqualTo(1)
 
-                .path("mutateQuiz.addAssociationQuestion.questionPool[0].text")
+                .path("mutateQuiz._internal_noauth_addAssociationQuestion.questionPool[0].text")
                 .entity(String.class)
                 .isEqualTo("question")
 
-                .path("mutateQuiz.addAssociationQuestion.questionPool[0].hint")
+                .path("mutateQuiz._internal_noauth_addAssociationQuestion.questionPool[0].hint")
                 .entity(String.class)
                 .isEqualTo("hint")
 
-                .path("mutateQuiz.addAssociationQuestion.questionPool[0].itemId")
+                .path("mutateQuiz._internal_noauth_addAssociationQuestion.questionPool[0].itemId")
                 .entity(UUID.class)
                 .isEqualTo(itemId)
 
-                .path("mutateQuiz.addAssociationQuestion.questionPool[0].correctAssociations")
+                .path("mutateQuiz._internal_noauth_addAssociationQuestion.questionPool[0].correctAssociations")
                 .entityList(SingleAssociation.class)
                 .contains(
                         new SingleAssociation("a", "b", "feedback1"),
                         new SingleAssociation("c", "d", "feedback2"))
 
-                .path("mutateQuiz.addAssociationQuestion.questionPool[0].leftSide")
+                .path("mutateQuiz._internal_noauth_addAssociationQuestion.questionPool[0].leftSide")
                 .entityList(String.class)
                 .contains("a", "c")
 
-                .path("mutateQuiz.addAssociationQuestion.questionPool[0].rightSide")
+                .path("mutateQuiz._internal_noauth_addAssociationQuestion.questionPool[0].rightSide")
                 .entityList(String.class)
                 .contains("b", "d");
 

@@ -39,7 +39,7 @@ class MutateQuizAddExactAnswerQuestionTest {
     private static final String ADD_EXACT_ANSWER_QUESTION_MUTATION = QuizFragments.FRAGMENT_DEFINITION + """
             mutation($id: UUID!, $input: CreateExactAnswerQuestionInput!) {
                 mutateQuiz(assessmentId: $id) {
-                    addExactAnswerQuestion(input: $input) {
+                    _internal_noauth_addExactAnswerQuestion(input: $input) {
                         ...QuizAllFields
                     }
                 }
@@ -74,25 +74,25 @@ class MutateQuizAddExactAnswerQuestionTest {
                 .variable("input", input)
                 .variable("id", quizEntity.getAssessmentId())
                 .execute()
-                .path("mutateQuiz.addExactAnswerQuestion.questionPool[0].number")
+                .path("mutateQuiz._internal_noauth_addExactAnswerQuestion.questionPool[0].number")
                 .entity(Integer.class).isEqualTo(1)
 
-                .path("mutateQuiz.addExactAnswerQuestion.questionPool[0].itemId")
+                .path("mutateQuiz._internal_noauth_addExactAnswerQuestion.questionPool[0].itemId")
                 .entity(UUID.class).isEqualTo(itemId)
 
-                .path("mutateQuiz.addExactAnswerQuestion.questionPool[0].hint")
+                .path("mutateQuiz._internal_noauth_addExactAnswerQuestion.questionPool[0].hint")
                 .entity(String.class).isEqualTo("hint")
 
-                .path("mutateQuiz.addExactAnswerQuestion.questionPool[0].text")
+                .path("mutateQuiz._internal_noauth_addExactAnswerQuestion.questionPool[0].text")
                 .entity(String.class).isEqualTo("question")
 
-                .path("mutateQuiz.addExactAnswerQuestion.questionPool[0].feedback")
+                .path("mutateQuiz._internal_noauth_addExactAnswerQuestion.questionPool[0].feedback")
                 .entity(String.class).isEqualTo("feedback")
 
-                .path("mutateQuiz.addExactAnswerQuestion.questionPool[0].caseSensitive")
+                .path("mutateQuiz._internal_noauth_addExactAnswerQuestion.questionPool[0].caseSensitive")
                 .entity(Boolean.class).isEqualTo(true)
 
-                .path("mutateQuiz.addExactAnswerQuestion.questionPool[0].correctAnswers")
+                .path("mutateQuiz._internal_noauth_addExactAnswerQuestion.questionPool[0].correctAnswers")
                 .entityList(String.class).contains("a", "b");
 
         final QuestionEntity questionEntity = quizRepository.findById(quizEntity.getAssessmentId())
@@ -102,7 +102,7 @@ class MutateQuizAddExactAnswerQuestionTest {
 
         assertThat(questionEntity, instanceOf(ExactAnswerQuestionEntity.class));
         final ExactAnswerQuestionEntity exactAnswerQuestionEntity = (ExactAnswerQuestionEntity) questionEntity;
-        assertThat(exactAnswerQuestionEntity.getItemId(),is("itemId"));
+        assertThat(exactAnswerQuestionEntity.getItemId(),is(itemId));
         assertThat(exactAnswerQuestionEntity.getHint(), is("hint"));
         assertThat(exactAnswerQuestionEntity.getText(), is("question"));
         assertThat(exactAnswerQuestionEntity.getFeedback(), is("feedback"));

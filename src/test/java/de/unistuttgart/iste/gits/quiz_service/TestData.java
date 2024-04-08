@@ -25,6 +25,7 @@ public class TestData {
             final String... wrongAnswerText) {
 
         final var builder = MultipleChoiceQuestionEntity.builder()
+                .itemId(UUID.randomUUID())
                 .type(QuestionType.MULTIPLE_CHOICE)
                 .hint("hint")
                 .number(number)
@@ -77,6 +78,7 @@ public class TestData {
 
     public static AssociationQuestionEntity createAssociationQuestion(final int number, final AssociationEmbeddable... associations) {
         return AssociationQuestionEntity.builder()
+                .itemId(UUID.randomUUID())
                 .type(QuestionType.ASSOCIATION)
                 .number(number)
                 .text("text")
@@ -125,6 +127,7 @@ public class TestData {
 
     public static SelfAssessmentQuestionEntity createSelfAssessmentQuestion(final int number, final String question, final String answer) {
         return SelfAssessmentQuestionEntity.builder()
+                .itemId(UUID.randomUUID())
                 .type(QuestionType.SELF_ASSESSMENT)
                 .number(number)
                 .text(question)

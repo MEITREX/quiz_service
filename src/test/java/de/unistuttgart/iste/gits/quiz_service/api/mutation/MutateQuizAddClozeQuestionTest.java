@@ -33,7 +33,7 @@ class MutateQuizAddClozeQuestionTest {
     private static final String ADD_CLOZE_QUESTION_MUTATION = QuizFragments.FRAGMENT_DEFINITION + """
             mutation($id: UUID!, $input: CreateClozeQuestionInput!) {
                 mutateQuiz(assessmentId: $id) {
-                    addClozeQuestion(input: $input) {
+                    _internal_noauth_addClozeQuestion(input: $input) {
                         ...QuizAllFields
                     }
                 }
@@ -85,31 +85,31 @@ class MutateQuizAddClozeQuestionTest {
                 .variable("input", input)
                 .variable("id", quizEntity.getAssessmentId())
                 .execute()
-                .path("mutateQuiz.addClozeQuestion.questionPool[0].number")
+                .path("mutateQuiz._internal_noauth_addClozeQuestion.questionPool[0].number")
                 .entity(Integer.class)
                 .isEqualTo(1)
 
-                .path("mutateQuiz.addClozeQuestion.questionPool[0].itemId")
+                .path("mutateQuiz._internal_noauth_addClozeQuestion.questionPool[0].itemId")
                 .entity(UUID.class)
                 .isEqualTo(itemId)
 
-                .path("mutateQuiz.addClozeQuestion.questionPool[0].showBlanksList")
+                .path("mutateQuiz._internal_noauth_addClozeQuestion.questionPool[0].showBlanksList")
                 .entity(Boolean.class)
                 .isEqualTo(false)
 
-                .path("mutateQuiz.addClozeQuestion.questionPool[0].additionalWrongAnswers")
+                .path("mutateQuiz._internal_noauth_addClozeQuestion.questionPool[0].additionalWrongAnswers")
                 .entityList(String.class)
                 .isEqualTo(List.of("wrong1", "wrong2"))
 
-                .path("mutateQuiz.addClozeQuestion.questionPool[0].clozeElements[0].text")
+                .path("mutateQuiz._internal_noauth_addClozeQuestion.questionPool[0].clozeElements[0].text")
                 .entity(String.class)
                 .isEqualTo("what is the capital of France?")
 
-                .path("mutateQuiz.addClozeQuestion.questionPool[0].clozeElements[1].correctAnswer")
+                .path("mutateQuiz._internal_noauth_addClozeQuestion.questionPool[0].clozeElements[1].correctAnswer")
                 .entity(String.class)
                 .isEqualTo("Paris")
 
-                .path("mutateQuiz.addClozeQuestion.questionPool[0].clozeElements[1].feedback")
+                .path("mutateQuiz._internal_noauth_addClozeQuestion.questionPool[0].clozeElements[1].feedback")
                 .entity(String.class)
                 .isEqualTo("feedback");
 

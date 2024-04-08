@@ -87,20 +87,13 @@ class MutationLogQuizCompletionTest {
                 .build();
         final Response response1= Response.builder()
                 .itemId(questions.get(0).getItemId())
-                .response(0)
+                .response(1)
                 .build();
         final Response response2=Response.builder()
                 .itemId(questions.get(1).getItemId())
+                .response(0)
                 .build();
-        final Response response3=Response.builder()
-                .itemId(questions.get(2).getItemId())
-                .response(0.5F)
-                .build();
-        final Response response4=Response.builder()
-                .itemId(questions.get(3).getItemId())
-                .response(0.5F)
-                .build();
-        final List<Response>responses=List.of(response1,response2,response3,response4);
+        final List<Response>responses=List.of(response1,response2);
         // create expected Progress event
         final ContentProgressedEvent expectedUserProgressLogEvent = ContentProgressedEvent.builder()
                 .userId(loggedInUser.getId())

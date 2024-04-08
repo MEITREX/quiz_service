@@ -135,7 +135,6 @@ class QueryByIdTest {
                         .build(),
                 AssociationQuestion.builder()
                         .setNumber(2)
-                        .setItemId(quizEntity.getQuestionPool().get(1).getItemId())
                         .setText("text")
                         .setHint("hint")
                         .setItemId(quizEntity.getQuestionPool().get(1).getItemId())

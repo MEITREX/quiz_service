@@ -56,7 +56,7 @@ class MutateQuizUpdateSelfAssessmentQuestionTest {
         final String query = QuizFragments.FRAGMENT_DEFINITION + """
                 mutation($id: UUID!, $input: UpdateSelfAssessmentQuestionInput!) {
                     mutateQuiz(assessmentId: $id) {
-                        updateSelfAssessmentQuestion(input: $input) {
+                        _internal_noauth_updateSelfAssessmentQuestion(input: $input) {
                             ...QuizAllFields
                         }
                     }
@@ -67,10 +67,10 @@ class MutateQuizUpdateSelfAssessmentQuestionTest {
                 .variable("id", quizEntity.getAssessmentId())
                 .variable("input", input)
                 .execute()
-                .path("mutateQuiz.updateSelfAssessmentQuestion.questionPool[0].number").entity(Integer.class).isEqualTo(1)
-                .path("mutateQuiz.updateSelfAssessmentQuestion.questionPool[0].text").entity(String.class).isEqualTo("new question")
-                .path("mutateQuiz.updateSelfAssessmentQuestion.questionPool[0].hint").entity(String.class).isEqualTo("new hint")
-                .path("mutateQuiz.updateSelfAssessmentQuestion.questionPool[0].solutionSuggestion").entity(String.class).isEqualTo("new solution suggestion");
+                .path("mutateQuiz._internal_noauth_updateSelfAssessmentQuestion.questionPool[0].number").entity(Integer.class).isEqualTo(1)
+                .path("mutateQuiz._internal_noauth_updateSelfAssessmentQuestion.questionPool[0].text").entity(String.class).isEqualTo("new question")
+                .path("mutateQuiz._internal_noauth_updateSelfAssessmentQuestion.questionPool[0].hint").entity(String.class).isEqualTo("new hint")
+                .path("mutateQuiz._internal_noauth_updateSelfAssessmentQuestion.questionPool[0].solutionSuggestion").entity(String.class).isEqualTo("new solution suggestion");
 
         final QuizEntity updatedQuiz = quizRepository.findById(quizEntity.getAssessmentId()).orElseThrow();
         assertThat(updatedQuiz.getQuestionPool(), hasSize(1));

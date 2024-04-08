@@ -58,7 +58,7 @@ class MutateQuizUpdateAssociationQuestionTest {
         final String query = QuizFragments.FRAGMENT_DEFINITION + """
                 mutation($id: UUID!, $input: UpdateAssociationQuestionInput!) {
                     mutateQuiz(assessmentId: $id) {
-                        updateAssociationQuestion(input: $input) {
+                        _internal_noauth_updateAssociationQuestion(input: $input) {
                             ...QuizAllFields
                         }
                     }
@@ -69,10 +69,10 @@ class MutateQuizUpdateAssociationQuestionTest {
                 .variable("id", quizEntity.getAssessmentId())
                 .variable("input", input)
                 .execute()
-                .path("mutateQuiz.updateAssociationQuestion.questionPool[0].number").entity(Integer.class).isEqualTo(1)
-                .path("mutateQuiz.updateAssociationQuestion.questionPool[0].text").entity(String.class).isEqualTo("new question")
-                .path("mutateQuiz.updateAssociationQuestion.questionPool[0].hint").entity(String.class).isEqualTo("new hint")
-                .path("mutateQuiz.updateAssociationQuestion.questionPool[0].correctAssociations").entityList(SingleAssociation.class)
+                .path("mutateQuiz._internal_noauth_updateAssociationQuestion.questionPool[0].number").entity(Integer.class).isEqualTo(1)
+                .path("mutateQuiz._internal_noauth_updateAssociationQuestion.questionPool[0].text").entity(String.class).isEqualTo("new question")
+                .path("mutateQuiz._internal_noauth_updateAssociationQuestion.questionPool[0].hint").entity(String.class).isEqualTo("new hint")
+                .path("mutateQuiz._internal_noauth_updateAssociationQuestion.questionPool[0].correctAssociations").entityList(SingleAssociation.class)
                 .contains(
                         new SingleAssociation("newA", "newC", "new feedback1"),
                         new SingleAssociation("newB", "newD", "new feedback2"));

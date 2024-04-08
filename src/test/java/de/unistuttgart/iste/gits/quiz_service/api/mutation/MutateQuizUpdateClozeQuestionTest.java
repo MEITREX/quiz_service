@@ -68,7 +68,7 @@ class MutateQuizUpdateClozeQuestionTest {
         final String query = QuizFragments.FRAGMENT_DEFINITION + """
                 mutation($id: UUID!, $input: UpdateClozeQuestionInput!) {
                     mutateQuiz(assessmentId: $id) {
-                        updateClozeQuestion(input: $input) {
+                        _internal_noauth_updateClozeQuestion(input: $input) {
                             ...QuizAllFields
                         }
                     }
@@ -79,32 +79,32 @@ class MutateQuizUpdateClozeQuestionTest {
                 .variable("id", quizEntity.getAssessmentId())
                 .variable("input", input)
                 .execute()
-                .path("mutateQuiz.updateClozeQuestion.questionPool[0].number")
+                .path("mutateQuiz._internal_noauth_updateClozeQuestion.questionPool[0].number")
                 .entity(Integer.class)
                 .isEqualTo(1)
 
-                .path("mutateQuiz.updateClozeQuestion.questionPool[0].clozeElements[0]")
+                .path("mutateQuiz._internal_noauth_updateClozeQuestion.questionPool[0].clozeElements[0]")
                 .entity(ClozeTextElement.class)
                 .isEqualTo(ClozeTextElement.builder()
                         .setText("This is an example text with a blank.")
                         .build())
 
-                .path("mutateQuiz.updateClozeQuestion.questionPool[0].clozeElements[1]")
+                .path("mutateQuiz._internal_noauth_updateClozeQuestion.questionPool[0].clozeElements[1]")
                 .entity(ClozeBlankElement.class)
                 .isEqualTo(ClozeBlankElement.builder()
                         .setCorrectAnswer("blank")
                         .setFeedback("new feedback")
                         .build())
 
-                .path("mutateQuiz.updateClozeQuestion.questionPool[0].showBlanksList")
+                .path("mutateQuiz._internal_noauth_updateClozeQuestion.questionPool[0].showBlanksList")
                 .entity(Boolean.class)
                 .isEqualTo(false)
 
-                .path("mutateQuiz.updateClozeQuestion.questionPool[0].hint")
+                .path("mutateQuiz._internal_noauth_updateClozeQuestion.questionPool[0].hint")
                 .entity(String.class)
                 .isEqualTo("new hint")
 
-                .path("mutateQuiz.updateClozeQuestion.questionPool[0].additionalWrongAnswers")
+                .path("mutateQuiz._internal_noauth_updateClozeQuestion.questionPool[0].additionalWrongAnswers")
                 .entityList(String.class)
                 .containsExactly("new wrong answer");
 

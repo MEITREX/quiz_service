@@ -39,7 +39,7 @@ class MutateQuizAddNumericQuestionTest {
     private static final String ADD_NUMERIC_QUESTION_MUTATION = QuizFragments.FRAGMENT_DEFINITION + """
             mutation($id: UUID!, $input: CreateNumericQuestionInput!) {
                 mutateQuiz(assessmentId: $id) {
-                    addNumericQuestion(input: $input) {
+                    _internal_noauth_addNumericQuestion(input: $input) {
                         ...QuizAllFields
                     }
                 }
@@ -73,25 +73,25 @@ class MutateQuizAddNumericQuestionTest {
                 .variable("input", input)
                 .variable("id", quizEntity.getAssessmentId())
                 .execute()
-                .path("mutateQuiz.addNumericQuestion.questionPool[0].number")
+                .path("mutateQuiz._internal_noauth_addNumericQuestion.questionPool[0].number")
                 .entity(Integer.class).isEqualTo(1)
 
-                .path("mutateQuiz.addNumericQuestion.questionPool[0].itemId")
+                .path("mutateQuiz._internal_noauth_addNumericQuestion.questionPool[0].itemId")
                 .entity(UUID.class).isEqualTo(itemId)
 
-                .path("mutateQuiz.addNumericQuestion.questionPool[0].hint")
+                .path("mutateQuiz._internal_noauth_addNumericQuestion.questionPool[0].hint")
                 .entity(String.class).isEqualTo("hint")
 
-                .path("mutateQuiz.addNumericQuestion.questionPool[0].text")
+                .path("mutateQuiz._internal_noauth_addNumericQuestion.questionPool[0].text")
                 .entity(String.class).isEqualTo("question")
 
-                .path("mutateQuiz.addNumericQuestion.questionPool[0].feedback")
+                .path("mutateQuiz._internal_noauth_addNumericQuestion.questionPool[0].feedback")
                 .entity(String.class).isEqualTo("feedback")
 
-                .path("mutateQuiz.addNumericQuestion.questionPool[0].correctAnswer")
+                .path("mutateQuiz._internal_noauth_addNumericQuestion.questionPool[0].correctAnswer")
                 .entity(Double.class).isEqualTo(2.0)
 
-                .path("mutateQuiz.addNumericQuestion.questionPool[0].tolerance")
+                .path("mutateQuiz._internal_noauth_addNumericQuestion.questionPool[0].tolerance")
                 .entity(Double.class).isEqualTo(0.5);
 
         final QuestionEntity questionEntity = quizRepository.findById(quizEntity.getAssessmentId())

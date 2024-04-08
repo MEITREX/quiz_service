@@ -31,7 +31,7 @@ public class AuthorizationTest {
     private static final String ADD_CLOZE_QUESTION_MUTATION = QuizFragments.FRAGMENT_DEFINITION + """
             mutation($id: UUID!, $input: CreateClozeQuestionInput!) {
                 mutateQuiz(assessmentId: $id) {
-                    addClozeQuestion(input: $input) {
+                    _internal_noauth_addClozeQuestion(input: $input) {
                         ...QuizAllFields
                     }
                 }
