@@ -2,7 +2,7 @@
 
 
 
-The Quiz Service in GITS offers a variety of quiz types to facilitate learning and assessment. These quizzes include:
+The Quiz Service in MEITREX offers a variety of quiz types to facilitate learning and assessment. These quizzes include:
 
 ### Multiple Choice Quiz
 
@@ -61,4 +61,4 @@ The endpoint for the GraphQL API is `/graphql`. The GraphQL Playground is availa
 
 ## Get started
 A guide how to start development can be
-found in the [wiki](https://gits-enpro.readthedocs.io/en/latest/dev-manuals/backend/get-started.html).
+found in the [wiki](https://meitrex.readthedocs.io/en/latest/dev-manuals/backend/get-started.html).
