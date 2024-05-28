@@ -79,7 +79,6 @@ class MutateQuizUpdateMultipleChoiceQuestionTest {
                 .get();
 
         assertThat(questions, hasSize(1));
-        System.out.println(questions.get(0));
         MatcherAssert.assertThat(questions.get(0), MultipleChoiceQuestionDtoToUpdateInputMatcher.matchesInput(input));
 
         final QuizEntity updatedQuiz = quizRepository.findById(quizEntity.getAssessmentId()).orElseThrow();

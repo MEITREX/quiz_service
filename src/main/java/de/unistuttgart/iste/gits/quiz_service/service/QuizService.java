@@ -320,7 +320,7 @@ public class QuizService {
         return modifyQuiz(quizId, entity -> {
             final QuestionEntity questionEntity = getQuestionInQuizByNumber(entity, number);
             entity.getQuestionPool().remove(questionEntity);
-
+            publishItemChangeEvent(questionEntity.getItemId());
             // decrease the number of all questions with a higher number
             entity.getQuestionPool().stream()
                     .filter(q -> q.getNumber() > number)

@@ -19,7 +19,7 @@ public class SubscriptionController {
 
     private final QuizService quizService;
 
-    @Topic(name = "content-changed", pubsubName = "gits")
+    @Topic(name = "content-changed", pubsubName = "meitrex")
     @PostMapping(path = "/quiz-service/content-changed-pubsub")
     public Mono<Void> updateAssociation(@RequestBody final CloudEvent<ContentChangeEvent> cloudEvent) {
 

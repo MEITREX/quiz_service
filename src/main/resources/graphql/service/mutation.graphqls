@@ -167,7 +167,7 @@ input CreateMultipleChoiceQuestionInput {
     """
     UUID of the question to update and the id of the corresponding item.
     """
-    itemId: UUID!
+    itemId: UUID
     """
     Number of the question, used for ordering.
     This can be omitted, in which case a number, one higher than the highest number of the existing questions, will be used.
