@@ -159,17 +159,17 @@ class QuizServiceTest {
                 .setQuizId(assessmentId)
                 .setCompletedQuestions(List.of(inputQuestion, inputQuestion2))
                 .build();
-        final Response response1=Response.builder()
+        final Response response1 = Response.builder()
                 .itemId(questions.get(0).getItemId())
                 .response(1)
                 .build();
-        final Response response2=Response.builder()
+        final Response response2 = Response.builder()
                 .itemId(questions.get(1).getItemId())
                 .response(1)
                 .build();
 
-        final List<Response>responses=List.of(response1,response2);
-        
+        final List<Response> responses = List.of(response1, response2);
+
         // create expected Progress event
         final ContentProgressedEvent expectedUserProgressLogEvent = ContentProgressedEvent.builder()
                 .userId(userId)
@@ -231,16 +231,16 @@ class QuizServiceTest {
                 .setQuizId(assessmentId)
                 .setCompletedQuestions(List.of(inputQuestion, inputQuestion2))
                 .build();
-        final Response response1=Response.builder()
+        final Response response1 = Response.builder()
                 .itemId(questions.get(0).getItemId())
                 .response(1)
                 .build();
-        final Response response2=Response.builder()
+        final Response response2 = Response.builder()
                 .itemId(questions.get(1).getItemId())
                 .response(0)
                 .build();
 
-        final List<Response>responses=List.of(response1,response2);
+        final List<Response> responses = List.of(response1, response2);
         // create expected Progress event
         final ContentProgressedEvent expectedUserProgressLogEvent = ContentProgressedEvent.builder()
                 .userId(userId)

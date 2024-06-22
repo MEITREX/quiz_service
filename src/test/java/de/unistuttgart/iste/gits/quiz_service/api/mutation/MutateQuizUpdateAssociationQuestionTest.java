@@ -51,8 +51,8 @@ class MutateQuizUpdateAssociationQuestionTest {
                 .setHint("new hint")
                 .setText("new question")
                 .setCorrectAssociations(List.of(
-                        new AssociationInput(UUID.randomUUID(),"newA", "newC", "new feedback1"),
-                        new AssociationInput(UUID.randomUUID(),"newB", "newD", "new feedback2")))
+                        new AssociationInput(UUID.randomUUID(), "newA", "newC", "new feedback1"),
+                        new AssociationInput(UUID.randomUUID(), "newB", "newD", "new feedback2")))
                 .build();
 
         final String query = QuizFragments.FRAGMENT_DEFINITION + """

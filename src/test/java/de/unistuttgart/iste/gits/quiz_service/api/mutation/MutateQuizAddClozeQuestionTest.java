@@ -61,7 +61,7 @@ class MutateQuizAddClozeQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-        UUID itemId=UUID.randomUUID();
+        UUID itemId = UUID.randomUUID();
         final CreateClozeQuestionInput input = CreateClozeQuestionInput.builder()
                 .setItemId(itemId)
                 .setHint("hint")
@@ -144,7 +144,7 @@ class MutateQuizAddClozeQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-        UUID itemId=UUID.randomUUID();
+        UUID itemId = UUID.randomUUID();
         final CreateClozeQuestionInput input = CreateClozeQuestionInput.builder()
                 .setItemId(itemId)
                 .setNumber(1)
@@ -179,7 +179,7 @@ class MutateQuizAddClozeQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-        UUID itemId=UUID.randomUUID();
+        UUID itemId = UUID.randomUUID();
         final CreateClozeQuestionInput input = CreateClozeQuestionInput.builder()
                 .setItemId(itemId)
                 .setNumber(1)
@@ -215,7 +215,7 @@ class MutateQuizAddClozeQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-        UUID itemId=UUID.randomUUID();
+        UUID itemId = UUID.randomUUID();
         final CreateClozeQuestionInput input = CreateClozeQuestionInput.builder()
                 .setItemId(itemId)
                 .setNumber(1)
@@ -250,7 +250,7 @@ class MutateQuizAddClozeQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-        UUID itemId=UUID.randomUUID();
+        UUID itemId = UUID.randomUUID();
         final CreateClozeQuestionInput input = CreateClozeQuestionInput.builder()
                 .setItemId(itemId)
                 .setNumber(1)
@@ -284,7 +284,7 @@ class MutateQuizAddClozeQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-        UUID itemId=UUID.randomUUID();
+        UUID itemId = UUID.randomUUID();
         final CreateClozeQuestionInput input = CreateClozeQuestionInput.builder()
                 .setItemId(itemId)
                 .setNumber(1)
@@ -314,7 +314,7 @@ class MutateQuizAddClozeQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-        UUID itemId=UUID.randomUUID();
+        UUID itemId = UUID.randomUUID();
         final CreateClozeQuestionInput input = CreateClozeQuestionInput.builder()
                 .setItemId(itemId)
                 .setNumber(1)

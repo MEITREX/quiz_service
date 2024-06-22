@@ -59,7 +59,7 @@ class MutateQuizAddNumericQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-        UUID itemId=UUID.randomUUID();
+        UUID itemId = UUID.randomUUID();
         final CreateNumericQuestionInput input = CreateNumericQuestionInput.builder()
                 .setItemId(itemId)
                 .setHint("hint")

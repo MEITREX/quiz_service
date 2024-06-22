@@ -59,7 +59,7 @@ class MutateQuizAddExactAnswerQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-        UUID itemId=UUID.randomUUID();
+        UUID itemId = UUID.randomUUID();
         final CreateExactAnswerQuestionInput input = CreateExactAnswerQuestionInput.builder()
                 .setItemId(itemId)
                 .setHint("hint")
@@ -102,7 +102,7 @@ class MutateQuizAddExactAnswerQuestionTest {
 
         assertThat(questionEntity, instanceOf(ExactAnswerQuestionEntity.class));
         final ExactAnswerQuestionEntity exactAnswerQuestionEntity = (ExactAnswerQuestionEntity) questionEntity;
-        assertThat(exactAnswerQuestionEntity.getItemId(),is(itemId));
+        assertThat(exactAnswerQuestionEntity.getItemId(), is(itemId));
         assertThat(exactAnswerQuestionEntity.getHint(), is("hint"));
         assertThat(exactAnswerQuestionEntity.getText(), is("question"));
         assertThat(exactAnswerQuestionEntity.getFeedback(), is("feedback"));

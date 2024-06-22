@@ -57,7 +57,7 @@ class MutateQuizAddSelfAssessmentQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-        UUID itemId=UUID.randomUUID();
+        UUID itemId = UUID.randomUUID();
         final CreateSelfAssessmentQuestionInput input = CreateSelfAssessmentQuestionInput.builder()
                 .setItemId(itemId)
                 .setHint("hint")

@@ -62,14 +62,14 @@ class MutateQuizAddAssociationQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-        UUID itemId=UUID.randomUUID();
+        UUID itemId = UUID.randomUUID();
         final CreateAssociationQuestionInput input = CreateAssociationQuestionInput.builder()
                 .setItemId(itemId)
                 .setHint("hint")
                 .setText("question")
                 .setCorrectAssociations(List.of(
-                        new AssociationInput(UUID.randomUUID(),"a", "b", "feedback1"),
-                        new AssociationInput(UUID.randomUUID(),"c", "d", "feedback2")))
+                        new AssociationInput(UUID.randomUUID(), "a", "b", "feedback1"),
+                        new AssociationInput(UUID.randomUUID(), "c", "d", "feedback2")))
                 .build();
 
 
@@ -137,15 +137,15 @@ class MutateQuizAddAssociationQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-        UUID itemId=UUID.randomUUID();
+        UUID itemId = UUID.randomUUID();
         final CreateAssociationQuestionInput input = CreateAssociationQuestionInput.builder()
                 .setItemId(itemId)
                 .setNumber(2)
                 .setHint("hint")
                 .setText("question")
                 .setCorrectAssociations(List.of(
-                        new AssociationInput(UUID.randomUUID(),"a", "b", "feedback1"),
-                        new AssociationInput(UUID.randomUUID(),"c", "b", "feedback2")))
+                        new AssociationInput(UUID.randomUUID(), "a", "b", "feedback1"),
+                        new AssociationInput(UUID.randomUUID(), "c", "b", "feedback2")))
                 .build();
 
         graphQlTester.document(ADD_ASSOCIATION_QUESTION_MUTATION)

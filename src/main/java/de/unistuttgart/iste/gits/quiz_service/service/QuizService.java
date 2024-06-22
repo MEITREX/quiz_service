@@ -286,10 +286,9 @@ public class QuizService {
      * @param questionNumber the number of the question to add. If null, the number is assigned automatically.
      * @param mapping        the mapping function that maps the input to a question entity.
      * @param <I>            the type of the question input, e.g. {@link CreateMultipleChoiceQuestionInput}
-     *
+     * @return the modified quiz
      * @implNote The second parameter questionNumber is necessary because the input types do not share a common interface,
      * and we cannot change the input types, as they are generated from the schema.
-     * @return the modified quiz
      */
     private <I> Quiz addQuestion(final UUID quizId,
                                  final I input,
@@ -470,13 +469,13 @@ public class QuizService {
         final boolean success = numbCorrectAnswers >= quizEntity.getRequiredCorrectAnswers();
         final double correctness = calculateCorrectness(numbCorrectAnswers, quizEntity);
         final int hintsUsed = countAsInt(input.getCompletedQuestions(), QuestionCompletedInput::getUsedHint);
-        List<Response>responses=new ArrayList<Response>();
-        for(QuestionCompletedInput question: input.getCompletedQuestions()){
-            float answer=0;
-            if(question.getCorrect()){
-                answer=1;
+        List<Response> responses = new ArrayList<Response>();
+        for (QuestionCompletedInput question : input.getCompletedQuestions()) {
+            float answer = 0;
+            if (question.getCorrect()) {
+                answer = 1;
             }
-            Response response=new Response(question.getQuestionId(),answer);
+            Response response = new Response(question.getQuestionId(), answer);
 
             responses.add(response);
         }
@@ -549,7 +548,7 @@ public class QuizService {
         // in RANDOM mode, the number of questions is not the size of the question pool
         // but the number of randomly selected questions
         if (quizEntity.getQuestionPoolingMode().equals(QuestionPoolingMode.RANDOM)
-            && quizEntity.getNumberOfRandomlySelectedQuestions() != null) {
+                && quizEntity.getNumberOfRandomlySelectedQuestions() != null) {
 
             if (quizEntity.getNumberOfRandomlySelectedQuestions() == 0) {
                 // prevent division by zero
@@ -565,22 +564,24 @@ public class QuizService {
         }
 
     }
-    private void publishQuizDeletion(UUID quizId){
+
+    private void publishQuizDeletion(UUID quizId) {
         Optional<QuizEntity> quizEntity = quizRepository.findById(quizId);
-        if(quizEntity.isPresent()){
-            QuizEntity quiz=quizEntity.get();
-            List<QuestionEntity>questionPool=quiz.getQuestionPool();
-            for(QuestionEntity question:questionPool){
+        if (quizEntity.isPresent()) {
+            QuizEntity quiz = quizEntity.get();
+            List<QuestionEntity> questionPool = quiz.getQuestionPool();
+            for (QuestionEntity question : questionPool) {
                 publishItemChangeEvent(question.getItemId());
             }
 
         }
     }
+
     /***
      * helper function, that creates a ItemChange Event and publish it, when a flashcard was deleted
      * @param itemId the id of the item
      */
     private void publishItemChangeEvent(final UUID itemId) {
-        topicPublisher.notifyItemChanges(itemId,CrudOperation.DELETE);
+        topicPublisher.notifyItemChanges(itemId, CrudOperation.DELETE);
     }
 }

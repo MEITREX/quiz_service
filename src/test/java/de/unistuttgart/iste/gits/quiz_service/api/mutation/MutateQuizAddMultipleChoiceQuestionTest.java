@@ -57,7 +57,7 @@ class MutateQuizAddMultipleChoiceQuestionTest {
                         createMultipleChoiceQuestion(1, "what is the capital of Germany?", "Berlin", "Paris")))
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-        UUID itemId=UUID.randomUUID();
+        UUID itemId = UUID.randomUUID();
         final CreateMultipleChoiceQuestionInput input = CreateMultipleChoiceQuestionInput.builder()
                 .setItemId(itemId)
                 .setText("what is the capital of France?")
@@ -141,7 +141,7 @@ class MutateQuizAddMultipleChoiceQuestionTest {
                         createMultipleChoiceQuestion(1, "what is the capital of Germany?", "Berlin", "Paris")))
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-        UUID itemId=UUID.randomUUID();
+        UUID itemId = UUID.randomUUID();
         final CreateMultipleChoiceQuestionInput input = CreateMultipleChoiceQuestionInput.builder()
                 .setItemId(itemId)
                 .setText("what is the capital of France?")
@@ -182,7 +182,7 @@ class MutateQuizAddMultipleChoiceQuestionTest {
                         createMultipleChoiceQuestion(1, "what is the capital of Germany?", "Berlin", "Paris")))
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-        UUID itemId=UUID.randomUUID();
+        UUID itemId = UUID.randomUUID();
         final CreateMultipleChoiceQuestionInput input = CreateMultipleChoiceQuestionInput.builder()
                 .setItemId(itemId)
                 .setText("what is the capital of France?")
@@ -222,7 +222,7 @@ class MutateQuizAddMultipleChoiceQuestionTest {
                         createMultipleChoiceQuestion(1, "what is the capital of Germany?", "Berlin", "Paris")))
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-        UUID itemId=UUID.randomUUID();
+        UUID itemId = UUID.randomUUID();
         final CreateMultipleChoiceQuestionInput input = CreateMultipleChoiceQuestionInput.builder()
                 .setItemId(itemId)
                 .setText("what is the capital of France?")
