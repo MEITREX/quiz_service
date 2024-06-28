@@ -1,16 +1,27 @@
 @echo off
 echo Generating API documentation...
-echo This requires the service to be running
+echo This requires npm to be installed!
 
 REM clear old docs
 del api.md
+REM Delete the combined file
+del combined.graphql
 
-set port=9001
 set title=Quiz Service API
 
 REM install graphql-markdown if not installed
 if not exist node_modules\graphql-markdown (
-  start cmd /C npm install graphql-markdown
+   echo Installing graphql-markdown, run this script again after installation
+   npm install graphql-markdown
 )
 
-npx graphql-markdown "http://localhost:%port%/graphql" --title "%title%" > api.md
+REM Concatenate all graphql files into one
+for /r src\main\resources\graphql %%i in (*.graphqls) do type "%%i" >> combined.graphql
+
+REM Run npx in a separate cmd instance
+cmd /c npx graphql-markdown combined.graphql --title "%title%" > api.md
+
+echo API documentation generated.
+
+REM Delete the combined file
+del combined.graphql
