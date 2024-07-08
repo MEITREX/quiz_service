@@ -28,7 +28,6 @@ import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMem
 
 
 @GraphQlApiTest
-@TablesToDelete({"association_question_correct_associations", "association_question", "quiz_question_pool", "question", "quiz"})
 class MutateQuizAddAssociationQuestionTest {
 
     @Autowired

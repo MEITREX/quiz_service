@@ -24,7 +24,6 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 
 @GraphQlApiTest
-@TablesToDelete({"self_assessment_question", "quiz_question_pool", "question", "quiz"})
 class MutateQuizAddSelfAssessmentQuestionTest {
 
     @Autowired

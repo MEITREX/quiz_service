@@ -25,7 +25,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @GraphQlApiTest
-@TablesToDelete({"exact_answer_question_correct_answers", "exact_answer_question", "quiz_question_pool", "question", "quiz"})
 class MutateQuizUpdateExactAnswerQuestionTest {
 
     @Autowired

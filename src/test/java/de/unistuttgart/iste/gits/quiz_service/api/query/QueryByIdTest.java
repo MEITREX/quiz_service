@@ -23,12 +23,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @GraphQlApiTest
-@TablesToDelete({"multiple_choice_question_answers", "multiple_choice_question",
-        "cloze_question_additional_wrong_answers", "cloze_question_cloze_elements", "cloze_question",
-        "association_question_correct_associations", "association_question",
-        "exact_answer_question_correct_answers", "exact_answer_question",
-        "numeric_question", "self_assessment_question",
-        "quiz_question_pool", "question", "quiz"})
 class QueryByIdTest {
 
     @Autowired

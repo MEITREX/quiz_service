@@ -27,7 +27,6 @@ import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMem
 
 
 @GraphQlApiTest
-@TablesToDelete({"cloze_question_additional_wrong_answers", "cloze_question_cloze_elements", "cloze_question", "quiz_question_pool", "question", "quiz"})
 class MutateQuizAddClozeQuestionTest {
 
     private static final String ADD_CLOZE_QUESTION_MUTATION = QuizFragments.FRAGMENT_DEFINITION + """

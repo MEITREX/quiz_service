@@ -34,7 +34,6 @@ import static org.mockito.Mockito.verify;
 
 @GraphQlApiTest
 @ContextConfiguration(classes = MockTestPublisherConfiguration.class)
-@TablesToDelete({"multiple_choice_question_answers", "multiple_choice_question", "quiz_question_pool", "question", "quiz"})
 class MutationLogQuizCompletionTest {
 
     @Autowired

@@ -25,7 +25,6 @@ import static org.hamcrest.Matchers.*;
 import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 
 @GraphQlApiTest
-@TablesToDelete({"multiple_choice_question_answers", "multiple_choice_question", "quiz_question_pool", "question", "quiz"})
 class MutateQuizAddMultipleChoiceQuestionTest {
 
     private static final String UPDATE_MULTIPLE_CHOICE_QUESTION_MUTATION = QuizFragments.FRAGMENT_DEFINITION + """
