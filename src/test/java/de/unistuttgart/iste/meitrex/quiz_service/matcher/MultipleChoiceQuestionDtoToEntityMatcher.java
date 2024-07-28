@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.meitrex.quiz_service.matcher;
 
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.MultipleChoiceQuestionEntity;
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuestionEntity;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.MultipleChoiceQuestionEntity;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionEntity;
 import de.unistuttgart.iste.meitrex.generated.dto.MultipleChoiceQuestion;
 import de.unistuttgart.iste.meitrex.generated.dto.QuestionType;
 import org.hamcrest.Description;

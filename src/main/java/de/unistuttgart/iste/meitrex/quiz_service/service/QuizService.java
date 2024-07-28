@@ -1,16 +1,16 @@
 package de.unistuttgart.iste.meitrex.quiz_service.service;
 
 
-import de.unistuttgart.iste.gits.quiz_service.persistence.mapper.QuizMapper;
-import de.unistuttgart.iste.gits.quiz_service.persistence.repository.QuizRepository;
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuestionEntity;
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuestionStatisticEntity;
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuizEntity;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.mapper.QuizMapper;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.repository.QuizRepository;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionEntity;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionStatisticEntity;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
 import de.unistuttgart.iste.meitrex.common.event.*;
 import de.unistuttgart.iste.meitrex.common.exception.IncompleteEventMessageException;
 import de.unistuttgart.iste.meitrex.generated.dto.*;
-import de.unistuttgart.iste.gits.quiz_service.validation.QuizValidator;
+import de.unistuttgart.iste.meitrex.quiz_service.validation.QuizValidator;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;

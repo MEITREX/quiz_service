@@ -1,11 +1,11 @@
 package de.unistuttgart.iste.meitrex.quiz_service.api.mutation;
 
 
-import de.unistuttgart.iste.gits.quiz_service.TestData;
-import de.unistuttgart.iste.gits.quiz_service.api.QuizFragments;
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.AssociationQuestionEntity;
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuizEntity;
-import de.unistuttgart.iste.gits.quiz_service.persistence.repository.QuizRepository;
+import de.unistuttgart.iste.meitrex.quiz_service.TestData;
+import de.unistuttgart.iste.meitrex.quiz_service.api.QuizFragments;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.AssociationQuestionEntity;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.repository.QuizRepository;
 
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMembershipInCourseWithId;
-import static de.unistuttgart.iste.gits.quiz_service.TestData.association;
+import static de.unistuttgart.iste.meitrex.quiz_service.TestData.association;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 

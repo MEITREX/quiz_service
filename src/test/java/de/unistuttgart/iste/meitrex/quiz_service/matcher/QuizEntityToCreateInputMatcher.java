@@ -1,6 +1,6 @@
 package de.unistuttgart.iste.meitrex.quiz_service.matcher;
 
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuizEntity;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.meitrex.generated.dto.CreateQuizInput;
 
 import org.hamcrest.Description;

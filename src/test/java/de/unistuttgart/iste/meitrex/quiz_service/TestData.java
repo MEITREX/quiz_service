@@ -1,6 +1,6 @@
 package de.unistuttgart.iste.meitrex.quiz_service;
 
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.*;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.*;
 import de.unistuttgart.iste.meitrex.generated.dto.*;
 
 

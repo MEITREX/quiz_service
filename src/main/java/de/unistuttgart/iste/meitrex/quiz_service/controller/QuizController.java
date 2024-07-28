@@ -1,8 +1,8 @@
 package de.unistuttgart.iste.meitrex.quiz_service.controller;
 
 
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuizEntity;
-import de.unistuttgart.iste.gits.quiz_service.service.QuizService;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
+import de.unistuttgart.iste.meitrex.quiz_service.service.QuizService;
 
 import de.unistuttgart.iste.meitrex.common.exception.NoAccessToCourseException;
 import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;

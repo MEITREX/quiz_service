@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.meitrex.quiz_service.controller;
 
 
-import de.unistuttgart.iste.gits.quiz_service.service.QuizService;
+import de.unistuttgart.iste.meitrex.quiz_service.service.QuizService;
 import de.unistuttgart.iste.meitrex.common.event.ContentChangeEvent;
 
 import io.dapr.Topic;

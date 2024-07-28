@@ -6,7 +6,7 @@ plugins {
 	id "org.sonarqube" version "5.+"
 	id "jacoco"
 }
-main
+
 group = 'de.unistuttgart.iste.meitrex'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '21'
@@ -124,7 +124,7 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-
+	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'de.unistuttgart.iste.meitrex:meitrex-common-test:1.2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework:spring-webflux'

@@ -1,13 +1,13 @@
 package de.unistuttgart.iste.meitrex.quiz_service.service;
 
 
-import de.unistuttgart.iste.gits.quiz_service.TestData;
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.MultipleChoiceQuestionEntity;
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuestionEntity;
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuizEntity;
-import de.unistuttgart.iste.gits.quiz_service.persistence.mapper.QuizMapper;
-import de.unistuttgart.iste.gits.quiz_service.persistence.repository.QuizRepository;
-import de.unistuttgart.iste.gits.quiz_service.validation.QuizValidator;
+import de.unistuttgart.iste.meitrex.quiz_service.TestData;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.MultipleChoiceQuestionEntity;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionEntity;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.mapper.QuizMapper;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.repository.QuizRepository;
+import de.unistuttgart.iste.meitrex.quiz_service.validation.QuizValidator;
 import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
 import de.unistuttgart.iste.meitrex.common.event.*;
 import de.unistuttgart.iste.meitrex.common.exception.IncompleteEventMessageException;

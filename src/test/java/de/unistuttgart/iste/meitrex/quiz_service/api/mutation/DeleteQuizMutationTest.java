@@ -3,8 +3,8 @@ package de.unistuttgart.iste.meitrex.quiz_service.api.mutation;
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.meitrex.generated.dto.QuestionPoolingMode;
 
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuizEntity;
-import de.unistuttgart.iste.gits.quiz_service.persistence.repository.QuizRepository;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.repository.QuizRepository;
 
 import graphql.ErrorType;
 import org.junit.jupiter.api.Test;

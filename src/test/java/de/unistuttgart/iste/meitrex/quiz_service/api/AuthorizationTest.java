@@ -2,7 +2,7 @@ package de.unistuttgart.iste.meitrex.quiz_service.api;
 
 
 
-import de.unistuttgart.iste.gits.quiz_service.TestData;
+import de.unistuttgart.iste.meitrex.quiz_service.TestData;
 
 import de.unistuttgart.iste.meitrex.common.testutil.AuthorizationAsserts;
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
@@ -13,8 +13,8 @@ import de.unistuttgart.iste.meitrex.generated.dto.ClozeElementInput;
 import de.unistuttgart.iste.meitrex.generated.dto.ClozeElementType;
 import de.unistuttgart.iste.meitrex.generated.dto.CreateClozeQuestionInput;
 
-import de.unistuttgart.iste.gits.quiz_service.persistence.entity.QuizEntity;
-import de.unistuttgart.iste.gits.quiz_service.persistence.repository.QuizRepository;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.repository.QuizRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.test.tester.GraphQlTester;
