@@ -1,7 +1,9 @@
 package de.unistuttgart.iste.meitrex.quiz_service.controller;
 
-import de.unistuttgart.iste.meitrex.common.event.ContentChangeEvent;
+
 import de.unistuttgart.iste.meitrex.quiz_service.service.QuizService;
+import de.unistuttgart.iste.meitrex.common.event.ContentChangeEvent;
+
 import io.dapr.Topic;
 import io.dapr.client.domain.CloudEvent;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +23,7 @@ public class SubscriptionController {
 
     private final QuizService quizService;
 
-    @Topic(name = "content-changed", pubsubName = "gits")
+    @Topic(name = "content-changed", pubsubName = "meitrex")
     @PostMapping(path = "/quiz-service/content-changed-pubsub")
     public Mono<Void> updateAssociation(@RequestBody final CloudEvent<ContentChangeEvent> cloudEvent) {
 

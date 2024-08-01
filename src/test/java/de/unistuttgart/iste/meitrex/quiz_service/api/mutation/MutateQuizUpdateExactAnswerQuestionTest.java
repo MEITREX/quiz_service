@@ -1,12 +1,12 @@
 package de.unistuttgart.iste.meitrex.quiz_service.api.mutation;
 
+import de.unistuttgart.iste.meitrex.quiz_service.api.QuizFragments;
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
 import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
 import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.meitrex.generated.dto.UpdateExactAnswerQuestionInput;
 import de.unistuttgart.iste.meitrex.quiz_service.TestData;
-import de.unistuttgart.iste.meitrex.quiz_service.api.QuizFragments;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.ExactAnswerQuestionEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.repository.QuizRepository;
@@ -25,7 +25,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @GraphQlApiTest
-@TablesToDelete({"exact_answer_question_correct_answers", "exact_answer_question", "quiz_question_pool", "question", "quiz"})
 class MutateQuizUpdateExactAnswerQuestionTest {
 
     @Autowired
@@ -46,7 +45,7 @@ class MutateQuizUpdateExactAnswerQuestionTest {
         quizEntity = quizRepository.save(quizEntity);
 
         final UpdateExactAnswerQuestionInput input = UpdateExactAnswerQuestionInput.builder()
-                .setId(quizEntity.getQuestionPool().get(0).getId())
+                .setItemId(quizEntity.getQuestionPool().get(0).getItemId())
                 .setHint("new hint")
                 .setText("new question")
                 .setFeedback("new feedback")
@@ -57,7 +56,7 @@ class MutateQuizUpdateExactAnswerQuestionTest {
         final String query = QuizFragments.FRAGMENT_DEFINITION + """
                 mutation($id: UUID!, $input: UpdateExactAnswerQuestionInput!) {
                     mutateQuiz(assessmentId: $id) {
-                        updateExactAnswerQuestion(input: $input) {
+                        _internal_noauth_updateExactAnswerQuestion(input: $input) {
                             ...QuizAllFields
                         }
                     }
@@ -68,12 +67,12 @@ class MutateQuizUpdateExactAnswerQuestionTest {
                 .variable("id", quizEntity.getAssessmentId())
                 .variable("input", input)
                 .execute()
-                .path("mutateQuiz.updateExactAnswerQuestion.questionPool[0].number").entity(Integer.class).isEqualTo(1)
-                .path("mutateQuiz.updateExactAnswerQuestion.questionPool[0].text").entity(String.class).isEqualTo("new question")
-                .path("mutateQuiz.updateExactAnswerQuestion.questionPool[0].hint").entity(String.class).isEqualTo("new hint")
-                .path("mutateQuiz.updateExactAnswerQuestion.questionPool[0].feedback").entity(String.class).isEqualTo("new feedback")
-                .path("mutateQuiz.updateExactAnswerQuestion.questionPool[0].caseSensitive").entity(Boolean.class).isEqualTo(false)
-                .path("mutateQuiz.updateExactAnswerQuestion.questionPool[0].correctAnswers").entityList(String.class).contains("newA", "newB");
+                .path("mutateQuiz._internal_noauth_updateExactAnswerQuestion.questionPool[0].number").entity(Integer.class).isEqualTo(1)
+                .path("mutateQuiz._internal_noauth_updateExactAnswerQuestion.questionPool[0].text").entity(String.class).isEqualTo("new question")
+                .path("mutateQuiz._internal_noauth_updateExactAnswerQuestion.questionPool[0].hint").entity(String.class).isEqualTo("new hint")
+                .path("mutateQuiz._internal_noauth_updateExactAnswerQuestion.questionPool[0].feedback").entity(String.class).isEqualTo("new feedback")
+                .path("mutateQuiz._internal_noauth_updateExactAnswerQuestion.questionPool[0].caseSensitive").entity(Boolean.class).isEqualTo(false)
+                .path("mutateQuiz._internal_noauth_updateExactAnswerQuestion.questionPool[0].correctAnswers").entityList(String.class).contains("newA", "newB");
 
         final QuizEntity updatedQuiz = quizRepository.findById(quizEntity.getAssessmentId()).orElseThrow();
         assertThat(updatedQuiz.getQuestionPool(), hasSize(1));

@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.meitrex.quiz_service.validation;
 
-import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import jakarta.validation.ValidationException;
 import org.springframework.stereotype.Component;
 

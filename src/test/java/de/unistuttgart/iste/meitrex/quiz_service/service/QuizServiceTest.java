@@ -1,14 +1,6 @@
 package de.unistuttgart.iste.meitrex.quiz_service.service;
 
-import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
-import de.unistuttgart.iste.meitrex.common.event.ContentChangeEvent;
-import de.unistuttgart.iste.meitrex.common.event.ContentProgressedEvent;
-import de.unistuttgart.iste.meitrex.common.event.CrudOperation;
-import de.unistuttgart.iste.meitrex.common.exception.IncompleteEventMessageException;
-import de.unistuttgart.iste.meitrex.generated.dto.QuestionCompletedInput;
-import de.unistuttgart.iste.meitrex.generated.dto.QuestionPoolingMode;
-import de.unistuttgart.iste.meitrex.generated.dto.QuizCompletedInput;
-import de.unistuttgart.iste.meitrex.generated.dto.QuizCompletionFeedback;
+
 import de.unistuttgart.iste.meitrex.quiz_service.TestData;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.MultipleChoiceQuestionEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionEntity;
@@ -16,6 +8,11 @@ import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.mapper.QuizMapper;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.repository.QuizRepository;
 import de.unistuttgart.iste.meitrex.quiz_service.validation.QuizValidator;
+import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
+import de.unistuttgart.iste.meitrex.common.event.*;
+import de.unistuttgart.iste.meitrex.common.exception.IncompleteEventMessageException;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
@@ -153,12 +150,12 @@ class QuizServiceTest {
 
         // create Inputs
         final QuestionCompletedInput inputQuestion = QuestionCompletedInput.builder()
-                .setQuestionId(questions.get(0).getId())
+                .setQuestionId(questions.get(0).getItemId())
                 .setCorrect(true)
                 .setUsedHint(false)
                 .build();
         final QuestionCompletedInput inputQuestion2 = QuestionCompletedInput.builder()
-                .setQuestionId(questions.get(1).getId())
+                .setQuestionId(questions.get(1).getItemId())
                 .setCorrect(true)
                 .setUsedHint(false)
                 .build();
@@ -167,6 +164,16 @@ class QuizServiceTest {
                 .setQuizId(assessmentId)
                 .setCompletedQuestions(List.of(inputQuestion, inputQuestion2))
                 .build();
+        final Response response1 = Response.builder()
+                .itemId(questions.get(0).getItemId())
+                .response(1)
+                .build();
+        final Response response2 = Response.builder()
+                .itemId(questions.get(1).getItemId())
+                .response(1)
+                .build();
+
+        final List<Response> responses = List.of(response1, response2);
 
         // create expected Progress event
         final ContentProgressedEvent expectedUserProgressLogEvent = ContentProgressedEvent.builder()
@@ -176,6 +183,7 @@ class QuizServiceTest {
                 .success(true)
                 .timeToComplete(null)
                 .correctness(2.0 / quizEntity.getNumberOfRandomlySelectedQuestions())
+                .responses(responses)
                 .build();
         final QuizCompletionFeedback expectedQuizCompletionFeedback = QuizCompletionFeedback.builder()
                 .setSuccess(true)
@@ -214,12 +222,12 @@ class QuizServiceTest {
 
         // create Inputs
         final QuestionCompletedInput inputQuestion = QuestionCompletedInput.builder()
-                .setQuestionId(questions.get(0).getId())
+                .setQuestionId(questions.get(0).getItemId())
                 .setCorrect(true)
                 .setUsedHint(false)
                 .build();
         final QuestionCompletedInput inputQuestion2 = QuestionCompletedInput.builder()
-                .setQuestionId(questions.get(1).getId())
+                .setQuestionId(questions.get(1).getItemId())
                 .setCorrect(false)
                 .setUsedHint(true)
                 .build();
@@ -228,7 +236,16 @@ class QuizServiceTest {
                 .setQuizId(assessmentId)
                 .setCompletedQuestions(List.of(inputQuestion, inputQuestion2))
                 .build();
+        final Response response1 = Response.builder()
+                .itemId(questions.get(0).getItemId())
+                .response(1)
+                .build();
+        final Response response2 = Response.builder()
+                .itemId(questions.get(1).getItemId())
+                .response(0)
+                .build();
 
+        final List<Response> responses = List.of(response1, response2);
         // create expected Progress event
         final ContentProgressedEvent expectedUserProgressLogEvent = ContentProgressedEvent.builder()
                 .userId(userId)
@@ -237,6 +254,7 @@ class QuizServiceTest {
                 .success(false)
                 .timeToComplete(null)
                 .correctness(1.0 / quizEntity.getQuestionPool().size())
+                .responses(responses)
                 .build();
         final QuizCompletionFeedback expectedQuizCompletionFeedback = QuizCompletionFeedback.builder()
                 .setCorrectness(1.0 / quizEntity.getQuestionPool().size())

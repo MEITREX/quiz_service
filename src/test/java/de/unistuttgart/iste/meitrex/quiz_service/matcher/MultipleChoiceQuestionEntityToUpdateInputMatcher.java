@@ -1,9 +1,8 @@
 package de.unistuttgart.iste.meitrex.quiz_service.matcher;
-
-import de.unistuttgart.iste.meitrex.generated.dto.QuestionType;
-import de.unistuttgart.iste.meitrex.generated.dto.UpdateMultipleChoiceQuestionInput;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.MultipleChoiceQuestionEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionEntity;
+import de.unistuttgart.iste.meitrex.generated.dto.QuestionType;
+import de.unistuttgart.iste.meitrex.generated.dto.UpdateMultipleChoiceQuestionInput;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
@@ -26,8 +25,8 @@ public class MultipleChoiceQuestionEntityToUpdateInputMatcher extends TypeSafeDi
 
     @Override
     protected boolean matchesSafely(final QuestionEntity item, final Description mismatchDescription) {
-        if (!Objects.equals(item.getId(), expected.getId())) {
-            mismatchDescription.appendText("id was ").appendValue(item.getId());
+        if (!Objects.equals(item.getItemId(), expected.getItemId())) {
+            mismatchDescription.appendText("id was ").appendValue(item.getItemId());
             return false;
         }
         if (!Objects.equals(item.getType(), QuestionType.MULTIPLE_CHOICE)) {

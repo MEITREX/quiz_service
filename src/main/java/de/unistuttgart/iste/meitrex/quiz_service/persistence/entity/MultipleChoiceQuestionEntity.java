@@ -1,13 +1,10 @@
 package de.unistuttgart.iste.meitrex.quiz_service.persistence.entity;
 
 import de.unistuttgart.iste.meitrex.generated.dto.QuestionType;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+
+import jakarta.persistence.*;
+import lombok.*;
+
 import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;

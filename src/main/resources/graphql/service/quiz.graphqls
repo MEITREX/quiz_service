@@ -63,9 +63,9 @@ Generic question interface.
 """
 interface Question {
     """
-    Unique identifier of the question.
+    Unique identifier of the question and the id of the corresponding item
     """
-    id: UUID!
+    itemId: UUID!
 
     """
     Number of the question, i.e., the position of the question in the list of questions.
@@ -103,9 +103,9 @@ type MultipleChoiceQuestion implements Question {
 
     # inherited from Question
     """
-    Unique identifier of the question.
+    Unique identifier of the question and the id of the corresponding item
     """
-    id: UUID!
+    itemId: UUID!
 
     """
     Number of the question, i.e., the position of the question in the list of questions.
@@ -159,9 +159,9 @@ type ClozeQuestion implements Question {
 
     # inherited from Question
     """
-    Unique identifier of the question.
+    Unique identifier of the question and the id of the corresponding item
     """
-    id: UUID!
+    itemId: UUID!
     """
     Number of the question, i.e., the position of the question in the list of questions.
     Only relevant if questionPoolingMode is ORDERED.
@@ -225,9 +225,9 @@ type AssociationQuestion implements Question {
 
     # inherited from Question
     """
-    Unique identifier of the question.
+    Unique identifier of the question and the id of the corresponding item
     """
-    id: UUID!
+    itemId: UUID!
     """
     Number of the question, i.e., the position of the question in the list of questions.
     Only relevant if questionPoolingMode is ORDERED.
@@ -284,9 +284,9 @@ type ExactAnswerQuestion implements Question {
 
     # inherited from Question
     """
-    Unique identifier of the question.
+    Unique identifier of the question and the id of the corresponding item
     """
-    id: UUID!
+    itemId: UUID!
     """
     Number of the question, i.e., the position of the question in the list of questions.
     Only relevant if questionPoolingMode is ORDERED.
@@ -323,9 +323,9 @@ type NumericQuestion implements Question {
 
     # inherited from Question
     """
-    Unique identifier of the question.
+    Unique identifier of the question and the id of the corresponding item
     """
-    id: UUID!
+    itemId: UUID!
     """
     Number of the question, i.e., the position of the question in the list of questions.
     Only relevant if questionPoolingMode is ORDERED.
@@ -358,9 +358,9 @@ type SelfAssessmentQuestion implements Question {
 
     # inherited from Question
     """
-    Unique identifier of the question.
+    Unique identifier of the question and the id of the corresponding item
     """
-    id: UUID!
+    itemId: UUID!
     """
     Number of the question, i.e., the position of the question in the list of questions.
     Only relevant if questionPoolingMode is ORDERED.

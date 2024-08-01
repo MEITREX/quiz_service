@@ -1,9 +1,9 @@
 package de.unistuttgart.iste.meitrex.quiz_service;
 
-import de.unistuttgart.iste.meitrex.generated.dto.ClozeElementType;
-import de.unistuttgart.iste.meitrex.generated.dto.QuestionPoolingMode;
-import de.unistuttgart.iste.meitrex.generated.dto.QuestionType;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.*;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
+
+
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -26,6 +26,7 @@ public class TestData {
             final String... wrongAnswerText) {
 
         final var builder = MultipleChoiceQuestionEntity.builder()
+                .itemId(UUID.randomUUID())
                 .type(QuestionType.MULTIPLE_CHOICE)
                 .hint("hint")
                 .number(number)
@@ -51,6 +52,7 @@ public class TestData {
 
     public static ClozeQuestionEntity createClozeQuestion(final int number, final ClozeElementEmbeddable... clozeElements) {
         return ClozeQuestionEntity.builder()
+                .itemId(UUID.randomUUID())
                 .type(QuestionType.CLOZE)
                 .number(number)
                 .showBlanksList(true)
@@ -77,6 +79,7 @@ public class TestData {
 
     public static AssociationQuestionEntity createAssociationQuestion(final int number, final AssociationEmbeddable... associations) {
         return AssociationQuestionEntity.builder()
+                .itemId(UUID.randomUUID())
                 .type(QuestionType.ASSOCIATION)
                 .number(number)
                 .text("text")
@@ -99,6 +102,7 @@ public class TestData {
 
     public static ExactAnswerQuestionEntity createExactAnswerQuestion(final int number, final String question, final String answer) {
         return ExactAnswerQuestionEntity.builder()
+                .itemId(UUID.randomUUID())
                 .type(QuestionType.EXACT_ANSWER)
                 .number(number)
                 .text(question)
@@ -111,6 +115,7 @@ public class TestData {
 
     public static NumericQuestionEntity createNumericQuestion(final int number, final String question, final double answer) {
         return NumericQuestionEntity.builder()
+                .itemId(UUID.randomUUID())
                 .type(QuestionType.NUMERIC)
                 .number(number)
                 .text(question)
@@ -123,6 +128,7 @@ public class TestData {
 
     public static SelfAssessmentQuestionEntity createSelfAssessmentQuestion(final int number, final String question, final String answer) {
         return SelfAssessmentQuestionEntity.builder()
+                .itemId(UUID.randomUUID())
                 .type(QuestionType.SELF_ASSESSMENT)
                 .number(number)
                 .text(question)
@@ -149,7 +155,7 @@ public class TestData {
                 .feedback("Well done!")
                 .build();
         final MultipleChoiceQuestionEntity questionEntity = MultipleChoiceQuestionEntity.builder()
-                .id(UUID.randomUUID())
+                .itemId(UUID.randomUUID())
                 .number(0)
                 .type(QuestionType.MULTIPLE_CHOICE)
                 .text("This is a question")
@@ -157,7 +163,7 @@ public class TestData {
                 .hint("Wink Wink")
                 .build();
         final MultipleChoiceQuestionEntity questionEntity2 = MultipleChoiceQuestionEntity.builder()
-                .id(UUID.randomUUID())
+                .itemId(UUID.randomUUID())
                 .number(0)
                 .type(QuestionType.MULTIPLE_CHOICE)
                 .text("This is a question")

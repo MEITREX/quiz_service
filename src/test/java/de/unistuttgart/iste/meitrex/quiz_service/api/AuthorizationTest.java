@@ -1,6 +1,9 @@
 package de.unistuttgart.iste.meitrex.quiz_service.api;
 
 
+
+import de.unistuttgart.iste.meitrex.quiz_service.TestData;
+
 import de.unistuttgart.iste.meitrex.common.testutil.AuthorizationAsserts;
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
@@ -9,7 +12,7 @@ import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.meitrex.generated.dto.ClozeElementInput;
 import de.unistuttgart.iste.meitrex.generated.dto.ClozeElementType;
 import de.unistuttgart.iste.meitrex.generated.dto.CreateClozeQuestionInput;
-import de.unistuttgart.iste.meitrex.quiz_service.TestData;
+
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.repository.QuizRepository;
 import org.junit.jupiter.api.Test;
@@ -30,7 +33,7 @@ public class AuthorizationTest {
     private static final String ADD_CLOZE_QUESTION_MUTATION = QuizFragments.FRAGMENT_DEFINITION + """
             mutation($id: UUID!, $input: CreateClozeQuestionInput!) {
                 mutateQuiz(assessmentId: $id) {
-                    addClozeQuestion(input: $input) {
+                    _internal_noauth_addClozeQuestion(input: $input) {
                         ...QuizAllFields
                     }
                 }
@@ -55,6 +58,7 @@ public class AuthorizationTest {
         quizEntity = quizRepository.save(quizEntity);
 
         final CreateClozeQuestionInput input = CreateClozeQuestionInput.builder()
+                .setItemId(UUID.randomUUID())
                 .setHint("hint")
                 .setAdditionalWrongAnswers(List.of("wrong1", "wrong2"))
                 .setShowBlanksList(false)

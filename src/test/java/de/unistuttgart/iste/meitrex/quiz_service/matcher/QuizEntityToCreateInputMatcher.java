@@ -1,7 +1,8 @@
 package de.unistuttgart.iste.meitrex.quiz_service.matcher;
 
-import de.unistuttgart.iste.meitrex.generated.dto.CreateQuizInput;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
+import de.unistuttgart.iste.meitrex.generated.dto.CreateQuizInput;
+
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 

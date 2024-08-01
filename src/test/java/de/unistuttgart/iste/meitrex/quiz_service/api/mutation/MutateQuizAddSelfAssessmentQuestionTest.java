@@ -1,15 +1,13 @@
 package de.unistuttgart.iste.meitrex.quiz_service.api.mutation;
 
-import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
-import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
-import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
-import de.unistuttgart.iste.meitrex.generated.dto.CreateSelfAssessmentQuestionInput;
-import de.unistuttgart.iste.meitrex.quiz_service.TestData;
 import de.unistuttgart.iste.meitrex.quiz_service.api.QuizFragments;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.SelfAssessmentQuestionEntity;
+import de.unistuttgart.iste.meitrex.common.testutil.*;
+import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
+import de.unistuttgart.iste.meitrex.generated.dto.CreateSelfAssessmentQuestionInput;
+import de.unistuttgart.iste.meitrex.quiz_service.TestData;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.repository.QuizRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -26,7 +24,6 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 
 @GraphQlApiTest
-@TablesToDelete({"self_assessment_question", "quiz_question_pool", "question", "quiz"})
 class MutateQuizAddSelfAssessmentQuestionTest {
 
     @Autowired
@@ -39,7 +36,7 @@ class MutateQuizAddSelfAssessmentQuestionTest {
     private static final String ADD_SELF_ASSESSMENT_QUESTION_MUTATION = QuizFragments.FRAGMENT_DEFINITION + """
             mutation($id: UUID!, $input: CreateSelfAssessmentQuestionInput!) {
                 mutateQuiz(assessmentId: $id) {
-                    addSelfAssessmentQuestion(input: $input) {
+                    _internal_noauth_addSelfAssessmentQuestion(input: $input) {
                         ...QuizAllFields
                     }
                 }
@@ -59,8 +56,9 @@ class MutateQuizAddSelfAssessmentQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-
+        UUID itemId = UUID.randomUUID();
         final CreateSelfAssessmentQuestionInput input = CreateSelfAssessmentQuestionInput.builder()
+                .setItemId(itemId)
                 .setHint("hint")
                 .setText("question")
                 .setSolutionSuggestion("solution suggestion")
@@ -70,16 +68,19 @@ class MutateQuizAddSelfAssessmentQuestionTest {
                 .variable("input", input)
                 .variable("id", quizEntity.getAssessmentId())
                 .execute()
-                .path("mutateQuiz.addSelfAssessmentQuestion.questionPool[0].number")
+                .path("mutateQuiz._internal_noauth_addSelfAssessmentQuestion.questionPool[0].number")
                 .entity(Integer.class).isEqualTo(1)
 
-                .path("mutateQuiz.addSelfAssessmentQuestion.questionPool[0].hint")
+                .path("mutateQuiz._internal_noauth_addSelfAssessmentQuestion.questionPool[0].itemId")
+                .entity(UUID.class).isEqualTo(itemId)
+
+                .path("mutateQuiz._internal_noauth_addSelfAssessmentQuestion.questionPool[0].hint")
                 .entity(String.class).isEqualTo("hint")
 
-                .path("mutateQuiz.addSelfAssessmentQuestion.questionPool[0].text")
+                .path("mutateQuiz._internal_noauth_addSelfAssessmentQuestion.questionPool[0].text")
                 .entity(String.class).isEqualTo("question")
 
-                .path("mutateQuiz.addSelfAssessmentQuestion.questionPool[0].solutionSuggestion")
+                .path("mutateQuiz._internal_noauth_addSelfAssessmentQuestion.questionPool[0].solutionSuggestion")
                 .entity(String.class).isEqualTo("solution suggestion");
 
         final QuestionEntity questionEntity = quizRepository.findById(quizEntity.getAssessmentId())
@@ -90,6 +91,7 @@ class MutateQuizAddSelfAssessmentQuestionTest {
         assertThat(questionEntity, instanceOf(SelfAssessmentQuestionEntity.class));
         final SelfAssessmentQuestionEntity selfAssessmentQuestionEntity = (SelfAssessmentQuestionEntity) questionEntity;
 
+        assertThat(selfAssessmentQuestionEntity.getItemId(), is(itemId));
         assertThat(selfAssessmentQuestionEntity.getHint(), is("hint"));
         assertThat(selfAssessmentQuestionEntity.getText(), is("question"));
         assertThat(selfAssessmentQuestionEntity.getSolutionSuggestion(), is("solution suggestion"));

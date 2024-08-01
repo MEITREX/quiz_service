@@ -23,12 +23,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @GraphQlApiTest
-@TablesToDelete({"multiple_choice_question_answers", "multiple_choice_question",
-        "cloze_question_additional_wrong_answers", "cloze_question_cloze_elements", "cloze_question",
-        "association_question_correct_associations", "association_question",
-        "exact_answer_question_correct_answers", "exact_answer_question",
-        "numeric_question", "self_assessment_question",
-        "quiz_question_pool", "question", "quiz"})
 class QueryByIdTest {
 
     @Autowired
@@ -118,7 +112,7 @@ class QueryByIdTest {
                         .setNumber(1)
                         .setText("What is the answer to life, the universe and everything?")
                         .setHint("hint")
-                        .setId(quizEntity.getQuestionPool().get(0).getId())
+                        .setItemId(quizEntity.getQuestionPool().get(0).getItemId())
                         .setAnswers(List.of(
                                 MultipleChoiceAnswer.builder()
                                         .setAnswerText("42")
@@ -135,10 +129,9 @@ class QueryByIdTest {
                         .build(),
                 AssociationQuestion.builder()
                         .setNumber(2)
-                        .setId(quizEntity.getQuestionPool().get(1).getId())
                         .setText("text")
                         .setHint("hint")
-                        .setId(quizEntity.getQuestionPool().get(1).getId())
+                        .setItemId(quizEntity.getQuestionPool().get(1).getItemId())
                         .setType(QuestionType.ASSOCIATION)
                         .setCorrectAssociations(List.of(
                                 new SingleAssociation("A", "1", "feedback"),
@@ -149,7 +142,7 @@ class QueryByIdTest {
                 ClozeQuestion.builder()
                         .setNumber(3)
                         .setHint("hint")
-                        .setId(quizEntity.getQuestionPool().get(2).getId())
+                        .setItemId(quizEntity.getQuestionPool().get(2).getItemId())
                         .setType(QuestionType.CLOZE)
                         .setShowBlanksList(true)
                         .setAdditionalWrongAnswers(List.of("wrong1", "wrong2"))
@@ -166,7 +159,7 @@ class QueryByIdTest {
                 ExactAnswerQuestion.builder()
                         .setNumber(4)
                         .setHint("hint")
-                        .setId(quizEntity.getQuestionPool().get(3).getId())
+                        .setItemId(quizEntity.getQuestionPool().get(3).getItemId())
                         .setType(QuestionType.EXACT_ANSWER)
                         .setText("question")
                         .setCorrectAnswers(List.of("answer"))
@@ -176,7 +169,7 @@ class QueryByIdTest {
                 NumericQuestion.builder()
                         .setNumber(5)
                         .setHint("hint")
-                        .setId(quizEntity.getQuestionPool().get(4).getId())
+                        .setItemId(quizEntity.getQuestionPool().get(4).getItemId())
                         .setType(QuestionType.NUMERIC)
                         .setText("question")
                         .setCorrectAnswer(42)
@@ -186,7 +179,7 @@ class QueryByIdTest {
                 SelfAssessmentQuestion.builder()
                         .setNumber(6)
                         .setHint("hint")
-                        .setId(quizEntity.getQuestionPool().get(5).getId())
+                        .setItemId(quizEntity.getQuestionPool().get(5).getItemId())
                         .setType(QuestionType.SELF_ASSESSMENT)
                         .setText("question")
                         .setSolutionSuggestion("answer")

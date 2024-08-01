@@ -2,6 +2,8 @@ package de.unistuttgart.iste.meitrex.quiz_service.api.mutation;
 
 import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
 import de.unistuttgart.iste.meitrex.common.event.ContentProgressedEvent;
+import de.unistuttgart.iste.meitrex.common.event.Response;
+
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
 import de.unistuttgart.iste.meitrex.common.testutil.MockTestPublisherConfiguration;
@@ -33,7 +35,6 @@ import static org.mockito.Mockito.verify;
 
 @GraphQlApiTest
 @ContextConfiguration(classes = MockTestPublisherConfiguration.class)
-@TablesToDelete({"multiple_choice_question_answers", "multiple_choice_question", "quiz_question_pool", "question", "quiz"})
 class MutationLogQuizCompletionTest {
 
     @Autowired
@@ -70,12 +71,12 @@ class MutationLogQuizCompletionTest {
 
         // create Inputs
         final QuestionCompletedInput inputQuestion = QuestionCompletedInput.builder()
-                .setQuestionId(quizEntity.getQuestionPool().get(0).getId())
+                .setQuestionId(quizEntity.getQuestionPool().get(0).getItemId())
                 .setCorrect(true)
                 .setUsedHint(false)
                 .build();
         final QuestionCompletedInput inputQuestion2 = QuestionCompletedInput.builder()
-                .setQuestionId(quizEntity.getQuestionPool().get(1).getId())
+                .setQuestionId(quizEntity.getQuestionPool().get(1).getItemId())
                 .setCorrect(false)
                 .setUsedHint(true)
                 .build();
@@ -84,7 +85,15 @@ class MutationLogQuizCompletionTest {
                 .setQuizId(assessmentId)
                 .setCompletedQuestions(List.of(inputQuestion, inputQuestion2))
                 .build();
-
+        final Response response1 = Response.builder()
+                .itemId(questions.get(0).getItemId())
+                .response(1)
+                .build();
+        final Response response2 = Response.builder()
+                .itemId(questions.get(1).getItemId())
+                .response(0)
+                .build();
+        final List<Response> responses = List.of(response1, response2);
         // create expected Progress event
         final ContentProgressedEvent expectedUserProgressLogEvent = ContentProgressedEvent.builder()
                 .userId(loggedInUser.getId())
@@ -93,6 +102,7 @@ class MutationLogQuizCompletionTest {
                 .success(false)
                 .timeToComplete(null)
                 .correctness(1.0 / quizEntity.getQuestionPool().size())
+                .responses(responses)
                 .build();
         final QuizCompletionFeedback expectedQuizCompletionFeedback = QuizCompletionFeedback.builder()
                 .setCorrectness(1.0 / quizEntity.getQuestionPool().size())

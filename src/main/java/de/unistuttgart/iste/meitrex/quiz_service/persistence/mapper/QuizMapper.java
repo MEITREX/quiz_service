@@ -1,7 +1,10 @@
 package de.unistuttgart.iste.meitrex.quiz_service.persistence.mapper;
 
 import de.unistuttgart.iste.meitrex.generated.dto.*;
+
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.*;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.*;
+
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -96,7 +99,7 @@ public class QuizMapper {
         final ClozeQuestion result = ClozeQuestion.builder()
                 .setType(QuestionType.CLOZE)
                 .setNumber(clozeQuestionEntity.getNumber())
-                .setId(clozeQuestionEntity.getId())
+                .setItemId(clozeQuestionEntity.getItemId())
                 .setShowBlanksList(clozeQuestionEntity.isShowBlanksList())
                 .setAdditionalWrongAnswers(clozeQuestionEntity.getAdditionalWrongAnswers())
                 .setClozeElements(clozeQuestionEntity.getClozeElements().stream()

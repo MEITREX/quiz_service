@@ -26,7 +26,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 @GraphQlApiTest
-@TablesToDelete({"self_assessment_question", "quiz_question_pool", "question", "quiz"})
 class MutateQuizUpdateSelfAssessmentQuestionTest {
 
     @Autowired
@@ -47,7 +46,7 @@ class MutateQuizUpdateSelfAssessmentQuestionTest {
         quizEntity = quizRepository.save(quizEntity);
 
         final UpdateSelfAssessmentQuestionInput input = UpdateSelfAssessmentQuestionInput.builder()
-                .setId(quizEntity.getQuestionPool().get(0).getId())
+                .setItemId(quizEntity.getQuestionPool().get(0).getItemId())
                 .setHint("new hint")
                 .setText("new question")
                 .setSolutionSuggestion("new solution suggestion")
@@ -56,7 +55,7 @@ class MutateQuizUpdateSelfAssessmentQuestionTest {
         final String query = QuizFragments.FRAGMENT_DEFINITION + """
                 mutation($id: UUID!, $input: UpdateSelfAssessmentQuestionInput!) {
                     mutateQuiz(assessmentId: $id) {
-                        updateSelfAssessmentQuestion(input: $input) {
+                        _internal_noauth_updateSelfAssessmentQuestion(input: $input) {
                             ...QuizAllFields
                         }
                     }
@@ -67,10 +66,10 @@ class MutateQuizUpdateSelfAssessmentQuestionTest {
                 .variable("id", quizEntity.getAssessmentId())
                 .variable("input", input)
                 .execute()
-                .path("mutateQuiz.updateSelfAssessmentQuestion.questionPool[0].number").entity(Integer.class).isEqualTo(1)
-                .path("mutateQuiz.updateSelfAssessmentQuestion.questionPool[0].text").entity(String.class).isEqualTo("new question")
-                .path("mutateQuiz.updateSelfAssessmentQuestion.questionPool[0].hint").entity(String.class).isEqualTo("new hint")
-                .path("mutateQuiz.updateSelfAssessmentQuestion.questionPool[0].solutionSuggestion").entity(String.class).isEqualTo("new solution suggestion");
+                .path("mutateQuiz._internal_noauth_updateSelfAssessmentQuestion.questionPool[0].number").entity(Integer.class).isEqualTo(1)
+                .path("mutateQuiz._internal_noauth_updateSelfAssessmentQuestion.questionPool[0].text").entity(String.class).isEqualTo("new question")
+                .path("mutateQuiz._internal_noauth_updateSelfAssessmentQuestion.questionPool[0].hint").entity(String.class).isEqualTo("new hint")
+                .path("mutateQuiz._internal_noauth_updateSelfAssessmentQuestion.questionPool[0].solutionSuggestion").entity(String.class).isEqualTo("new solution suggestion");
 
         final QuizEntity updatedQuiz = quizRepository.findById(quizEntity.getAssessmentId()).orElseThrow();
         assertThat(updatedQuiz.getQuestionPool(), hasSize(1));

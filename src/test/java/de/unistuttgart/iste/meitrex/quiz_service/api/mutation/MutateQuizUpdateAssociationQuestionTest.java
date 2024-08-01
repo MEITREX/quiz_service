@@ -1,18 +1,19 @@
 package de.unistuttgart.iste.meitrex.quiz_service.api.mutation;
 
-import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
-import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
-import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
-import de.unistuttgart.iste.meitrex.generated.dto.AssociationInput;
-import de.unistuttgart.iste.meitrex.generated.dto.SingleAssociation;
-import de.unistuttgart.iste.meitrex.generated.dto.UpdateAssociationQuestionInput;
+
 import de.unistuttgart.iste.meitrex.quiz_service.TestData;
 import de.unistuttgart.iste.meitrex.quiz_service.api.QuizFragments;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.AssociationQuestionEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.repository.QuizRepository;
+
+import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
+import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
+import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import jakarta.transaction.Transactional;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.test.tester.GraphQlTester;
@@ -23,12 +24,10 @@ import java.util.UUID;
 
 import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 import static de.unistuttgart.iste.meitrex.quiz_service.TestData.association;
-import static de.unistuttgart.iste.meitrex.quiz_service.TestData.createAssociationQuestion;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @GraphQlApiTest
-@TablesToDelete({"association_question_correct_associations", "association_question", "quiz_question_pool", "question", "quiz"})
 class MutateQuizUpdateAssociationQuestionTest {
 
     @Autowired
@@ -44,23 +43,23 @@ class MutateQuizUpdateAssociationQuestionTest {
     void testUpdateAssociationQuestion(final GraphQlTester graphQlTester) {
         QuizEntity quizEntity = TestData.exampleQuizBuilder(courseId)
                 .questionPool(List.of(
-                        createAssociationQuestion(1, association("a", "b"), association("c", "d"))))
+                        TestData.createAssociationQuestion(1, TestData.association("a", "b"), TestData.association("c", "d"))))
                 .build();
         quizEntity = quizRepository.save(quizEntity);
 
         final UpdateAssociationQuestionInput input = UpdateAssociationQuestionInput.builder()
-                .setId(quizEntity.getQuestionPool().get(0).getId())
+                .setItemId(quizEntity.getQuestionPool().get(0).getItemId())
                 .setHint("new hint")
                 .setText("new question")
                 .setCorrectAssociations(List.of(
-                        new AssociationInput("newA", "newC", "new feedback1"),
-                        new AssociationInput("newB", "newD", "new feedback2")))
+                        new AssociationInput(UUID.randomUUID(), "newA", "newC", "new feedback1"),
+                        new AssociationInput(UUID.randomUUID(), "newB", "newD", "new feedback2")))
                 .build();
 
         final String query = QuizFragments.FRAGMENT_DEFINITION + """
                 mutation($id: UUID!, $input: UpdateAssociationQuestionInput!) {
                     mutateQuiz(assessmentId: $id) {
-                        updateAssociationQuestion(input: $input) {
+                        _internal_noauth_updateAssociationQuestion(input: $input) {
                             ...QuizAllFields
                         }
                     }
@@ -71,10 +70,10 @@ class MutateQuizUpdateAssociationQuestionTest {
                 .variable("id", quizEntity.getAssessmentId())
                 .variable("input", input)
                 .execute()
-                .path("mutateQuiz.updateAssociationQuestion.questionPool[0].number").entity(Integer.class).isEqualTo(1)
-                .path("mutateQuiz.updateAssociationQuestion.questionPool[0].text").entity(String.class).isEqualTo("new question")
-                .path("mutateQuiz.updateAssociationQuestion.questionPool[0].hint").entity(String.class).isEqualTo("new hint")
-                .path("mutateQuiz.updateAssociationQuestion.questionPool[0].correctAssociations").entityList(SingleAssociation.class)
+                .path("mutateQuiz._internal_noauth_updateAssociationQuestion.questionPool[0].number").entity(Integer.class).isEqualTo(1)
+                .path("mutateQuiz._internal_noauth_updateAssociationQuestion.questionPool[0].text").entity(String.class).isEqualTo("new question")
+                .path("mutateQuiz._internal_noauth_updateAssociationQuestion.questionPool[0].hint").entity(String.class).isEqualTo("new hint")
+                .path("mutateQuiz._internal_noauth_updateAssociationQuestion.questionPool[0].correctAssociations").entityList(SingleAssociation.class)
                 .contains(
                         new SingleAssociation("newA", "newC", "new feedback1"),
                         new SingleAssociation("newB", "newD", "new feedback2"));
@@ -85,9 +84,9 @@ class MutateQuizUpdateAssociationQuestionTest {
         assertThat(updatedQuestion.getText(), is("new question"));
         assertThat(updatedQuestion.getHint(), is("new hint"));
         assertThat(updatedQuestion.getCorrectAssociations(), hasSize(2));
-        assertThat(updatedQuestion.getCorrectAssociations(), containsInAnyOrder(
-                association("newA", "newC", "new feedback1"),
-                association("newB", "newD", "new feedback2")));
+        assertThat(updatedQuestion.getCorrectAssociations(), Matchers.containsInAnyOrder(
+                TestData.association("newA", "newC", "new feedback1"),
+                TestData.association("newB", "newD", "new feedback2")));
 
 
     }

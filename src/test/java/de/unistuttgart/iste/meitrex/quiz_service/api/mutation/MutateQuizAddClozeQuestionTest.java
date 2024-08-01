@@ -1,18 +1,17 @@
 package de.unistuttgart.iste.meitrex.quiz_service.api.mutation;
 
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.ClozeQuestionEntity;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionEntity;
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
 import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
 import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
-import de.unistuttgart.iste.meitrex.generated.dto.ClozeElementInput;
-import de.unistuttgart.iste.meitrex.generated.dto.ClozeElementType;
-import de.unistuttgart.iste.meitrex.generated.dto.CreateClozeQuestionInput;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.quiz_service.TestData;
 import de.unistuttgart.iste.meitrex.quiz_service.api.QuizFragments;
-import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.ClozeQuestionEntity;
-import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionEntity;
-import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.repository.QuizRepository;
+
 import graphql.ErrorType;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -26,16 +25,16 @@ import java.util.UUID;
 import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 
 
 @GraphQlApiTest
-@TablesToDelete({"cloze_question_additional_wrong_answers", "cloze_question_cloze_elements", "cloze_question", "quiz_question_pool", "question", "quiz"})
 class MutateQuizAddClozeQuestionTest {
 
     private static final String ADD_CLOZE_QUESTION_MUTATION = QuizFragments.FRAGMENT_DEFINITION + """
             mutation($id: UUID!, $input: CreateClozeQuestionInput!) {
                 mutateQuiz(assessmentId: $id) {
-                    addClozeQuestion(input: $input) {
+                    _internal_noauth_addClozeQuestion(input: $input) {
                         ...QuizAllFields
                     }
                 }
@@ -63,8 +62,9 @@ class MutateQuizAddClozeQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-
+        UUID itemId = UUID.randomUUID();
         final CreateClozeQuestionInput input = CreateClozeQuestionInput.builder()
+                .setItemId(itemId)
                 .setHint("hint")
                 .setAdditionalWrongAnswers(List.of("wrong1", "wrong2"))
                 .setShowBlanksList(false)
@@ -86,27 +86,31 @@ class MutateQuizAddClozeQuestionTest {
                 .variable("input", input)
                 .variable("id", quizEntity.getAssessmentId())
                 .execute()
-                .path("mutateQuiz.addClozeQuestion.questionPool[0].number")
+                .path("mutateQuiz._internal_noauth_addClozeQuestion.questionPool[0].number")
                 .entity(Integer.class)
                 .isEqualTo(1)
 
-                .path("mutateQuiz.addClozeQuestion.questionPool[0].showBlanksList")
+                .path("mutateQuiz._internal_noauth_addClozeQuestion.questionPool[0].itemId")
+                .entity(UUID.class)
+                .isEqualTo(itemId)
+
+                .path("mutateQuiz._internal_noauth_addClozeQuestion.questionPool[0].showBlanksList")
                 .entity(Boolean.class)
                 .isEqualTo(false)
 
-                .path("mutateQuiz.addClozeQuestion.questionPool[0].additionalWrongAnswers")
+                .path("mutateQuiz._internal_noauth_addClozeQuestion.questionPool[0].additionalWrongAnswers")
                 .entityList(String.class)
                 .isEqualTo(List.of("wrong1", "wrong2"))
 
-                .path("mutateQuiz.addClozeQuestion.questionPool[0].clozeElements[0].text")
+                .path("mutateQuiz._internal_noauth_addClozeQuestion.questionPool[0].clozeElements[0].text")
                 .entity(String.class)
                 .isEqualTo("what is the capital of France?")
 
-                .path("mutateQuiz.addClozeQuestion.questionPool[0].clozeElements[1].correctAnswer")
+                .path("mutateQuiz._internal_noauth_addClozeQuestion.questionPool[0].clozeElements[1].correctAnswer")
                 .entity(String.class)
                 .isEqualTo("Paris")
 
-                .path("mutateQuiz.addClozeQuestion.questionPool[0].clozeElements[1].feedback")
+                .path("mutateQuiz._internal_noauth_addClozeQuestion.questionPool[0].clozeElements[1].feedback")
                 .entity(String.class)
                 .isEqualTo("feedback");
 
@@ -141,8 +145,9 @@ class MutateQuizAddClozeQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-
+        UUID itemId = UUID.randomUUID();
         final CreateClozeQuestionInput input = CreateClozeQuestionInput.builder()
+                .setItemId(itemId)
                 .setNumber(1)
                 .setShowBlanksList(true)
                 .setClozeElements(List.of(
@@ -175,8 +180,9 @@ class MutateQuizAddClozeQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-
+        UUID itemId = UUID.randomUUID();
         final CreateClozeQuestionInput input = CreateClozeQuestionInput.builder()
+                .setItemId(itemId)
                 .setNumber(1)
                 .setShowBlanksList(true)
                 .setClozeElements(List.of(
@@ -210,8 +216,9 @@ class MutateQuizAddClozeQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-
+        UUID itemId = UUID.randomUUID();
         final CreateClozeQuestionInput input = CreateClozeQuestionInput.builder()
+                .setItemId(itemId)
                 .setNumber(1)
                 .setShowBlanksList(true)
                 .setClozeElements(List.of(
@@ -244,8 +251,9 @@ class MutateQuizAddClozeQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-
+        UUID itemId = UUID.randomUUID();
         final CreateClozeQuestionInput input = CreateClozeQuestionInput.builder()
+                .setItemId(itemId)
                 .setNumber(1)
                 .setShowBlanksList(true)
                 .setClozeElements(List.of(
@@ -277,8 +285,9 @@ class MutateQuizAddClozeQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-
+        UUID itemId = UUID.randomUUID();
         final CreateClozeQuestionInput input = CreateClozeQuestionInput.builder()
+                .setItemId(itemId)
                 .setNumber(1)
                 .setShowBlanksList(true)
                 .setClozeElements(List.of(
@@ -306,8 +315,9 @@ class MutateQuizAddClozeQuestionTest {
                 .questionPool(List.of())
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-
+        UUID itemId = UUID.randomUUID();
         final CreateClozeQuestionInput input = CreateClozeQuestionInput.builder()
+                .setItemId(itemId)
                 .setNumber(1)
                 .setShowBlanksList(true)
                 .setClozeElements(List.of(

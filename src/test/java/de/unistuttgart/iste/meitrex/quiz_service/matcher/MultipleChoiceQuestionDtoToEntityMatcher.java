@@ -1,9 +1,9 @@
 package de.unistuttgart.iste.meitrex.quiz_service.matcher;
 
-import de.unistuttgart.iste.meitrex.generated.dto.MultipleChoiceQuestion;
-import de.unistuttgart.iste.meitrex.generated.dto.QuestionType;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.MultipleChoiceQuestionEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionEntity;
+import de.unistuttgart.iste.meitrex.generated.dto.MultipleChoiceQuestion;
+import de.unistuttgart.iste.meitrex.generated.dto.QuestionType;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
@@ -30,8 +30,11 @@ public class MultipleChoiceQuestionDtoToEntityMatcher extends TypeSafeDiagnosing
             mismatchDescription.appendText("expected was not a MultipleChoiceQuestionEntity");
             return false;
         }
-
         // for convenience, we do not check the id as it is usually null before saving
+        if (!Objects.equals(item.getItemId(), expected.getItemId())) {
+            mismatchDescription.appendText("id was ").appendValue(item.getItemId());
+            return false;
+        }
 
         if (item.getNumber() != expected.getNumber()) {
             mismatchDescription.appendText("number was ").appendValue(item.getNumber());

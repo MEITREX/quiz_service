@@ -4,13 +4,12 @@ import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
 import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
 import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
-import de.unistuttgart.iste.meitrex.generated.dto.CreateMultipleChoiceQuestionInput;
-import de.unistuttgart.iste.meitrex.generated.dto.MultipleChoiceAnswerInput;
-import de.unistuttgart.iste.meitrex.generated.dto.MultipleChoiceQuestion;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.quiz_service.TestData;
 import de.unistuttgart.iste.meitrex.quiz_service.api.QuizFragments;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.repository.QuizRepository;
+
 import graphql.ErrorType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +24,16 @@ import static de.unistuttgart.iste.meitrex.quiz_service.matcher.MultipleChoiceQu
 import static de.unistuttgart.iste.meitrex.quiz_service.matcher.MultipleChoiceQuestionDtoToEntityMatcher.matchesEntity;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMembershipInCourseWithId;
+
 
 @GraphQlApiTest
-@TablesToDelete({"multiple_choice_question_answers", "multiple_choice_question", "quiz_question_pool", "question", "quiz"})
 class MutateQuizAddMultipleChoiceQuestionTest {
 
     private static final String UPDATE_MULTIPLE_CHOICE_QUESTION_MUTATION = QuizFragments.FRAGMENT_DEFINITION + """
             mutation($id: UUID!, $input: CreateMultipleChoiceQuestionInput!) {
                 mutateQuiz(assessmentId: $id) {
-                    addMultipleChoiceQuestion(input: $input) {
+                    _internal_noauth_addMultipleChoiceQuestion(input: $input) {
                         ...QuizAllFields
                     }
                 }
@@ -59,8 +59,9 @@ class MutateQuizAddMultipleChoiceQuestionTest {
                         createMultipleChoiceQuestion(1, "what is the capital of Germany?", "Berlin", "Paris")))
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-
+        UUID itemId = UUID.randomUUID();
         final CreateMultipleChoiceQuestionInput input = CreateMultipleChoiceQuestionInput.builder()
+                .setItemId(itemId)
                 .setText("what is the capital of France?")
                 .setNumber(2)
                 .setAnswers(List.of(
@@ -78,7 +79,7 @@ class MutateQuizAddMultipleChoiceQuestionTest {
                 .variable("input", input)
                 .variable("id", quizEntity.getAssessmentId())
                 .execute()
-                .path("mutateQuiz.addMultipleChoiceQuestion.questionPool")
+                .path("mutateQuiz._internal_noauth_addMultipleChoiceQuestion.questionPool")
                 .entityList(MultipleChoiceQuestion.class)
                 .get();
 
@@ -99,8 +100,9 @@ class MutateQuizAddMultipleChoiceQuestionTest {
                         createMultipleChoiceQuestion(1, "what is the capital of Germany?", "Berlin", "Paris")))
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-
+        UUID itemId = UUID.randomUUID();
         final CreateMultipleChoiceQuestionInput input = CreateMultipleChoiceQuestionInput.builder()
+                .setItemId(itemId)
                 .setText("what is the capital of France?")
                 .setNumber(null) // number should be assigned automatically
                 .setAnswers(List.of(
@@ -118,7 +120,7 @@ class MutateQuizAddMultipleChoiceQuestionTest {
                 .variable("input", input)
                 .variable("id", quizEntity.getAssessmentId())
                 .execute()
-                .path("mutateQuiz.addMultipleChoiceQuestion.questionPool")
+                .path("mutateQuiz._internal_noauth_addMultipleChoiceQuestion.questionPool")
                 .entityList(MultipleChoiceQuestion.class)
                 .get();
 
@@ -141,8 +143,9 @@ class MutateQuizAddMultipleChoiceQuestionTest {
                         createMultipleChoiceQuestion(1, "what is the capital of Germany?", "Berlin", "Paris")))
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-
+        UUID itemId = UUID.randomUUID();
         final CreateMultipleChoiceQuestionInput input = CreateMultipleChoiceQuestionInput.builder()
+                .setItemId(itemId)
                 .setText("what is the capital of France?")
                 .setNumber(1) // already existing number
                 .setAnswers(List.of(
@@ -181,8 +184,9 @@ class MutateQuizAddMultipleChoiceQuestionTest {
                         createMultipleChoiceQuestion(1, "what is the capital of Germany?", "Berlin", "Paris")))
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-
+        UUID itemId = UUID.randomUUID();
         final CreateMultipleChoiceQuestionInput input = CreateMultipleChoiceQuestionInput.builder()
+                .setItemId(itemId)
                 .setText("what is the capital of France?")
                 .setAnswers(List.of(
                         MultipleChoiceAnswerInput.builder()
@@ -220,8 +224,9 @@ class MutateQuizAddMultipleChoiceQuestionTest {
                         createMultipleChoiceQuestion(1, "what is the capital of Germany?", "Berlin", "Paris")))
                 .build();
         quizEntity = quizRepository.save(quizEntity);
-
+        UUID itemId = UUID.randomUUID();
         final CreateMultipleChoiceQuestionInput input = CreateMultipleChoiceQuestionInput.builder()
+                .setItemId(itemId)
                 .setText("what is the capital of France?")
                 .setAnswers(List.of(
                         MultipleChoiceAnswerInput.builder()

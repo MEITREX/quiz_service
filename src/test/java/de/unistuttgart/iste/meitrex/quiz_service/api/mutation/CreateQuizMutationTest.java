@@ -2,9 +2,7 @@ package de.unistuttgart.iste.meitrex.quiz_service.api.mutation;
 
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
-import de.unistuttgart.iste.meitrex.generated.dto.CreateQuizInput;
-import de.unistuttgart.iste.meitrex.generated.dto.MultipleChoiceQuestion;
-import de.unistuttgart.iste.meitrex.generated.dto.QuestionPoolingMode;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.quiz_service.api.QuizFragments;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.repository.QuizRepository;
 import jakarta.transaction.Transactional;
@@ -22,7 +20,6 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 
 @GraphQlApiTest
-@TablesToDelete({"multiple_choice_question_answers", "multiple_choice_question", "quiz_question_pool", "question", "quiz"})
 class CreateQuizMutationTest {
 
     @Autowired
