@@ -1,19 +1,18 @@
-version: "3"
-
 services:
-  database-quiz:
-    image: postgres:alpine
+  database:
+    image: pgvector/pgvector:pg16
     restart: always
     expose:
-      - 9032
+      - 5432
     ports:
-      - "9032:5432"
+      - "5432:5432"
     volumes:
-      - quizdata:/var/lib/postgresql/data
+      - dbdata:/var/lib/postgresql/data
+      - ./../quiz_service/pg-init-scripts:/docker-entrypoint-initdb.d
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=quiz_service
+      - POSTGRES_CREATE_DB_QUIZ_SERVICE=quiz_service
   app-quiz:
     build:
       context: ./../quiz_service # necessary because otherwise docker-compose overrides the context path when merging multiple docker-compose.yml files
@@ -27,9 +26,9 @@ services:
       - "9000:9000"
       - "9001:9001"
     depends_on:
-      - database-quiz
+      - database
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://database-quiz:5432/quiz_service
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/quiz_service
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
   dapr-quiz:
@@ -52,7 +51,7 @@ services:
     expose:
       - "6379"
 volumes:
-  quizdata:
+  dbdata:
   testdata:
 networks:
   default:
