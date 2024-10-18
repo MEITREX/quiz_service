@@ -1,11 +1,9 @@
 package de.unistuttgart.iste.meitrex.quiz_service.service;
 
 
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.*;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.mapper.QuizMapper;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.repository.QuizRepository;
-import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionEntity;
-import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionStatisticEntity;
-import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
 import de.unistuttgart.iste.meitrex.common.event.*;
 import de.unistuttgart.iste.meitrex.common.exception.IncompleteEventMessageException;
@@ -20,11 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -395,6 +389,14 @@ public class QuizService {
         modifier.accept(entity);
 
         final QuizEntity savedEntity = quizRepository.save(entity);
+
+        topicPublisher.notifyAssessmentContentMutated(new AssessmentContentMutatedEvent(
+                entity.getCourseId(),
+                entity.getAssessmentId(),
+                AssessmentType.QUIZ,
+                generateTaskInformation(savedEntity)
+        ));
+
         return quizMapper.entityToDto(savedEntity);
     }
 
@@ -589,5 +591,124 @@ public class QuizService {
      */
     private void publishItemChangeEvent(final UUID itemId) {
         topicPublisher.notifyItemChanges(itemId, CrudOperation.DELETE);
+    }
+
+    /**
+     * Helper method which generates task information for the given quiz.
+     * @param quiz The quiz for which to generate task information.
+     * @return Returns a list containing the task information.
+     */
+    private List<AssessmentContentMutatedEvent.TaskInformation> generateTaskInformation(final QuizEntity quiz) {
+        final List<AssessmentContentMutatedEvent.TaskInformation> results
+                = new ArrayList<>(quiz.getQuestionPool().size());
+
+        for(final QuestionEntity question : quiz.getQuestionPool()) {
+            final StringBuilder sb = new StringBuilder();
+            switch (question) {
+                case final AssociationQuestionEntity associationQuestion:
+                    sb.append("Task: Associate each item with the correct partner item.\n\n");
+
+                    printHint(sb, associationQuestion);
+
+                    sb.append("Question: ");
+                    sb.append(associationQuestion.getText());
+                    sb.append("\n");
+                    for(final AssociationEmbeddable association : associationQuestion.getCorrectAssociations()) {
+                        sb.append(association.getLeft());
+                        sb.append(" - ");
+                        sb.append(association.getRight());
+                        sb.append("\n");
+                    }
+                    break;
+                case final ClozeQuestionEntity clozeQuestion:
+                    sb.append("Task: Fill in the blanks in the text with the correct terms.\n\n");
+
+                    printHint(sb, clozeQuestion);
+
+                    for(final ClozeElementEmbeddable clozeItem : clozeQuestion.getClozeElements().stream()
+                            .sorted(Comparator.comparing(ClozeElementEmbeddable::getPosition)).toList()) {
+                        switch(clozeItem.getType()) {
+                            case TEXT -> sb.append(clozeItem.getText());
+                            case BLANK -> sb.append(clozeItem.getCorrectAnswer());
+                        }
+                    }
+                    break;
+                case final ExactAnswerQuestionEntity exactAnswerQuestion:
+                    sb.append("Task: Answer the question.\n\n");
+
+                    printHint(sb, exactAnswerQuestion);
+
+                    sb.append("Question: ");
+                    sb.append(exactAnswerQuestion.getText());
+                    sb.append("\n");
+                    for(final String correctAnswer : exactAnswerQuestion.getCorrectAnswers()) {
+                        sb.append("Correct Answer: ");
+                        sb.append(correctAnswer);
+                        sb.append("\n");
+                    }
+                    break;
+                case final MultipleChoiceQuestionEntity multipleChoiceQuestion:
+                    sb.append("Task: Choose the correct answer(s).\n\n");
+
+                    printHint(sb, multipleChoiceQuestion);
+
+                    sb.append("Question: ");
+                    sb.append(multipleChoiceQuestion.getText());
+                    sb.append("\n");
+                    for(final MultipleChoiceAnswerEmbeddable answer : multipleChoiceQuestion.getAnswers()) {
+                        if(!answer.isCorrect())
+                            continue;
+
+                        sb.append("Correct Answer: ");
+                        sb.append(answer.getAnswerText());
+                        sb.append("\n");
+                    }
+                    break;
+                case final NumericQuestionEntity numericQuestionEntity:
+                    sb.append("Task: Find the correct number/value to the question.\n\n");
+
+                    printHint(sb, numericQuestionEntity);
+
+                    sb.append("Question: ");
+                    sb.append(numericQuestionEntity.getText());
+                    sb.append("\n");
+
+                    sb.append("Correct Answer: ");
+                    sb.append(numericQuestionEntity.getCorrectAnswer());
+                    break;
+                case final SelfAssessmentQuestionEntity selfAssessmentQuestionEntity:
+                    sb.append("Task: Find a free-form answer to the question and self-assess its correctness.\n\n");
+
+                    printHint(sb, selfAssessmentQuestionEntity);
+
+                    sb.append("Question: ");
+                    sb.append(selfAssessmentQuestionEntity.getText());
+                    sb.append("\n");
+
+                    sb.append("Correct Answer: ");
+                    sb.append(selfAssessmentQuestionEntity.getSolutionSuggestion());
+                    break;
+                default:
+                    // throw if we encounter a question type we don't know
+                    throw new IllegalArgumentException(
+                            "Unknown question type could not be converted to textual representation: "
+                                    + question.getType());
+            }
+            results.add(new AssessmentContentMutatedEvent.TaskInformation(question.getItemId(), sb.toString().trim()));
+        }
+
+        return results;
+    }
+
+    /**
+     * Helper method to print the hint of a question to a StringBuilder, used to generate the textual representation
+     * of a question.
+     */
+    private void printHint(StringBuilder sb, QuestionEntity question) {
+        if(question.getHint() != null) {
+            sb.append("Hint: ");
+            sb.append(question.getHint());
+            sb.append("\n\n");
+        }
     }
 }
