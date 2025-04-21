@@ -167,7 +167,7 @@ input CreateMultipleChoiceQuestionInput {
     """
     UUID of the question to update and the id of the corresponding item.
     """
-    itemId: UUID
+    itemId: UUID!
     """
     Number of the question, used for ordering.
     This can be omitted, in which case a number, one higher than the highest number of the existing questions, will be used.
@@ -226,7 +226,7 @@ input CreateClozeQuestionInput {
     """
     id of the corresponding item
     """
-    itemId:UUID
+    itemId:UUID!
     """
     Number of the question, used for ordering.
     This can be omitted, in which case a number, one higher than the highest number of the existing questions, will be used.
@@ -273,11 +273,27 @@ input UpdateClozeQuestionInput {
     hint: JSON
 }
 
+input CreateClozeElementInput {
+    """
+    Type of the element.
+    """
+    type: ClozeElementType!
+
+    """
+    Text of the element. Only used for TEXT type.
+    """
+    text: JSON
+
+    """
+    The correct answer for the blank. Only used for BLANK type.
+    """
+    correctAnswer: String @Size(max: 255)
+    """
+    Feedback for the blank when the user selects a wrong answer, in SlateJS JSON format. Only used for BLANK type.
+    """
+    feedback: JSON
+}
 input ClozeElementInput {
-    """
-    id of the corresponding item
-    """
-    itemId:UUID
     """
     Type of the element.
     """
@@ -302,7 +318,7 @@ input CreateAssociationQuestionInput {
     """
     id of the corresponding item
     """
-    itemId:UUID
+    itemId:UUID!
     """
     Number of the question, used for ordering.
     This can be omitted, in which case a number, one higher than the highest number of the existing questions, will be used.
@@ -341,6 +357,7 @@ input UpdateAssociationQuestionInput {
     hint: JSON
 }
 
+
 input AssociationInput {
     """
     id of the corresponding item
@@ -358,6 +375,21 @@ input AssociationInput {
     Feedback for the association when the user selects a wrong answer, in SlateJS JSON format.
     """
     feedback: JSON
+}
+
+input CreateAssociationInput {
+	"""
+	Text of the left side of the association, in SlateJS JSON format.
+	"""
+	left: String! @Size(max: 255)
+	"""
+	Text of the right side of the association, in SlateJS JSON format.
+	"""
+	right: String! @Size(max: 255)
+	"""
+	Feedback for the association when the user selects a wrong answer, in SlateJS JSON format.
+	"""
+	feedback: JSON
 }
 
 input CreateExactAnswerQuestionInput {
@@ -423,7 +455,7 @@ input CreateNumericQuestionInput {
     """
     id of the corresponding item
     """
-    itemId:UUID
+    itemId:UUID!
     """
     Number of the question, used for ordering.
     This can be omitted, in which case a number, one higher than the highest number of the existing questions, will be used.
@@ -482,7 +514,7 @@ input CreateSelfAssessmentQuestionInput {
     """
     id of the corresponding item
     """
-    itemId:UUID
+    itemId:UUID!
     """
     Number of the question, used for ordering.
     This can be omitted, in which case a number, one higher than the highest number of the existing questions, will be used.
