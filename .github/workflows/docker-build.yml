@@ -1,7 +1,6 @@
 name: Building Docker Image
 
 on:
-  workflow_dispatch:
   workflow_run:
     workflows:
       - Testing CI pipeline
