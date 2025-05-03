@@ -14,6 +14,8 @@ import graphql.ErrorType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.test.tester.GraphQlTester;
+import org.springframework.test.context.ContextConfiguration;
+import de.unistuttgart.iste.meitrex.common.testutil.MockTestPublisherConfiguration;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +30,7 @@ import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMem
 
 
 @GraphQlApiTest
+@ContextConfiguration(classes = MockTestPublisherConfiguration.class)
 class MutateQuizAddMultipleChoiceQuestionTest {
 
     private static final String UPDATE_MULTIPLE_CHOICE_QUESTION_MUTATION = QuizFragments.FRAGMENT_DEFINITION + """
