@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.test.annotation.Commit;
+import org.springframework.test.context.ContextConfiguration;
+import de.unistuttgart.iste.meitrex.common.testutil.MockTestPublisherConfiguration;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,6 +28,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 @GraphQlApiTest
+@ContextConfiguration(classes = MockTestPublisherConfiguration.class)
 class MutateQuizUpdateClozeQuestionTest {
 
     @Autowired
