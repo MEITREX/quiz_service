@@ -30,9 +30,9 @@ sonarqube {
 
 // workaround to fetch schema files from external repositories
 // as gradle only supports java dependencies
-def fetchFilesFromRepo(String repository, List<String> files) {
+def fetchFilesFromRepo(String repository, String basePath, List<String> files) {
 	def baseurl = "https://raw.githubusercontent.com/MEITREX/"
-	def fileUrl = "${baseurl}${repository}/main/src/main/resources/graphql/"
+	def fileUrl = "${baseurl}${repository}${basePath}"
 	def outputDir = "src/main/resources/graphql"
 
 	files.each { file ->
@@ -42,7 +42,8 @@ def fetchFilesFromRepo(String repository, List<String> files) {
 	}
 }
 
-fetchFilesFromRepo("common", ["directives.graphqls", "scalars.graphqls", "sortFilterPagination.graphqls"])
+fetchFilesFromRepo("common", "/main/src/main/resources/graphql/" , ["directives.graphqls", "scalars.graphqls", "sortFilterPagination.graphqls"])
+fetchFilesFromRepo("docprocai_service", "/refs/heads/main/schema/", ["query.graphqls"])
 
 // run this task to fetch the latest schema files from the external github repositories
 tasks.register("fetchAllExternalSchemas", Task) {
@@ -109,7 +110,7 @@ repositories {
 
 dependencies {
 
-	implementation 'de.unistuttgart.iste.meitrex:meitrex-common:1.2.4'
+	implementation 'de.unistuttgart.iste.meitrex:meitrex-common:1.2.6'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-graphql'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -125,7 +126,7 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'de.unistuttgart.iste.meitrex:meitrex-common-test:1.2.4'
+	testImplementation 'de.unistuttgart.iste.meitrex:meitrex-common-test:1.2.6'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework:spring-webflux'
 	testImplementation 'org.springframework.graphql:spring-graphql-test'
@@ -133,6 +134,7 @@ dependencies {
 	testImplementation 'org.hamcrest:hamcrest:2.+'
 	testImplementation "org.testcontainers:postgresql:1.+"
 	testImplementation "org.testcontainers:junit-jupiter:1.+"
+
 }
 
 tasks.named('test') {
