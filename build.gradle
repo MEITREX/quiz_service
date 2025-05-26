@@ -43,7 +43,9 @@ def fetchFilesFromRepo(String repository, String basePath, List<String> files) {
 }
 
 fetchFilesFromRepo("common", "/main/src/main/resources/graphql/" , ["directives.graphqls", "scalars.graphqls", "sortFilterPagination.graphqls"])
-fetchFilesFromRepo("docprocai_service", "/refs/heads/main/schema/", ["query.graphqls"])
+
+// TODO remove query wrapper from the fetch python script. Otherwise the compilation will fail
+// fetchFilesFromRepo("docprocai_service", "/refs/heads/main/schema/", ["query.graphqls"])
 
 // run this task to fetch the latest schema files from the external github repositories
 tasks.register("fetchAllExternalSchemas", Task) {

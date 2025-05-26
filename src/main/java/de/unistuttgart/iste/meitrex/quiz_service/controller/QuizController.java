@@ -2,6 +2,7 @@ package de.unistuttgart.iste.meitrex.quiz_service.controller;
 
 
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
+import de.unistuttgart.iste.meitrex.quiz_service.service.AiQuizGenerationService;
 import de.unistuttgart.iste.meitrex.quiz_service.service.QuizService;
 
 import de.unistuttgart.iste.meitrex.common.exception.NoAccessToCourseException;
@@ -16,8 +17,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.*;
 import org.springframework.stereotype.Controller;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static de.unistuttgart.iste.meitrex.common.user_handling.UserCourseAccessValidator.validateUserHasAccessToCourse;
@@ -30,6 +34,7 @@ public class QuizController {
     private static final String QUIZ_MUTATION_NAME = "QuizMutation";
 
     private final QuizService quizService;
+    private final AiQuizGenerationService aiQuizGenerationService;
 
     @QueryMapping
     public List<Quiz> findQuizzesByAssessmentIds(@Argument final List<UUID> assessmentIds,
@@ -165,6 +170,18 @@ public class QuizController {
         validateUserHasAccessToCourse(currentUser, UserRoleInCourse.STUDENT, quiz.getCourseId());
 
         return quizService.publishProgress(input, currentUser.getId());
+    }
+
+    @MutationMapping
+    public Mono<Quiz> aiGenerateQuestions(@Argument final AiGenQuestionContext context, @ContextValue final LoggedInUser currentUser) {
+        // TODO fix thread starvation issue
+        Optional<Quiz> q = quizService.findQuizById(context.getQuizId());
+        return q.map(quiz -> Mono.create(sink -> {
+                    // run async task
+
+                }).subscribeOn(Schedulers.boundedElastic())
+                .map(r -> quiz)).orElseGet(Mono::empty);
+
     }
 
 }

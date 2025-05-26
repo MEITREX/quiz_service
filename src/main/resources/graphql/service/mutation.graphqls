@@ -133,7 +133,79 @@ type QuizMutation {
     Will only be considered if questionPoolingMode is RANDOM.
     """
     setNumberOfRandomlySelectedQuestions(numberOfRandomlySelectedQuestions: Int! @Positive): Quiz!
+
+    """
+    Generate a question using AI. It will append to the end of the quiz questions. If will return the quiz to which the question will be added
+    """
+    aiGenerateQuestionAsync(context: AiGenQuestionContext) :  Quiz!
 }
+
+input AiGenQuestionContext{
+
+    """
+    The question is used to fine tune the prompt context
+    """
+    description: String!
+
+    """
+    the media records that are used to give knowledge to the AI about the topic of the question.
+    """
+    mediaRecordIds: [UUID]!
+
+    """
+    The id of the quiz to which the question will be added.
+    """
+    quizId: UUID!
+
+
+    # limits for prompts
+
+    """
+    The maximum number of questions that can be generated.
+    """
+    maxQuestions: Int! @Positive
+
+    """
+    The minimum number of questions that must be generated.
+    """
+    minQuestions: Int! @Positive
+
+    """
+    The maximum number of answers per question if is a multiple choice question.
+    """
+    maxAnswersPerQuestion: Int! @Positive
+
+    """
+    The maximum number of multiple choice questions that can be generated.
+    """
+    maxMultipleChoiceQuestions: Int! @Positive
+
+    """
+    The maximum number of free text questions that can be generated.
+    """
+    maxFreeTextQuestions: Int! @Positive
+
+    """
+    The maximum number of numeric questions that can be generated.
+    """
+    maxNumericQuestions: Int! @Positive
+
+    """
+    The maximum number of exact answer questions that can be generated.
+    """
+    maxExactQuestions: Int! @Positive
+
+    """
+    Whether multiple choice questions with multiple correct answers are allowed.
+    """
+    allowMultipleCorrectAnswers: Boolean! = false
+
+
+
+
+}
+
+
 
 
 input CreateQuizInput {

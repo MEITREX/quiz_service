@@ -52,6 +52,17 @@ public class QuizService {
     }
 
     /**
+     * Returns the quiz with the given id.
+     *
+     * @param quizId the id of the quiz
+     * @return the quiz or an empty optional if the quiz does not exist
+     */
+    public Optional<Quiz> findQuizById(final UUID quizId) {
+        return quizRepository.findById(quizId)
+                .map(quizMapper::entityToDto);
+    }
+
+    /**
      * Creates a new quiz.
      *
      * @param courseId     the id of the course the quiz belongs to
