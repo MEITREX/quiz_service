@@ -98,12 +98,11 @@ public class AiQuizGenerationServiceTest {
         limits.setMaxNumericQuestions(5);
         limits.setMaxExactQuestions(5);
 
-        String topic = "test topic";
         String description = "test description";
         List<String> contentIds = List.of(uuid);
 
 
-        List<QuestionEntity> questions = aiQuizGenerationService.generateQuizQuestions(limits, topic, description, contentIds);
+        List<QuestionEntity> questions = aiQuizGenerationService.generateQuizQuestions(limits, description, contentIds);
         assert questions != null;
         assert questions.size() == 20;
 

@@ -88,13 +88,12 @@ public class AiQuizGenerationService {
      * this methods will generate questions for a quiz and adds them to the quiz entity.
      * @param quizEntity the quiz entity to fill with questions
      * @param limits the limits for the quiz generation
-     * @param topic the topic of the quiz
      * @param description the description of the quiz to fine tune the quiz generation
      * @param mediaRecordIds the media record ids to use as resources for the quiz generation
      * @return
      */
-    public Quiz fillQuizWithQuestions(QuizEntity quizEntity, AiQuizGenLimits limits, String topic, String description, List<String> mediaRecordIds) {
-        final QuizEntity fillQuiz = fillQuiz(quizEntity, limits, topic, description, mediaRecordIds);
+    public Quiz fillQuizWithQuestions(QuizEntity quizEntity, AiQuizGenLimits limits, String description, List<String> mediaRecordIds) {
+        final QuizEntity fillQuiz = fillQuiz(quizEntity, limits, description, mediaRecordIds);
         return quizMapper.entityToDto(fillQuiz);
     }
 
@@ -104,13 +103,12 @@ public class AiQuizGenerationService {
      * usably for internal or chained operations on the quiz entity
      * @param quizEntity
      * @param limits
-     * @param topic
      * @param description
      * @param mediaRecordIds
      * @return
      */
-    protected QuizEntity fillQuiz(QuizEntity quizEntity, AiQuizGenLimits limits, String topic, String description, List<String> mediaRecordIds) {
-        List<QuestionEntity> questions = generateQuizQuestions(limits, topic, description, mediaRecordIds);
+    protected QuizEntity fillQuiz(QuizEntity quizEntity, AiQuizGenLimits limits, String description, List<String> mediaRecordIds) {
+        List<QuestionEntity> questions = generateQuizQuestions(limits, description, mediaRecordIds);
         if (questions.isEmpty()) {
             return quizEntity; // or throw an exception, depending on your error handling strategy
         }
@@ -129,12 +127,11 @@ public class AiQuizGenerationService {
     /**
      * generates quiz questions based on the given limits, topic, description and media record ids. It will not add the questions to a quiz entity.
      * @param limits
-     * @param topic
      * @param description
      * @param mediaRecordIds
      * @return
      */
-    public List<QuestionEntity> generateQuizQuestions(AiQuizGenLimits limits, String topic, String description, List<String> mediaRecordIds){
+    public List<QuestionEntity> generateQuizQuestions(AiQuizGenLimits limits, String description, List<String> mediaRecordIds){
         String prompt = buildPrompt(limits, description, mediaRecordIds);
         OllamaRequest request = new OllamaRequest(model, prompt, false);
         try {

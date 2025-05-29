@@ -13,6 +13,7 @@ import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.service.QuizService;
 
+import de.unistuttgart.iste.meitrex.quiz_service.service.model.AiQuizGenLimits;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.*;
@@ -174,14 +175,34 @@ public class QuizController {
 
     @MutationMapping
     public Mono<Quiz> aiGenerateQuestions(@Argument final AiGenQuestionContext context, @ContextValue final LoggedInUser currentUser) {
-        // TODO fix thread starvation issue
-        Optional<Quiz> q = quizService.findQuizById(context.getQuizId());
-        return q.map(quiz -> Mono.create(sink -> {
-                    // run async task
 
-                }).subscribeOn(Schedulers.boundedElastic())
-                .map(r -> quiz)).orElseGet(Mono::empty);
+        // TODO fix thread starvation issue, migrate repos to reflux repository
 
+        final QuizEntity q = quizService.requireQuizExists(context.getQuizId());
+        validateUserHasAccessToCourse(currentUser, UserRoleInCourse.STUDENT, q.getCourseId());
+        return Optional.of(q).map(
+                    quiz -> Mono
+                            .fromRunnable(() -> backgroundQuestionGeneration(context))
+                            .subscribeOn(Schedulers.boundedElastic())
+                            .mapNotNull(r -> quizService.findQuizById(q.getAssessmentId()).orElse(null))
+        ).orElseGet(Mono::empty);
+
+    }
+
+    // runs the background task to generate and add questions to a quiz
+    protected void backgroundQuestionGeneration(AiGenQuestionContext context){
+        final String description = context.getDescription();
+        final List<String> mediaRecordIds = context.getMediaRecordIds() == null ? List.of() : context.getMediaRecordIds().stream().map(UUID::toString).toList();
+        AiQuizGenLimits limits = new AiQuizGenLimits();
+        limits.setMaxExactQuestions(context.getMaxExactQuestions());
+        limits.setMaxMultipleChoiceQuestions(context.getMaxMultipleChoiceQuestions());
+        limits.setMaxQuestions(context.getMaxQuestions());
+        limits.setMinQuestions(context.getMinQuestions());
+        limits.setMaxFreeTextQuestions(context.getMaxFreeTextQuestions());
+        limits.setMaxNumericQuestions(context.getMaxNumericQuestions());
+        limits.setAllowMultipleCorrectAnswers(context.getAllowMultipleCorrectAnswers());
+        limits.setMaxAnswersPerQuestion(context.getMaxAnswersPerQuestion());
+        aiQuizGenerationService.generateQuizQuestions(limits, description, mediaRecordIds);
     }
 
 }
