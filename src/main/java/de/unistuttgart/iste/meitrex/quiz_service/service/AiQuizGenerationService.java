@@ -109,6 +109,13 @@ public class AiQuizGenerationService {
      */
     protected QuizEntity fillQuiz(QuizEntity quizEntity, AiQuizGenLimits limits, String description, List<String> mediaRecordIds) {
         List<QuestionEntity> questions = generateQuizQuestions(limits, description, mediaRecordIds);
+        // refresh quiz entity to ensure it is up to date
+        QuizEntity qe = quizRepository.findById(quizEntity.getAssessmentId()).orElse(null);
+        if (qe == null) {
+            throw new IllegalArgumentException("Quiz entity not found with id: " + quizEntity.getAssessmentId());
+        }
+        quizEntity = qe;
+
         if (questions.isEmpty()) {
             return quizEntity; // or throw an exception, depending on your error handling strategy
         }

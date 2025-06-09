@@ -1,5 +1,6 @@
 package de.unistuttgart.iste.meitrex.quiz_service.service;
 
+import de.unistuttgart.iste.meitrex.quiz_service.config.OllamaConfig;
 import de.unistuttgart.iste.meitrex.quiz_service.service.model.OllamaRequest;
 import de.unistuttgart.iste.meitrex.quiz_service.service.model.OllamaResponse;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,9 @@ public class OllamaServiceTest {
 
     // mock HttpClient
     private final HttpClient httpClient = Mockito.mock(HttpClient.class);
-    private final OllamaService ollamaService = new OllamaService(httpClient);
+    private final OllamaConfig config = Mockito.mock(OllamaConfig.class);
+
+    private final OllamaService ollamaService = new OllamaService(config, httpClient);
 
     @Test
     public void testOllamaService() throws IOException, InterruptedException {
@@ -27,6 +30,8 @@ public class OllamaServiceTest {
                 "mistral-nemo",
                 testPrompt
         );
+
+        when(config.getUrl()).thenReturn("http://localhost:11434");
 
         // load json from file in resources
         final String jsonPath =  this.getClass().getClassLoader().getResource("ollama_sample.json").getPath();

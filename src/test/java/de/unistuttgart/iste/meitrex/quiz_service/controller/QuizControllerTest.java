@@ -4,13 +4,13 @@ import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.meitrex.common.user_handling.UserCourseAccessValidator;
 import de.unistuttgart.iste.meitrex.generated.dto.AiGenQuestionContext;
 import de.unistuttgart.iste.meitrex.generated.dto.Quiz;
+import de.unistuttgart.iste.meitrex.generated.dto.QuizMutation;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.service.AiQuizGenerationService;
 import de.unistuttgart.iste.meitrex.quiz_service.service.QuizService;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import reactor.core.Disposable;
 
 import java.util.Date;
 import java.util.List;
@@ -55,10 +55,14 @@ public class QuizControllerTest {
         when(loggedInUser.getId()).thenReturn(UUID.randomUUID());
         AiGenQuestionContext context = new AiGenQuestionContext();
         context.setDescription("Test description");
-        context.setQuizId(UUID.randomUUID());
+
+        UUID quizId = UUID.randomUUID();
+
+        QuizMutation qm = new QuizMutation();
+        qm.setAssessmentId(quizId);
+
         quizController
-                .aiGenerateQuestions(context, loggedInUser)
-                .subscribe();
+                .aiGenerateQuestions(context, loggedInUser, qm);
 
         Date endMain = new Date();
 

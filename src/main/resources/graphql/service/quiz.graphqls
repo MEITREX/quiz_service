@@ -139,6 +139,13 @@ type MultipleChoiceAnswer {
     feedback: JSON
 }
 
+type QuizAIGenAsyncResponse {
+    """
+    The quiz that is going to be modified by the AI.
+    """
+    quiz: Quiz
+}
+
 type ClozeQuestion implements Question {
     """
     The elements of the cloze question.

@@ -1,6 +1,11 @@
 package de.unistuttgart.iste.meitrex.quiz_service.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.unistuttgart.iste.meitrex.quiz_service.config.DocProcConfig;
+import de.unistuttgart.iste.meitrex.quiz_service.config.OllamaConfig;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.unistuttgart.iste.meitrex.quiz_service.service.model.OllamaRequest;
@@ -17,23 +22,27 @@ import java.util.Optional;
 
 
 @Service
+@RequiredArgsConstructor
+
 public class OllamaService {
 
     // TODO replace with an application properties entry
-    private final String serverUrl = "http://localhost:11434/";
     private final String endpoint = "api/generate";
+    private final OllamaConfig config;
 
     private final ObjectMapper jsonMapper = new ObjectMapper();
     private final HttpClient client;
 
-
-    public OllamaService() {
-        this(HttpClient.newHttpClient());
+    protected OllamaService(){
+        this.config = new OllamaConfig();
+        this.client = HttpClient.newHttpClient();
     }
 
-    public OllamaService(HttpClient client) {
-        this.client = client;
+    public OllamaService(@Autowired OllamaConfig config) {
+        this(config, HttpClient.newHttpClient());
     }
+
+
 
     /**
      * query the ollama server to query the LLM
@@ -47,7 +56,7 @@ public class OllamaService {
         final String json = jsonMapper.writeValueAsString(request);
 
         HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(serverUrl + endpoint))
+                .uri(URI.create(this.config.getUrl() + "/" + endpoint))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();

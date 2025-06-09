@@ -23,6 +23,8 @@ type Mutation {
     🔒 The user must be enrolled in the course the quiz is in to perform this action.
     """
     logQuizCompleted(input: QuizCompletedInput!): QuizCompletionFeedback!
+
+
 }
 
 type QuizMutation {
@@ -137,7 +139,8 @@ type QuizMutation {
     """
     Generate a question using AI. It will append to the end of the quiz questions. If will return the quiz to which the question will be added
     """
-    aiGenerateQuestionAsync(context: AiGenQuestionContext) :  Quiz!
+    aiGenerateQuestionAsync(context: AiGenQuestionContext) :  QuizAIGenAsyncResponse
+
 }
 
 input AiGenQuestionContext{
@@ -151,11 +154,6 @@ input AiGenQuestionContext{
     the media records that are used to give knowledge to the AI about the topic of the question.
     """
     mediaRecordIds: [UUID]!
-
-    """
-    The id of the quiz to which the question will be added.
-    """
-    quizId: UUID!
 
 
     # limits for prompts

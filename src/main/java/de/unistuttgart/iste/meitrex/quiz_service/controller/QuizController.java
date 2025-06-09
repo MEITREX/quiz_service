@@ -1,6 +1,7 @@
 package de.unistuttgart.iste.meitrex.quiz_service.controller;
 
 
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.service.AiQuizGenerationService;
 import de.unistuttgart.iste.meitrex.quiz_service.service.QuizService;
@@ -10,17 +11,16 @@ import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser.UserRoleInCourse;
 import de.unistuttgart.iste.meitrex.generated.dto.*;
 
-import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
-import de.unistuttgart.iste.meitrex.quiz_service.service.QuizService;
-
 import de.unistuttgart.iste.meitrex.quiz_service.service.model.AiQuizGenLimits;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.graphql.data.method.annotation.*;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -173,26 +173,39 @@ public class QuizController {
         return quizService.publishProgress(input, currentUser.getId());
     }
 
-    @MutationMapping
-    public Mono<Quiz> aiGenerateQuestions(@Argument final AiGenQuestionContext context, @ContextValue final LoggedInUser currentUser) {
-
-        // TODO fix thread starvation issue, migrate repos to reflux repository
-
-        final QuizEntity q = quizService.requireQuizExists(context.getQuizId());
+    @SchemaMapping(value = "aiGenerateQuestionAsync", typeName = QUIZ_MUTATION_NAME)
+    public QuizAIGenAsyncResponse aiGenerateQuestions(@Argument final AiGenQuestionContext context, @ContextValue final LoggedInUser currentUser, final QuizMutation quizMutation) {
+        final QuizEntity q = quizService.requireQuizExists(quizMutation.getAssessmentId());
         validateUserHasAccessToCourse(currentUser, UserRoleInCourse.STUDENT, q.getCourseId());
-        return Optional.of(q).map(
+        Optional.of(q).map(
                     quiz -> Mono
-                            .fromRunnable(() -> backgroundQuestionGeneration(context))
+                            .fromRunnable(() -> backgroundQuestionGeneration(context, quizMutation))
                             .subscribeOn(Schedulers.boundedElastic())
                             .mapNotNull(r -> quizService.findQuizById(q.getAssessmentId()).orElse(null))
-        ).orElseGet(Mono::empty);
-
+        ).orElseGet(Mono::empty)
+                .subscribe();
+        Quiz quiz = quizService.findQuizById(q.getAssessmentId()).orElse(null);
+        QuizAIGenAsyncResponse res = new QuizAIGenAsyncResponse();
+        res.setQuiz(quiz);
+        return res;
     }
 
     // runs the background task to generate and add questions to a quiz
-    protected void backgroundQuestionGeneration(AiGenQuestionContext context){
+    protected void backgroundQuestionGeneration(AiGenQuestionContext context, final QuizMutation quizMutation) {
         final String description = context.getDescription();
         final List<String> mediaRecordIds = context.getMediaRecordIds() == null ? List.of() : context.getMediaRecordIds().stream().map(UUID::toString).toList();
+        AiQuizGenLimits limits = getAiQuizGenLimits(context);
+        final QuizEntity q = quizService.requireQuizExists(quizMutation.getAssessmentId());
+        try {
+            aiQuizGenerationService.fillQuizWithQuestions(q, limits, description, mediaRecordIds);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    @NotNull
+    private static AiQuizGenLimits getAiQuizGenLimits(AiGenQuestionContext context) {
         AiQuizGenLimits limits = new AiQuizGenLimits();
         limits.setMaxExactQuestions(context.getMaxExactQuestions());
         limits.setMaxMultipleChoiceQuestions(context.getMaxMultipleChoiceQuestions());
@@ -202,7 +215,7 @@ public class QuizController {
         limits.setMaxNumericQuestions(context.getMaxNumericQuestions());
         limits.setAllowMultipleCorrectAnswers(context.getAllowMultipleCorrectAnswers());
         limits.setMaxAnswersPerQuestion(context.getMaxAnswersPerQuestion());
-        aiQuizGenerationService.generateQuizQuestions(limits, description, mediaRecordIds);
+        return limits;
     }
 
 }
