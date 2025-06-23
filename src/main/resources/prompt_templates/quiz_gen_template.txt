@@ -30,33 +30,6 @@ The question types have the following type_options:
 The following limitations apply:
 {{limitations}}
 
-
-The output shall be json formatted with 
-{
-    "quiz": {
-        "title": "Quiz Title",
-        "questions": [
-            {
-                "question": "question text",
-                "type": "multiple_choice",
-                "type_options": {
-                    "options": [
-                        {
-                            "text": "option 1",
-                            "is_correct": true
-                        },
-                        {
-                            "text": "option 2",
-                            "is_correct": false
-                        },
-                    ]
-                },
-            },
-            ...
-        ]
-    }
-}
-
 Please give your answer in JSON without any introduction: {
 
 

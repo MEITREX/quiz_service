@@ -31,6 +31,20 @@ public class AiQuizGenLimits {
     @Getter
     private int maxNumericQuestions = 5;
 
+    @Setter
+    @Getter
+    private int minMultipleChoiceQuestions = 5;
+    @Setter
+    @Getter
+    private int minFreeTextQuestions = 5;
+    @Setter
+    @Getter
+    private int minExactQuestions = 5;
+    @Setter
+    @Getter
+    private int minNumericQuestions = 5;
+
+
     public AiQuizGenLimits() {
     }
 

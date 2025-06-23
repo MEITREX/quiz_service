@@ -5,12 +5,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unistuttgart.iste.meitrex.generated.dto.Quiz;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.mapper.AiQuestionMapper;
@@ -47,6 +46,8 @@ public class AiQuizGenerationService {
     private final AiQuestionMapper questionMapper;
 
     private final QuizRepository quizRepository;
+    
+    private final ObjectMapper jsonMapper = new ObjectMapper();
 
     private String getTemplatePath() {
         return this.getClass().getResource("/prompt_templates/quiz_gen_template.txt").getPath();
@@ -130,6 +131,21 @@ public class AiQuizGenerationService {
         return quizRepository.save(quizEntity);
     }
 
+
+    private Map<String, Object> buildJsonSchema(AiQuizGenLimits limits){
+        JsonSchema jsonSchema = new JsonSchema();
+        JsonSchema.SchemaArgs schemaArgs = new JsonSchema.SchemaArgs();
+        schemaArgs.setMinExactAnswerQuestions(Optional.of(limits.getMinExactQuestions()));
+        schemaArgs.setMaxExactAnswerQuestions(Optional.of(limits.getMaxExactQuestions()));
+        schemaArgs.setMinFreeTextQuestions(Optional.of(limits.getMinFreeTextQuestions()));
+        schemaArgs.setMaxFreeTextQuestions(Optional.of(limits.getMaxFreeTextQuestions()));
+        schemaArgs.setMinMultipleChoicesQuestions(Optional.of(limits.getMinMultipleChoiceQuestions()));
+        schemaArgs.setMaxMultipleChoicesQuestions(Optional.of(limits.getMaxMultipleChoiceQuestions()));
+        schemaArgs.setMinNumericQuestions(Optional.of(limits.getMinNumericQuestions()));
+        schemaArgs.setMaxNumericQuestions(Optional.of(limits.getMaxNumericQuestions()));
+        JsonNode json = jsonSchema.buildSchema(schemaArgs);
+        return jsonMapper.convertValue(json, Map.class);
+    }
 
     /**
      * generates quiz questions based on the given limits, topic, description and media record ids. It will not add the questions to a quiz entity.

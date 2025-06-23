@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -17,51 +18,74 @@ import java.util.stream.Stream;
 public class AiQuestionMapper {
 
 
-    public List<QuestionEntity> map(PromptJson.Question[] questions) {
-        return Stream.of(questions)
-                .map(this::mapQuestion)
-                .filter(Objects::nonNull)
-                .toList();
+    public List<QuestionEntity> map(PromptJson.Questions questions) {
+
+        List<QuestionEntity> res = new LinkedList<>();
+        if (questions == null) {
+            return res;
+        }
+
+        if (questions.getNumericQuestions() != null) {
+            questions.getNumericQuestions().forEach(numeric -> {
+                QuestionEntity question = mapNumericQuestion(numeric);
+                    res.add(question);
+            });
+        }
+
+        if (questions.getFreeTextQuestions() != null) {
+            questions.getFreeTextQuestions().forEach(freeText -> {
+                QuestionEntity question = mapFreeText(freeText);
+                res.add(question);
+            });
+        }
+
+        if (questions.getMultipleChoiceQuestions() != null) {
+            questions.getMultipleChoiceQuestions().forEach(multipleChoice -> {
+                QuestionEntity question = mapMultipleChoice(multipleChoice);
+                res.add(question);
+            });
+        }
+
+        if (questions.getExactAnswerQuestions() != null) {
+            questions.getExactAnswerQuestions().forEach(exactAnswer -> {
+                QuestionEntity question = mapExactAnswer(exactAnswer);
+                res.add(question);
+            });
+        }
+
+        return res;
     }
 
-    private QuestionEntity mapQuestion(PromptJson.Question question) {
-        if(question.isNumeric()){
-            return question.getAsNumeric().map(numeric -> mapNumericQuestion(question, numeric)).orElse(null);
-        }
-        if(question.isFreeText()){
-            return question.getAsFreeText().map(freeText -> mapFreeText(question, freeText)).orElse(null);
-        }
-        if(question.isMultipleChoice()){
-            return question.getAsMultipleChoice().map(multipleChoice -> mapMultipleChoice(question, multipleChoice)).orElse(null);
-        }
-        if(question.isExactAnswer()){
-            return question.getAsExactAnswer().map(exactAnswer -> mapExactAnswer(question, exactAnswer)).orElse(null);
-        }
-        return null;
-    }
 
-    private QuestionEntity mapNumericQuestion(PromptJson.Question question, PromptJson.Numeric numeric) {
+    private QuestionEntity mapNumericQuestion(PromptJson.Numeric numeric) {
         NumericQuestionEntity eq = new NumericQuestionEntity();
-        eq.setText(question.getQuestion());
+        eq.setText(numeric.getQuestion());
         eq.setType(QuestionType.NUMERIC);
         eq.setTolerance(numeric.getMaxDifference());
         eq.setCorrectAnswer(numeric.getAnswer());
         return eq;
     }
 
-    private QuestionEntity mapFreeText(PromptJson.Question question, PromptJson.FreeText freeText) {
+    private QuestionEntity mapFreeText(PromptJson.FreeText freeText) {
         ExactAnswerQuestionEntity eq = new ExactAnswerQuestionEntity();
-        eq.setText(question.getQuestion());
+        eq.setText(freeText.getQuestion());
         eq.setType(QuestionType.EXACT_ANSWER);
         eq.setCaseSensitive(false);
         eq.setCorrectAnswers(List.of(freeText.getAnswer()));
         return eq;
     }
 
-    private QuestionEntity mapMultipleChoice(PromptJson.Question question, PromptJson.MultipleChoice multipleChoice) {
+    private MultipleChoiceAnswerEmbeddable mapChoiceAnswer(PromptJson.MultipleChoice.Option option) {
+        MultipleChoiceAnswerEmbeddable answer = new MultipleChoiceAnswerEmbeddable();
+        answer.setAnswerText(option.getText());
+        answer.setCorrect(option.isCorrect());
+        return answer;
+    }
+
+    private QuestionEntity mapMultipleChoice(PromptJson.MultipleChoice multipleChoice) {
         MultipleChoiceQuestionEntity multipleChoiceQuestionEntity = new MultipleChoiceQuestionEntity();
-        multipleChoiceQuestionEntity.setText(question.getQuestion());
-        List<MultipleChoiceAnswerEmbeddable> answers = Arrays.stream(multipleChoice.getOptions()).map(this::createMultipleChoiceAnswer).toList();
+        multipleChoiceQuestionEntity.setText(multipleChoice.getQuestion());
+        List<MultipleChoiceAnswerEmbeddable> answers = multipleChoice.getOptions().stream().map(this::mapChoiceAnswer).toList();
         multipleChoiceQuestionEntity.setAnswers(answers);
         multipleChoiceQuestionEntity.setType(QuestionType.MULTIPLE_CHOICE);
         return multipleChoiceQuestionEntity;
@@ -74,9 +98,9 @@ public class AiQuestionMapper {
         return answer;
     }
 
-    private QuestionEntity mapExactAnswer(PromptJson.Question question, PromptJson.ExactAnswer exactAnswer) {
+    private QuestionEntity mapExactAnswer(PromptJson.ExactAnswer exactAnswer) {
         ExactAnswerQuestionEntity eq = new ExactAnswerQuestionEntity();
-        eq.setText(question.getQuestion());
+        eq.setText(exactAnswer.getQuestion());
         eq.setCaseSensitive(exactAnswer.isCaseSensitive());
         eq.setType(QuestionType.EXACT_ANSWER);
         eq.setCorrectAnswers(List.of(exactAnswer.getAnswer()));

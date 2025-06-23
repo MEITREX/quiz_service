@@ -194,9 +194,25 @@ input AiGenQuestionContext{
     maxExactQuestions: Int! = 5 @Positive
 
     """
-    Whether multiple choice questions with multiple correct answers are allowed.
+    The minimum number of multiple choice questions that must be generated.
     """
-    allowMultipleCorrectAnswers: Boolean! = false
+    minMultipleChoiceQuestions: Int! = 1 @Positive
+    """
+    The minimum number of free text questions that must be generated.
+    """
+    minFreeTextQuestions: Int! = 1 @Positive
+    """
+    The minimum number of numeric questions that must be generated.
+    """
+    minNumericQuestions: Int! = 1 @Positive
+    """
+    The minimum number of exact answer questions that must be generated.
+    """
+    minExactQuestions: Int! = 1 @Positive
+
+
+
+
 
 
 

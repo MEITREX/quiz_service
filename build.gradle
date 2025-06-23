@@ -138,6 +138,11 @@ dependencies {
 	testImplementation "org.testcontainers:junit-jupiter:1.+"
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 
+	implementation 'com.github.victools:jsonschema-generator:4.38.0'
+	implementation 'com.github.victools:jsonschema-module-jackson:4.38.0'
+	implementation 'com.github.victools:jsonschema-module-jakarta-validation:4.38.0'
+
+
 }
 
 tasks.named('test') {

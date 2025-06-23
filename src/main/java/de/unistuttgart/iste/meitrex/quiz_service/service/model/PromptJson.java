@@ -1,72 +1,20 @@
 package de.unistuttgart.iste.meitrex.quiz_service.service.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.List;
 
-/**
- *
- * Example JSON:
- *
- * {
- *     "quiz": {
- *         "title": "Quiz Title",
- *         "questions": [
- *             {
- *                 "question": "question text",
- *                 "type": "multiple_choice",
- *                 "type_options": {
- *                     "options": [
- *                         {
- *                             "text": "option 1",
- *                             "is_correct": true
- *                         },
- *                         {
- *                             "text": "option 2",
- *                             "is_correct": false
- *                         },
- *                     ]
- *                 },
- *             },
- *             {
- *                 "question": "question text",
- *                 "type": "multiple_choice",
- *                 "type_options": {
- *                     "options":
- *                     {
- *                         answer: ""
- *                     }
- *                 },
- *             },
- *             {
- *  *                 "question": "question text",
- *  *                 "type": "numeric",
- *  *                 "type_options": {
- *  *                     "options":
- *  *                     {
- *  *                         answer: 0.0,
- *  *                         maxDifference: 10.0
- *  *                     }
- *  *                 },
- *  *             },
- *  *             {
- *  *                 "question": "question text",
- *  *                 "type": "exact_answer",
- *  *                 "type_options": {
- *         ]
- *     }
- * }
- */
+
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // required for deserialization
 public class PromptJson {
 
     @Getter
     @Setter
+    @NotNull
     private Quiz quiz;
 
     @NoArgsConstructor(access = AccessLevel.PROTECTED) // required for deserialization
@@ -74,155 +22,45 @@ public class PromptJson {
 
         @Getter
         @Setter
+        @NotNull
         private String title;
 
         @Getter
         @Setter
-        private Question[] questions;
+        @NotNull
+        private Questions questions;
 
-        public Quiz(String title, Question[] questions) {
+        public Quiz(String title, Questions questions) {
             this.title = title;
             this.questions = questions;
         }
 
     }
 
-    @NoArgsConstructor(access = AccessLevel.PROTECTED) // required for deserialization
-    public static class Question {
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @Setter
+    @Getter
+    public static class Questions{
 
-        @Setter
-        @Getter
-        private String question;
+        @JsonProperty(value = "multiple_choice", required = true)
+        @NotNull
+        private List<MultipleChoice> multipleChoiceQuestions;
 
-        @Setter
-        @Getter
-        private String type;
+        @JsonProperty(value = "free_text", required = true)
+        @NotNull
+        private List<FreeText> freeTextQuestions;
 
+        @JsonProperty(value = "numeric", required = true)
+        @NotNull
+        private List<Numeric> numericQuestions;
 
-        @JsonProperty("type_options")
-        @Getter
-        private Map<String, Object> typeOptions;
+        @JsonProperty(value = "exact_answer", required = true)
+        @NotNull
+        private List<ExactAnswer> exactAnswerQuestions;
 
-
-        @Getter
-        @JsonIgnore
-        private String typeOptionsJson;
-
-        @JsonIgnore
-        private ObjectMapper objectMapper = new ObjectMapper();
-
-        public Question(String question, String type, Map<String, Object> typeOptions) {
-            this.question = question;
-            this.type = type;
-            this.typeOptions = typeOptions;
-            this.setTypeOptions(typeOptions);
-        }
-
-        public void setTypeOptions(Map<String, Object> typeOptions) {
-            this.typeOptions = typeOptions;
-            try {
-                this.typeOptionsJson = objectMapper.writeValueAsString(typeOptions);
-            } catch (Exception e) {
-                this.typeOptionsJson = "{}";
-            }
-        }
-
-
-        /**
-         * @return true if the type is free_text, false otherwise
-         */
-        @JsonIgnore
-        public boolean isFreeText(){
-            return type.equals("free_text");
-        }
-
-        /**
-         * @return true if the type is multiple_choice, false otherwise
-         */
-        @JsonIgnore
-        public boolean isMultipleChoice(){
-            return type.equals("multiple_choice");
-        }
-
-        /**
-         * @return true if the type is numeric, false otherwise
-         */
-        @JsonIgnore
-        public boolean isNumeric(){
-            return type.equals("numeric");
-        }
-
-        /**
-         * @return true if the type is exact_answer, false otherwise
-         */
-        @JsonIgnore
-        public boolean isExactAnswer(){
-            return type.equals("exact_answer");
-        }
-
-        /**
-         * @return the typeOptions as FreeText if the type is free_text, otherwise an empty Optional
-         */
-        @JsonIgnore
-        public Optional<FreeText> getAsFreeText(){
-            if(isFreeText()){
-                try {
-                    FreeText freeText = objectMapper.readValue(typeOptionsJson, FreeText.class);
-                    return Optional.of(freeText);
-                } catch (Exception e) {
-                    return Optional.empty();
-                }
-            } else {
-                return Optional.empty();
-            }
-        }
-
-        /**
-         * @return the typeOptions as MultipleChoice if the type is multiple_choice, otherwise an empty Optional
-         */
-        @JsonIgnore
-        public Optional<MultipleChoice> getAsMultipleChoice(){
-            if(isMultipleChoice()){
-                try {
-                    MultipleChoice multipleChoice = objectMapper.readValue(typeOptionsJson, MultipleChoice.class);
-                    return Optional.of(multipleChoice);
-                } catch (Exception e) {
-                    return Optional.empty();
-                }
-            } else {
-                return Optional.empty();
-            }
-        }
-
-        /**
-         * @return the typeOptions as Numeric if the type is numeric, otherwise an empty Optional
-         */
-        public Optional<Numeric> getAsNumeric(){
-            if(isNumeric()){
-                try {
-                    Numeric numeric = objectMapper.readValue(typeOptionsJson, Numeric.class);
-                    return Optional.of(numeric);
-                } catch (Exception e) {
-                    return Optional.empty();
-                }
-            } else {
-                return Optional.empty();
-            }
-        }
-
-        public Optional<ExactAnswer> getAsExactAnswer(){
-            if(isExactAnswer()){
-                try {
-                    ExactAnswer exactAnswer = objectMapper.readValue(typeOptionsJson, ExactAnswer.class);
-                    return Optional.of(exactAnswer);
-                } catch (Exception e) {
-                    return Optional.empty();
-                }
-            } else {
-                return Optional.empty();
-            }
-        }
     }
+
+
 
 
     /**
@@ -230,10 +68,16 @@ public class PromptJson {
      */
     @NoArgsConstructor
     @AllArgsConstructor
+    @Getter
+    @Setter
     public static class FreeText{
-        @Getter
-        @Setter
+
+        @NotNull
+        private String question;
+
+        @NotNull
         private String answer;
+
 
 
     }
@@ -243,15 +87,21 @@ public class PromptJson {
      */
     @NoArgsConstructor(access = AccessLevel.PROTECTED) // required for deserialization
     @AllArgsConstructor
+    @Getter
+    @Setter
     public static class Numeric{
 
-        @Getter
-        @Setter
+        @NotNull
+        private String question;
+
+        @NotNull
         private double answer;
-        @Getter
-        @Setter
-        @JsonProperty("max_difference")
+
+        @JsonProperty(value = "max_difference", required = true)
+        @NotNull
         private double maxDifference;
+
+
 
     }
 
@@ -259,16 +109,16 @@ public class PromptJson {
      * the options of the multiple choice question wrapped in a class
      */
     @NoArgsConstructor(access = AccessLevel.PROTECTED) // required for deserialization
+    @Getter
+    @Setter
     public static class MultipleChoice{
 
-        @Getter
-        @Setter
-        private Option[] options;
+        @NotNull
+        private String question;
 
-        public MultipleChoice(Option[] options) {
-            this.options = options;
-        }
-
+        @Size(min = 4, max = 4, message = "There must be exactly 4 options for a multiple choice question")
+        @NotNull
+        private List<Option> options;
 
 
         /**
@@ -276,15 +126,15 @@ public class PromptJson {
          */
         @NoArgsConstructor(access = AccessLevel.PROTECTED) // required for deserialization
         @AllArgsConstructor
+        @Getter
+        @Setter
         public static class Option{
 
-            @Getter
-            @Setter
+            @NotNull
             private String text;
 
-            @Getter
-            @Setter
-            @JsonProperty("is_correct")
+            @JsonProperty(value = "is_correct", required = true)
+            @NotNull
             private boolean isCorrect;
 
         }
@@ -293,14 +143,19 @@ public class PromptJson {
 
     @NoArgsConstructor(access = AccessLevel.PROTECTED) // required for deserialization
     @AllArgsConstructor
+    @Getter
+    @Setter
     public static class ExactAnswer {
-        @Getter
-        @Setter
+
+        @NotNull
+        private String question;
+
+        @NotNull
         private String answer;
 
-        @Getter
-        @Setter
-        @JsonProperty("case_sensitive")
+
+        @JsonProperty(value = "case_sensitive", required = true)
+        @NotNull
         private boolean caseSensitive = false;
 
     }

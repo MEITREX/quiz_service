@@ -213,8 +213,11 @@ public class QuizController {
         limits.setMinQuestions(context.getMinQuestions());
         limits.setMaxFreeTextQuestions(context.getMaxFreeTextQuestions());
         limits.setMaxNumericQuestions(context.getMaxNumericQuestions());
-        limits.setAllowMultipleCorrectAnswers(context.getAllowMultipleCorrectAnswers());
         limits.setMaxAnswersPerQuestion(context.getMaxAnswersPerQuestion());
+        limits.setMinExactQuestions(context.getMinExactQuestions());
+        limits.setMinMultipleChoiceQuestions(context.getMinMultipleChoiceQuestions());
+        limits.setMinFreeTextQuestions(context.getMinFreeTextQuestions());
+        limits.setMinNumericQuestions(context.getMinNumericQuestions());
         return limits;
     }
 
