@@ -209,8 +209,6 @@ public class QuizController {
         AiQuizGenLimits limits = new AiQuizGenLimits();
         limits.setMaxExactQuestions(context.getMaxExactQuestions());
         limits.setMaxMultipleChoiceQuestions(context.getMaxMultipleChoiceQuestions());
-        limits.setMaxQuestions(context.getMaxQuestions());
-        limits.setMinQuestions(context.getMinQuestions());
         limits.setMaxFreeTextQuestions(context.getMaxFreeTextQuestions());
         limits.setMaxNumericQuestions(context.getMaxNumericQuestions());
         limits.setMaxAnswersPerQuestion(context.getMaxAnswersPerQuestion());

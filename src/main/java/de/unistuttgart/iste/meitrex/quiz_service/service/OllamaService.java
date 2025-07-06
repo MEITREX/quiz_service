@@ -23,7 +23,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-
 public class OllamaService {
 
     // TODO replace with an application properties entry
@@ -32,15 +31,6 @@ public class OllamaService {
 
     private final ObjectMapper jsonMapper = new ObjectMapper();
     private final HttpClient client;
-
-    protected OllamaService(){
-        this.config = new OllamaConfig();
-        this.client = HttpClient.newHttpClient();
-    }
-
-    public OllamaService(@Autowired OllamaConfig config) {
-        this(config, HttpClient.newHttpClient());
-    }
 
 
 

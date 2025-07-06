@@ -2,6 +2,7 @@ package de.unistuttgart.iste.meitrex.quiz_service.service;
 
 import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
 import de.unistuttgart.iste.meitrex.generated.dto.Quiz;
+import de.unistuttgart.iste.meitrex.quiz_service.config.QuizGenConfig;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.mapper.AiQuestionMapper;
@@ -39,13 +40,17 @@ public class AiQuizGenerationServiceTest {
     private final DocProcAiService docProcAiService = Mockito.mock(DocProcAiService.class);
     private final AiQuestionMapper aiQuestionMapper = new AiQuestionMapper();
     private final QuizRepository quizRepository = Mockito.mock(QuizRepository.class);
+    private final QuizGenConfig quizGenConfig = Mockito.mock(QuizGenConfig.class);
 
-    private final AiQuizGenerationService aiQuizGenerationService = new AiQuizGenerationService(ollamaService,docProcAiService, quizMapper, aiQuestionMapper, quizRepository);
+
+
+    private final AiQuizGenerationService aiQuizGenerationService = new AiQuizGenerationService(ollamaService,docProcAiService, quizMapper, aiQuestionMapper, quizRepository, quizGenConfig);
 
 
     @Test
     void generateQuizQuestions() throws IOException, InterruptedException {
         final String uuid = "f18cc437-b696-404d-a5eb-445bc0fc0cff";
+        when(quizGenConfig.getModel()).then(invocation -> "mistral-nemo");
         when(docProcAiService.getSummaryByDocId(UUID.fromString(uuid))).thenReturn(Mono.just("test summary generated in unit test 1111 \ntest summary generated in unit test 2222"));
         when(ollamaService.parseResponse(any(),any())).thenAnswer(re -> {
             OllamaResponse ollamaResponse = re.getArgument(0, OllamaResponse.class);
@@ -122,6 +127,8 @@ public class AiQuizGenerationServiceTest {
         final String jsonPath =  this.getClass().getClassLoader().getResource("test_example_output.json").getPath();
         final String json = new String(Files.readAllBytes(java.nio.file.Paths.get(jsonPath)));
 
+
+        when(quizGenConfig.getModel()).then(invocation -> "mistral-nemo");
         final OllamaResponse res = mock(OllamaResponse.class);
         when(res.getResponse()).thenReturn(json);
         when(ollamaService.parseResponse(any(),any())).thenAnswer(re -> {

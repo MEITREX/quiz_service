@@ -156,18 +156,6 @@ input AiGenQuestionContext{
     mediaRecordIds: [UUID]!
 
 
-    # limits for prompts
-
-    """
-    The maximum number of questions that can be generated.
-    """
-    maxQuestions: Int! = 5 @Positive
-
-    """
-    The minimum number of questions that must be generated.
-    """
-    minQuestions: Int! = 5 @Positive
-
     """
     The maximum number of answers per question if is a multiple choice question.
     """
