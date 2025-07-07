@@ -74,16 +74,6 @@ public class AiQuizGenerationServiceTest {
             assert prompt.contains("test summary generated in unit test 2222");
             assert prompt.contains("test description");
 
-
-            assert prompt.contains("the maximum number of questions is: 20");
-            assert prompt.contains("the minimum number of questions is: 20");
-            assert prompt.contains("the maximum number of answers per question is: 4");
-            assert prompt.contains("the maximum number of multiple choice questions is: 5");
-            assert prompt.contains("the maximum number of free text questions is: 5");
-            assert prompt.contains("the maximum number of numeric questions is: 5");
-            assert prompt.contains("the maximum number of exact answer questions is: 5");
-            assert prompt.contains("are multiple choice questions with multiple correct answers allowed: true");
-
             // load json from file in resources
             final String jsonPath =  this.getClass().getClassLoader().getResource("test_example_output.json").getPath();
             final String json = new String(Files.readAllBytes(java.nio.file.Paths.get(jsonPath)));
@@ -95,13 +85,10 @@ public class AiQuizGenerationServiceTest {
 
         AiQuizGenLimits limits = new AiQuizGenLimits();
         limits.setAllowMultipleCorrectAnswers(true);
-        limits.setMaxQuestions(20);
-        limits.setMinQuestions(20);
-        limits.setMaxAnswersPerQuestion(4);
-        limits.setMaxMultipleChoiceQuestions(5);
-        limits.setMaxFreeTextQuestions(5);
-        limits.setMaxNumericQuestions(5);
-        limits.setMaxExactQuestions(5);
+        limits.setMaxMultipleChoiceQuestions(4);
+        limits.setMaxFreeTextQuestions(4);
+        limits.setMaxNumericQuestions(4);
+        limits.setMaxExactQuestions(4);
 
         String description = "test description";
         List<String> contentIds = List.of(uuid);
@@ -109,7 +96,7 @@ public class AiQuizGenerationServiceTest {
 
         List<QuestionEntity> questions = aiQuizGenerationService.generateQuizQuestions(limits, description, contentIds);
         assert questions != null;
-        assert questions.size() == 20;
+        assert questions.size() == 12;
 
     }
 
@@ -148,6 +135,6 @@ public class AiQuizGenerationServiceTest {
         // start test here
         Optional<List<QuestionEntity>> questions =  aiQuizGenerationService.generateQuestionsFromAiResponse(res);
         assert questions.isPresent();
-        assert questions.get().size() == 20;
+        assert questions.get().size() == 12;
     }
 }

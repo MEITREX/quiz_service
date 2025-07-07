@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.Mockito.*;
@@ -31,10 +32,10 @@ public class QuizControllerTest {
         long delay = 5000L;
         Date now = new Date();
 
-        when(aiQuizGenerationService.generateQuizQuestions(any(),any(), any())).thenAnswer(r -> {
+        when(aiQuizGenerationService.fillQuizWithQuestions(any(),any(),any(), any())).thenAnswer(r -> {
             // Create a long running task
             Thread.sleep(delay);
-            return List.of();
+            return Mockito.mock(Quiz.class);
         });
         userCourseAccessValidator.when(() -> UserCourseAccessValidator.validateUserHasAccessToCourse(any(), any(),any())).then(r -> r);
 
@@ -48,7 +49,7 @@ public class QuizControllerTest {
         when(quizService.findQuizById(any(UUID.class))).thenAnswer(r -> {
             Quiz qe = new Quiz();
             qe.setAssessmentId(r.getArgument(0,UUID.class));
-            return qe;
+            return Optional.of(qe);
         });
 
         LoggedInUser loggedInUser = Mockito.mock(LoggedInUser.class);
@@ -73,7 +74,7 @@ public class QuizControllerTest {
         // assert generateQuizQuestions called after delay of 200ms
         Thread.sleep(200);
         verify(aiQuizGenerationService, times(1))
-                .generateQuizQuestions(any(), any(), any());
+                .fillQuizWithQuestions(any(), any(), any(), any());
 
 
 

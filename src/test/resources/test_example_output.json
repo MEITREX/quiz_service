@@ -1,169 +1,120 @@
 {
-"quiz": {
-"title": "General Knowledge Quiz about Computers and Technology",
-"questions": [
-{
-"question": "What was the first electronic general-purpose computer?",
-"type": "exact_answer",
-"type_options": {
-"answer": "ENIAC",
-"case_sensitive": false
+  "quiz": {
+    "title": "Sample Quiz",
+    "questions": {
+  "exact_answer": [
+    {
+      "answer": "ENIAC",
+      "case_sensitive": false,
+      "question": "What was the name of the first electronic general-purpose computer?"
+    },
+    {
+      "answer": "Douglas Engelbart",
+      "case_sensitive": false,
+      "question": "Who invented the first computer mouse made of wood in the 1960s?"
+    },
+    {
+      "answer": "Alan Turing",
+      "case_sensitive": false,
+      "question": "Who proposed the theoretical model of computation known as the Turing machine?"
+    }
+  ],
+  "free_text": [
+    {
+      "answer": "A human who performed numerical calculations",
+      "question": "What was the original meaning of the term 'computer'?"
+    },
+    {
+      "answer": "Binary code consisting of 0s and 1s",
+      "question": "In what format do computers operate?"
+    },
+    {
+      "answer": "UNIVAC I",
+      "question": "What was the first commercially available computer?"
+    }
+  ],
+  "multiple_choice": [
+    {
+      "options": [
+        {
+          "is_correct": true,
+          "text": "The CPU"
+        },
+        {
+          "is_correct": false,
+          "text": "RAM"
+        },
+        {
+          "is_correct": false,
+          "text": "SSD"
+        },
+        {
+          "is_correct": false,
+          "text": "BIOS"
+        }
+      ],
+      "question": "Which of the following is considered the brain of the computer?"
+    },
+    {
+      "options": [
+        {
+          "is_correct": true,
+          "text": "Every two years"
+        },
+        {
+          "is_correct": false,
+          "text": "Every four years"
+        },
+        {
+          "is_correct": false,
+          "text": "Every five years"
+        },
+        {
+          "is_correct": false,
+          "text": "Never"
+        }
+      ],
+      "question": "According to Moore’s Law, how often does the number of transistors on a chip double?"
+    },
+    {
+      "options": [
+        {
+          "is_correct": true,
+          "text": "Volatile memory that temporarily stores data while the computer is on"
+        },
+        {
+          "is_correct": false,
+          "text": "Permanent memory used for long-term storage"
+        },
+        {
+          "is_correct": false,
+          "text": "Memory used only for running operating systems"
+        },
+        {
+          "is_correct": false,
+          "text": "Memory that can be accessed only in sequential order"
+        }
+      ],
+      "question": "What is RAM?"
+    }
+  ],
+  "numeric": [
+    {
+      "answer": 8,
+      "max_difference": 0,
+      "question": "How many bits make up a byte?"
+    },
+    {
+      "answer": 1954,
+      "max_difference": 2,
+      "question": "In which year was the first computer mouse invented by Douglas Engelbart?"
+    },
+    {
+      "answer": 0.68,
+      "max_difference": 0.02,
+      "question": "What percentage of the world's population had internet access in January 2021 according to Internet World Stats?"
+    }
+  ]
 }
-},
-{
-"question": "What does CPU stand for?",
-"type": "exact_answer",
-"type_options": {
-"answer": "Central Processing Unit",
-"case_sensitive": false
-}
-},
-{
-"question": "How many bits are in a byte?",
-"type": "numeric",
-"type_options": {
-"answer": 8,
-"max_difference": 0
-}
-},
-{
-"question": "What does RAM stand for?",
-"type": "exact_answer",
-"type_options": {
-"answer": "Random Access Memory",
-"case_sensitive": false
-}
-},
-{
-"question": "Who invented the first computer mouse?",
-"type": "exact_answer",
-"type_options": {
-"answer": "Douglas Engelbart",
-"case_sensitive": false
-}
-},
-{
-"question": "What is the base of the binary code used by computers?",
-"type": "numeric",
-"type_options": {
-"answer": 2,
-"max_difference": 0
-}
-},
-{
-"question": "What does Moore’s Law state?",
-"type": "free_text",
-"type_options": {
-"answer": "The number of transistors on a chip doubles about every two years."
-}
-},
-{
-"question": "What does OS stand for in computing?",
-"type": "exact_answer",
-"type_options": {
-"answer": "Operating System",
-"case_sensitive": false
-}
-},
-{
-"question": "What was the first commercially available computer?",
-"type": "exact_answer",
-"type_options": {
-"answer": "UNIVAC I",
-"case_sensitive": false
-}
-},
-{
-"question": "Which is faster, SSD or HDD?",
-"type": "multiple_choice",
-"type_options": {
-"options": [
-{
-"text": "SSD",
-"is_correct": true
-},
-{
-"text": "HDD",
-"is_correct": false
-}
-]
-}
-},
-{
-"question": "What was the original name of the Internet?",
-"type": "exact_answer",
-"type_options": {
-"answer": "ARPANET",
-"case_sensitive": false
-}
-},
-{
-"question": "What is a computer virus?",
-"type": "free_text",
-"type_options": {
-"answer": "A type of malicious software designed to spread and cause damage."
-}
-},
-{
-"question": "What do quantum computers use instead of bits?",
-"type": "exact_answer",
-"type_options": {
-"answer": "Qubits",
-"case_sensitive": false
-}
-},
-{
-"question": "Who proposed the Turing machine?",
-"type": "exact_answer",
-"type_options": {
-"answer": "Alan Turing",
-"case_sensitive": false
-}
-},
-{
-"question": "What does GPU stand for?",
-"type": "exact_answer",
-"type_options": {
-"answer": "Graphics Processing Unit",
-"case_sensitive": false
-}
-},
-{
-"question": "Name two input devices used with computers.",
-"type": "free_text",
-"type_options": {
-"answer": "Keyboard and mouse"
-}
-},
-{
-"question": "What is Linux?",
-"type": "free_text",
-"type_options": {
-"answer": "An open-source operating system widely used for servers and embedded systems."
-}
-},
-{
-"question": "What does ASCII stand for?",
-"type": "exact_answer",
-"type_options": {
-"answer": "American Standard Code for Information Interchange",
-"case_sensitive": false
-}
-},
-{
-"question": "What is the cloud in computing?",
-"type": "free_text",
-"type_options": {
-"answer": "Remote servers accessed over the Internet to store and process data."
-}
-},
-{
-"question": "What are firewalls used for?",
-"type": "free_text",
-"type_options": {
-"answer": "To monitor and control incoming and outgoing network traffic."
-}
-}
-]
-}
+  }
 }
