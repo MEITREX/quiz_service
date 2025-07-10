@@ -1,7 +1,9 @@
 package de.unistuttgart.iste.meitrex.quiz_service.controller;
 
 
+import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
+import de.unistuttgart.iste.meitrex.quiz_service.service.AiQuizGenerationService;
 import de.unistuttgart.iste.meitrex.quiz_service.service.QuizService;
 
 import de.unistuttgart.iste.meitrex.common.exception.NoAccessToCourseException;
@@ -9,15 +11,18 @@ import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser.UserRoleInCourse;
 import de.unistuttgart.iste.meitrex.generated.dto.*;
 
-import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
-import de.unistuttgart.iste.meitrex.quiz_service.service.QuizService;
-
+import de.unistuttgart.iste.meitrex.quiz_service.service.model.AiQuizGenLimits;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.graphql.data.method.annotation.*;
 import org.springframework.stereotype.Controller;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static de.unistuttgart.iste.meitrex.common.user_handling.UserCourseAccessValidator.validateUserHasAccessToCourse;
@@ -30,6 +35,7 @@ public class QuizController {
     private static final String QUIZ_MUTATION_NAME = "QuizMutation";
 
     private final QuizService quizService;
+    private final AiQuizGenerationService aiQuizGenerationService;
 
     @QueryMapping
     public List<Quiz> findQuizzesByAssessmentIds(@Argument final List<UUID> assessmentIds,
@@ -165,6 +171,52 @@ public class QuizController {
         validateUserHasAccessToCourse(currentUser, UserRoleInCourse.STUDENT, quiz.getCourseId());
 
         return quizService.publishProgress(input, currentUser.getId());
+    }
+
+    @SchemaMapping(value = "aiGenerateQuestionAsync", typeName = QUIZ_MUTATION_NAME)
+    public QuizAIGenAsyncResponse aiGenerateQuestions(@Argument final AiGenQuestionContext context, @ContextValue final LoggedInUser currentUser, final QuizMutation quizMutation) {
+        final QuizEntity q = quizService.requireQuizExists(quizMutation.getAssessmentId());
+        validateUserHasAccessToCourse(currentUser, UserRoleInCourse.STUDENT, q.getCourseId());
+        Optional.of(q).map(
+                    quiz -> Mono
+                            .fromRunnable(() -> backgroundQuestionGeneration(context, quizMutation))
+                            .subscribeOn(Schedulers.boundedElastic())
+                            .mapNotNull(r -> quizService.findQuizById(q.getAssessmentId()).orElse(null))
+        ).orElseGet(Mono::empty)
+                .subscribe();
+        Quiz quiz = quizService.findQuizById(q.getAssessmentId()).orElse(null);
+        QuizAIGenAsyncResponse res = new QuizAIGenAsyncResponse();
+        res.setQuiz(quiz);
+        return res;
+    }
+
+    // runs the background task to generate and add questions to a quiz
+    protected void backgroundQuestionGeneration(AiGenQuestionContext context, final QuizMutation quizMutation) {
+        final String description = context.getDescription();
+        final List<String> mediaRecordIds = context.getMediaRecordIds() == null ? List.of() : context.getMediaRecordIds().stream().map(UUID::toString).toList();
+        AiQuizGenLimits limits = getAiQuizGenLimits(context);
+        final QuizEntity q = quizService.requireQuizExists(quizMutation.getAssessmentId());
+        try {
+            aiQuizGenerationService.fillQuizWithQuestions(q, limits, description, mediaRecordIds);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    @NotNull
+    private static AiQuizGenLimits getAiQuizGenLimits(AiGenQuestionContext context) {
+        AiQuizGenLimits limits = new AiQuizGenLimits();
+        limits.setMaxExactQuestions(context.getMaxExactQuestions());
+        limits.setMaxMultipleChoiceQuestions(context.getMaxMultipleChoiceQuestions());
+        limits.setMaxFreeTextQuestions(context.getMaxFreeTextQuestions());
+        limits.setMaxNumericQuestions(context.getMaxNumericQuestions());
+        limits.setMaxAnswersPerQuestion(context.getMaxAnswersPerQuestion());
+        limits.setMinExactQuestions(context.getMinExactQuestions());
+        limits.setMinMultipleChoiceQuestions(context.getMinMultipleChoiceQuestions());
+        limits.setMinFreeTextQuestions(context.getMinFreeTextQuestions());
+        limits.setMinNumericQuestions(context.getMinNumericQuestions());
+        return limits;
     }
 
 }

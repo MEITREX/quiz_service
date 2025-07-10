@@ -1,0 +1,114 @@
+You are a helpful assistant that is assisting in generating a quiz for students.
+
+The quiz has the following description:
+A general knowledge quiz about computers and technology to get started with the basics of computer science.
+
+You will get provided the following resources to produce a quiz of:
+
+1. The first electronic general-purpose computer was ENIAC, completed in 1945.
+---------
+2. The term "computer" originally referred to a human who performed numerical calculations.
+---------
+3. A byte consists of 8 bits and is the standard unit for measuring data.
+---------
+4. The Central Processing Unit (CPU) is considered the brain of the computer.
+---------
+5. RAM (Random Access Memory) is volatile memory that temporarily stores data while a computer is on.
+---------
+6. The first computer mouse was made of wood and invented in the 1960s by Douglas Engelbart.
+---------
+7. Computers operate using binary code, which consists of only 0s and 1s.
+---------
+8. Moore’s Law states that the number of transistors on a chip doubles about every two years.
+---------
+9. An operating system (OS) is software that manages hardware and software resources on a computer.
+---------
+10. The first commercially available computer was the UNIVAC I in 1951.
+---------
+11. A solid-state drive (SSD) is faster and more durable than a traditional hard disk drive (HDD).
+---------
+12. The Internet was originally developed as a project called ARPANET in the late 1960s.
+---------
+13. A computer virus is a type of malicious software designed to spread and cause damage.
+---------
+14. Quantum computers use qubits and can perform certain calculations much faster than classical computers.
+---------
+15. The Turing machine, proposed by Alan Turing, is a theoretical model of computation.
+---------
+16. A GPU (Graphics Processing Unit) accelerates rendering of images and video and is also used in AI tasks.
+---------
+17. Computers use input devices like keyboards and mice, and output devices like monitors and printers.
+---------
+18. Linux is an open-source operating system widely used for servers and embedded systems.
+---------
+19. ASCII stands for American Standard Code for Information Interchange and encodes text in computers.
+---------
+20. The cloud refers to remote servers accessed over the Internet to store and process data.
+---------
+21. Firewalls are security systems that monitor and control incoming and outgoing network traffic.
+---------
+22. The BIOS (Basic Input/Output System) is firmware that initializes hardware during the boot process.
+---------
+23. A compiler translates code written in high-level programming languages into machine code.
+---------
+24. Virtual machines allow multiple operating systems to run on a single physical machine.
+---------
+25. CAPTCHA stands for "Completely Automated Public Turing test to tell Computers and Humans Apart."
+---------
+
+%%%
+
+The following question types are supported:
+- multiple_choice
+- free_text
+- numeric
+- exact_answer
+
+The question types have the following type_options:
+- multiple_choice:
+    - options: a list of options for the question, each option has "text" as string and "is_correct" as boolean
+- free_text:
+    - answer: to the question, this is a string
+- numeric:
+    - answer: the answer to the question, this is a decimal number and
+    - max_difference: the maximum difference allowed between the answer and the correct answer
+- exact_answer:
+    - answer: the answer to the question, this is a string
+    - case_sensitive: a boolean indicating if the answer should be case-sensitive
+
+The following limitations apply:
+the maximum number of questions is: 20
+the minimum number of questions is: 20
+the maximum number of answers per question is: 5
+the maximum number of multiple choice questions is: 5
+the maximum number of free text questions is: 5
+the maximum number of numeric questions is: 5
+the maximum number of exact answer questions is: 5
+
+The output shall be json formatted with
+{
+    "quiz": {
+        "title": "Quiz Title",
+        "questions": [
+            {
+                "question": "question text",
+                "type": "multiple_choice",
+                "type_options": {
+                    "options": [
+                        {
+                            "text": "option 1",
+                            "is_correct": true
+                        },
+                        {
+                            "text": "option 2",
+                            "is_correct": false
+                        },
+                    ]
+                },
+            },
+            ...
+        ]
+    }
+}
+
+Please give your answer in JSON without any introduction: {

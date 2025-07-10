@@ -1,0 +1,120 @@
+{
+  "quiz": {
+    "title": "Sample Quiz",
+    "questions": {
+  "exact_answer": [
+    {
+      "answer": "ENIAC",
+      "case_sensitive": false,
+      "question": "What was the name of the first electronic general-purpose computer?"
+    },
+    {
+      "answer": "Douglas Engelbart",
+      "case_sensitive": false,
+      "question": "Who invented the first computer mouse made of wood in the 1960s?"
+    },
+    {
+      "answer": "Alan Turing",
+      "case_sensitive": false,
+      "question": "Who proposed the theoretical model of computation known as the Turing machine?"
+    }
+  ],
+  "free_text": [
+    {
+      "answer": "A human who performed numerical calculations",
+      "question": "What was the original meaning of the term 'computer'?"
+    },
+    {
+      "answer": "Binary code consisting of 0s and 1s",
+      "question": "In what format do computers operate?"
+    },
+    {
+      "answer": "UNIVAC I",
+      "question": "What was the first commercially available computer?"
+    }
+  ],
+  "multiple_choice": [
+    {
+      "options": [
+        {
+          "is_correct": true,
+          "text": "The CPU"
+        },
+        {
+          "is_correct": false,
+          "text": "RAM"
+        },
+        {
+          "is_correct": false,
+          "text": "SSD"
+        },
+        {
+          "is_correct": false,
+          "text": "BIOS"
+        }
+      ],
+      "question": "Which of the following is considered the brain of the computer?"
+    },
+    {
+      "options": [
+        {
+          "is_correct": true,
+          "text": "Every two years"
+        },
+        {
+          "is_correct": false,
+          "text": "Every four years"
+        },
+        {
+          "is_correct": false,
+          "text": "Every five years"
+        },
+        {
+          "is_correct": false,
+          "text": "Never"
+        }
+      ],
+      "question": "According to Moore’s Law, how often does the number of transistors on a chip double?"
+    },
+    {
+      "options": [
+        {
+          "is_correct": true,
+          "text": "Volatile memory that temporarily stores data while the computer is on"
+        },
+        {
+          "is_correct": false,
+          "text": "Permanent memory used for long-term storage"
+        },
+        {
+          "is_correct": false,
+          "text": "Memory used only for running operating systems"
+        },
+        {
+          "is_correct": false,
+          "text": "Memory that can be accessed only in sequential order"
+        }
+      ],
+      "question": "What is RAM?"
+    }
+  ],
+  "numeric": [
+    {
+      "answer": 8,
+      "max_difference": 0,
+      "question": "How many bits make up a byte?"
+    },
+    {
+      "answer": 1954,
+      "max_difference": 2,
+      "question": "In which year was the first computer mouse invented by Douglas Engelbart?"
+    },
+    {
+      "answer": 0.68,
+      "max_difference": 0.02,
+      "question": "What percentage of the world's population had internet access in January 2021 according to Internet World Stats?"
+    }
+  ]
+}
+  }
+}

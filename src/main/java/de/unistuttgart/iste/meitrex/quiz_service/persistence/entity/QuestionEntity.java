@@ -34,6 +34,10 @@ public class QuestionEntity {
     @Column(nullable = true, columnDefinition = "TEXT")
     private String hint;
 
+    // column definition is necessary for hibernate to migrate the table correctly
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean aiGenerated;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "question_id")
     @Builder.Default
