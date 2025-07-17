@@ -159,44 +159,44 @@ input AiGenQuestionContext{
     """
     The maximum number of answers per question if is a multiple choice question.
     """
-    maxAnswersPerQuestion: Int! = 5 @Positive
+    maxAnswersPerQuestion: Int! = 0 @NonNegativeInt
 
     """
     The maximum number of multiple choice questions that can be generated.
     """
-    maxMultipleChoiceQuestions: Int! = 5 @Positive
+    maxMultipleChoiceQuestions: Int! = 0 @NonNegativeInt
 
     """
     The maximum number of free text questions that can be generated.
     """
-    maxFreeTextQuestions: Int! = 5 @Positive
+    maxFreeTextQuestions: Int! = 0 @NonNegativeInt
 
     """
     The maximum number of numeric questions that can be generated.
     """
-    maxNumericQuestions: Int! = 5 @Positive
+    maxNumericQuestions: Int! = 0 @NonNegativeInt
 
     """
     The maximum number of exact answer questions that can be generated.
     """
-    maxExactQuestions: Int! = 5 @Positive
+    maxExactQuestions: Int! = 0 @NonNegativeInt
 
     """
     The minimum number of multiple choice questions that must be generated.
     """
-    minMultipleChoiceQuestions: Int! = 1 @Positive
+    minMultipleChoiceQuestions: Int! = 0 @NonNegativeInt
     """
     The minimum number of free text questions that must be generated.
     """
-    minFreeTextQuestions: Int! = 1 @Positive
+    minFreeTextQuestions: Int! = 0 @NonNegativeInt
     """
     The minimum number of numeric questions that must be generated.
     """
-    minNumericQuestions: Int! = 1 @Positive
+    minNumericQuestions: Int! = 0 @NonNegativeInt
     """
     The minimum number of exact answer questions that must be generated.
     """
-    minExactQuestions: Int! = 1 @Positive
+    minExactQuestions: Int! = 0 @NonNegativeInt
 
 
 
