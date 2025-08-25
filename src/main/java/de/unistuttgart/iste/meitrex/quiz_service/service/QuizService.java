@@ -1,6 +1,7 @@
 package de.unistuttgart.iste.meitrex.quiz_service.service;
 
 
+import de.unistuttgart.iste.meitrex.quiz_service.event.EventPublisher;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.*;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.mapper.QuizMapper;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.repository.QuizRepository;
@@ -35,6 +36,7 @@ public class QuizService {
     private final QuizMapper quizMapper;
     private final QuizValidator quizValidator;
     private final TopicPublisher topicPublisher;
+    private final EventPublisher  eventPublisher;
 
     /**
      * Returns all quizzes for the given assessment ids.
@@ -407,6 +409,9 @@ public class QuizService {
                 AssessmentType.QUIZ,
                 generateTaskInformation(savedEntity)
         ));
+
+        // publish the quiz change event
+        eventPublisher.publishUpdateQuizEvent(savedEntity);
 
         return quizMapper.entityToDto(savedEntity);
     }

@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.unistuttgart.iste.meitrex.generated.dto.Quiz;
 import de.unistuttgart.iste.meitrex.quiz_service.config.QuizGenConfig;
+import de.unistuttgart.iste.meitrex.quiz_service.event.EventPublisher;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.mapper.AiQuestionMapper;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.mapper.QuizMapper;
@@ -46,6 +47,8 @@ public class AiQuizGenerationService {
     private final QuizRepository quizRepository;
 
     private final QuizGenConfig quizGenConfig;
+
+    private final EventPublisher eventPublisher;
     
     private final ObjectMapper jsonMapper = new ObjectMapper();
 
@@ -130,7 +133,11 @@ public class AiQuizGenerationService {
         }
         quizEntity.getQuestionPool().addAll(questions);
 
-        return quizRepository.save(quizEntity);
+        QuizEntity savedEntity = quizRepository.save(quizEntity);
+        // publish the quiz change event, block to ensure that the event is actually send,
+        // to ensure that the event is actually send, since it is system critical
+        eventPublisher.publishUpdateQuizEvent(savedEntity).block();
+        return savedEntity;
     }
 
 
@@ -169,8 +176,6 @@ public class AiQuizGenerationService {
     }
 
 
-
-
     protected Optional<List<QuestionEntity>> generateQuestionsFromAiResponse(OllamaResponse aiResponse) {
         Optional<PromptJson> promptJson = ollamaService.parseResponse(aiResponse, PromptJson.class);
         if (promptJson.isEmpty()) {
@@ -179,9 +184,6 @@ public class AiQuizGenerationService {
         List<QuestionEntity> questions = questionMapper.map(promptJson.get().getQuiz().getQuestions());
         return Optional.of(questions);
     }
-
-
-
 
     protected List<String> loadResources(final List<String> mediaRecordIds) {
         return mediaRecordIds

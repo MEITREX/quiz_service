@@ -2,6 +2,8 @@ package de.unistuttgart.iste.meitrex.quiz_service.config;
 
 import de.unistuttgart.iste.meitrex.common.dapr.MockTopicPublisher;
 import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
+import de.unistuttgart.iste.meitrex.quiz_service.event.EventPublisher;
+import io.dapr.client.DaprClientBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,5 +26,11 @@ public class DevTopicPublisherConfiguration {
     public TopicPublisher getTopicPublisher() {
         log.warn("TopicPublisher is mocked. This is intended for development use only.");
         return new MockTopicPublisher();
+    }
+
+    @Bean
+    public EventPublisher getEventPublisher() {
+        log.info("Event Publisher started");
+        return new EventPublisher(new DaprClientBuilder().build());
     }
 }

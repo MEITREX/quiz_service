@@ -1,8 +1,12 @@
 package de.unistuttgart.iste.meitrex.quiz_service.service;
 
 import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
+import de.unistuttgart.iste.meitrex.generated.dto.QuestionPoolingMode;
 import de.unistuttgart.iste.meitrex.generated.dto.Quiz;
+import de.unistuttgart.iste.meitrex.quiz_service.QuizServiceApplication;
 import de.unistuttgart.iste.meitrex.quiz_service.config.QuizGenConfig;
+import de.unistuttgart.iste.meitrex.quiz_service.config.TestsContainer;
+import de.unistuttgart.iste.meitrex.quiz_service.event.EventPublisher;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.mapper.AiQuestionMapper;
@@ -11,17 +15,25 @@ import de.unistuttgart.iste.meitrex.quiz_service.persistence.repository.QuizRepo
 import de.unistuttgart.iste.meitrex.quiz_service.service.model.AiQuizGenLimits;
 import de.unistuttgart.iste.meitrex.quiz_service.service.model.OllamaRequest;
 import de.unistuttgart.iste.meitrex.quiz_service.service.model.OllamaResponse;
-import de.unistuttgart.iste.meitrex.quiz_service.service.model.PromptJson;
-import de.unistuttgart.iste.meitrex.quiz_service.validation.QuizValidator;
+import io.dapr.client.DaprClientBuilder;
+import io.dapr.springboot.DaprAutoConfiguration;
+import io.dapr.testcontainers.DaprContainer;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.testcontainers.containers.Container;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.net.http.HttpClient;
-import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +43,19 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest(
+        classes = {
+                QuizServiceApplication.class,
+                TestsContainer.class,
+                DaprAutoConfiguration.class },
+        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT
+)
 public class AiQuizGenerationServiceTest {
+
+    // start a test container for PostgreSQL
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
+            "postgres:16-alpine"
+    );
 
     // mock HttpClient
     private final QuizMapper quizMapper = new QuizMapper(new ModelMapper());
@@ -43,8 +67,46 @@ public class AiQuizGenerationServiceTest {
     private final QuizGenConfig quizGenConfig = Mockito.mock(QuizGenConfig.class);
 
 
+    // create with beans from tests containers
+    private EventPublisher eventPublisher;
+    private DaprContainer daprContainer;
+    private TestsContainer.RedisTestContainer redisContainer;
 
-    private final AiQuizGenerationService aiQuizGenerationService = new AiQuizGenerationService(ollamaService,docProcAiService, quizMapper, aiQuestionMapper, quizRepository, quizGenConfig);
+
+    private final AiQuizGenerationService aiQuizGenerationService;
+
+    @Autowired
+    AiQuizGenerationServiceTest(
+            EventPublisher eventPublisher,
+            TestsContainer.RedisTestContainer redisContainer,
+            DaprContainer daprContainer) {
+        this.eventPublisher = eventPublisher;
+        this.daprContainer = daprContainer;
+        this.redisContainer = redisContainer;
+        this.aiQuizGenerationService = new AiQuizGenerationService(ollamaService,docProcAiService, quizMapper, aiQuestionMapper, quizRepository, quizGenConfig, eventPublisher);
+
+    }
+
+
+
+    @BeforeAll
+    static void beforeAll() {
+        postgres.start();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        postgres.stop();
+    }
+
+
+    @BeforeEach
+    void setUp() {
+        daprContainer.start();
+
+        //
+        daprContainer.waitingFor(Wait.forLogMessage("*Workflow engine started*", 1));
+    }
 
 
     @Test
@@ -137,4 +199,82 @@ public class AiQuizGenerationServiceTest {
         assert questions.isPresent();
         assert questions.get().size() == 12;
     }
+
+    @Test
+    public void fillQuizWithQuestions() throws IOException, InterruptedException {
+
+        final List<String> mediaRecordIds = List.of(UUID.randomUUID().toString());
+
+        // prepare test mocks
+        when(quizRepository.save(any(QuizEntity.class))).thenAnswer(invocation -> invocation.getArgument(0, QuizEntity.class));
+
+        when(quizGenConfig.getModel()).then(invocation -> "mistral-nemo");
+        when(docProcAiService.getSummaryByDocId(UUID.fromString(mediaRecordIds.getFirst()))).thenReturn(Mono.just("test summary generated in unit test 1111 \ntest summary generated in unit test 2222"));
+        when(ollamaService.parseResponse(any(),any())).thenAnswer(re -> {
+            OllamaResponse ollamaResponse = re.getArgument(0, OllamaResponse.class);
+            Class<?> responseType = re.getArgument(1, Class.class);
+            ObjectMapper jsonMapper = new ObjectMapper();
+            final String response = ollamaResponse.getResponse();
+            if(responseType == null || response == null) {
+                return Optional.empty();
+            }
+            try {
+                return Optional.of(jsonMapper.readValue(response, responseType));
+            } catch (IOException e) {
+                return Optional.empty();
+            }
+        });
+
+        when(ollamaService.queryLLM(any())).then((request) -> {
+            OllamaRequest req = request.getArgument(0, OllamaRequest.class);
+            String prompt = req.getPrompt();
+            assert prompt != null;
+            assert prompt.contains("test summary generated in unit test 1111");
+            assert prompt.contains("test summary generated in unit test 2222");
+            assert prompt.contains("test description");
+
+            // load json from file in resources
+            final String jsonPath =  this.getClass().getClassLoader().getResource("test_example_output.json").getPath();
+            final String json = new String(Files.readAllBytes(java.nio.file.Paths.get(jsonPath)));
+            final OllamaResponse res = mock(OllamaResponse.class);
+            when(res.getResponse()).thenReturn(json);
+
+            return res;
+        });
+        final QuizEntity quizEntity = new QuizEntity();
+        final UUID assessmentId = UUID.randomUUID();
+        quizEntity.setAssessmentId(assessmentId);
+        quizEntity.setRequiredCorrectAnswers(4);
+        quizEntity.setQuestionPoolingMode(QuestionPoolingMode.RANDOM);
+
+        when(quizRepository.findById(any(UUID.class))).thenReturn(Optional.of(quizEntity));
+
+
+
+
+        AiQuizGenLimits limits = new AiQuizGenLimits();
+        limits.setAllowMultipleCorrectAnswers(true);
+        limits.setMaxMultipleChoiceQuestions(4);
+
+        final String description = "test description";
+        final String[] cmdKeys = {"redis-cli", "KEYS", "*"};
+
+       Container.ExecResult res =  redisContainer.execInContainer(cmdKeys);
+
+       List<String> redisKeys = List.of(res.getStdout().split("\n"));
+
+
+
+        Quiz eq = aiQuizGenerationService.fillQuizWithQuestions(quizEntity, limits, description, mediaRecordIds);
+
+        Container.ExecResult res2 =  redisContainer.execInContainer(cmdKeys);
+        List<String> redisKeys2 =  List.of(res2.getStdout().split("\n"));
+        assert eq != null;
+        assert redisKeys2.size() > redisKeys.size();
+        assert redisKeys2.contains("quiz_updated");
+    }
+
+
+
+
 }
