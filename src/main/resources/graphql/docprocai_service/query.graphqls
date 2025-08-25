@@ -1,0 +1,127 @@
+type MediaRecordSegmentLink {
+    segment1: MediaRecordSegment!
+    segment2: MediaRecordSegment!
+}
+
+interface SemanticSearchResult {
+    """
+    The similarity score of the search result.
+    """
+    score: Float!
+}
+
+type MediaRecordSegmentSemanticSearchResult implements SemanticSearchResult {
+    """
+    The similarity score of the search result.
+    """
+    score: Float!
+    """
+    The media record segment this search result is referencing.
+    """
+    mediaRecordSegment: MediaRecordSegment!
+}
+
+type AssessmentSemanticSearchResult implements SemanticSearchResult {
+    """
+    The similarity score of the search result.
+    """
+    score: Float!
+    """
+    ID of the assessment this search result is referencing.
+    """
+    assessmentId: UUID!
+}
+
+type AssessmentContentReference {
+    assessmentId: UUID!
+}
+
+interface MediaRecordSegment {
+    """
+    UUID of this segment.
+    """
+    id: UUID!
+    """
+    UUID of the media record this segment is part of.
+    """
+    mediaRecordId: UUID!
+    """
+    Base64-encoded image thumbnail for this segment.
+    """
+    thumbnail: String!
+    """
+    Title of this segment.
+    """
+    title: String
+}
+
+type DocumentRecordSegment implements MediaRecordSegment {
+    """
+    UUID of this segment.
+    """
+    id: UUID!
+    """
+    UUID of the media record this search result references.
+    """
+    mediaRecordId: UUID!
+    """
+    Page of the document this search result references.
+    """
+    page: Int!
+    """
+    The text snippet of the document this search result references.
+    """
+    text: String!
+    """
+    Base64-encoded image thumbnail for this segment.
+    """
+    thumbnail: String!
+    """
+    Title of this segment.
+    """
+    title: String
+}
+
+type VideoRecordSegment implements MediaRecordSegment {
+    """
+    UUID of this segment.
+    """
+    id: UUID!
+    """
+    UUID of the media record this search result references.
+    """
+    mediaRecordId: UUID!
+    """
+    Start time in seconds of the snippet of the video this search result references.
+    """
+    startTime: Int!
+    """
+    Text on the screen during this video snippet.
+    """
+    screenText: String!
+    """
+    Textual transcript of the spoken text during the video snippet this search result references.
+    """
+    transcript: String!
+    """
+    Base64-encoded image thumbnail for this segment.
+    """
+    thumbnail: String!
+    """
+    Title of this segment.
+    """
+    title: String
+}
+
+type AiEntityProcessingProgress {
+    entityId: UUID!
+    state: AiEntityProcessingState!
+    queuePosition: Int
+}
+
+enum AiEntityProcessingState {
+    UNKNOWN,
+    ENQUEUED,
+    PROCESSING,
+    DONE
+}

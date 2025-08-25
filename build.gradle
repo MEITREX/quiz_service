@@ -30,9 +30,9 @@ sonarqube {
 
 // workaround to fetch schema files from external repositories
 // as gradle only supports java dependencies
-def fetchFilesFromRepo(String repository, List<String> files) {
+def fetchFilesFromRepo(String repository, String basePath, List<String> files) {
 	def baseurl = "https://raw.githubusercontent.com/MEITREX/"
-	def fileUrl = "${baseurl}${repository}/main/src/main/resources/graphql/"
+	def fileUrl = "${baseurl}${repository}${basePath}"
 	def outputDir = "src/main/resources/graphql"
 
 	files.each { file ->
@@ -42,7 +42,10 @@ def fetchFilesFromRepo(String repository, List<String> files) {
 	}
 }
 
-fetchFilesFromRepo("common", ["directives.graphqls", "scalars.graphqls", "sortFilterPagination.graphqls"])
+fetchFilesFromRepo("common", "/main/src/main/resources/graphql/" , ["directives.graphqls", "scalars.graphqls", "sortFilterPagination.graphqls"])
+
+// TODO remove query wrapper from the fetch python script. Otherwise the compilation will fail
+// fetchFilesFromRepo("docprocai_service", "/refs/heads/main/schema/", ["query.graphqls"])
 
 // run this task to fetch the latest schema files from the external github repositories
 tasks.register("fetchAllExternalSchemas", Task) {
@@ -109,7 +112,7 @@ repositories {
 
 dependencies {
 
-	implementation 'de.unistuttgart.iste.meitrex:meitrex-common:1.2.6'
+	implementation 'de.unistuttgart.iste.meitrex:meitrex-common:1.3.3'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-graphql'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -118,14 +121,15 @@ dependencies {
 	implementation 'org.modelmapper:modelmapper:3.+'
 	implementation 'com.graphql-java:graphql-java-extended-scalars:22.0'
 	implementation 'com.graphql-java:graphql-java-extended-validation:22.0'
-	implementation 'io.dapr:dapr-sdk:1.9.0' // Dapr's core SDK with all features, except Actors.
-	implementation 'io.dapr:dapr-sdk-springboot:1.9.0' // Dapr's SDK integration with SpringBoot
+	implementation 'io.dapr:dapr-sdk:1.13.3' // Dapr's core SDK with all features, except Actors.
+	implementation 'io.dapr:dapr-sdk-springboot:1.13.3' // Dapr's SDK integration with SpringBoot
 	compileOnly 'org.projectlombok:lombok'
+	testCompileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'de.unistuttgart.iste.meitrex:meitrex-common-test:1.2.6'
+	testImplementation 'de.unistuttgart.iste.meitrex:meitrex-common-test:1.3.3'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework:spring-webflux'
 	testImplementation 'org.springframework.graphql:spring-graphql-test'
@@ -133,6 +137,16 @@ dependencies {
 	testImplementation 'org.hamcrest:hamcrest:2.+'
 	testImplementation "org.testcontainers:postgresql:1.+"
 	testImplementation "org.testcontainers:junit-jupiter:1.+"
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
+
+	implementation 'com.github.victools:jsonschema-generator:4.38.0'
+	implementation 'com.github.victools:jsonschema-module-jackson:4.38.0'
+	implementation 'com.github.victools:jsonschema-module-jakarta-validation:4.38.0'
+
+	testImplementation 'io.dapr.spring:dapr-spring-boot-starter:0.13.3'
+	testImplementation 'io.dapr.spring:dapr-spring-boot-starter-test:0.13.3'
+
+
 }
 
 tasks.named('test') {

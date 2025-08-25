@@ -23,6 +23,8 @@ type Mutation {
     🔒 The user must be enrolled in the course the quiz is in to perform this action.
     """
     logQuizCompleted(input: QuizCompletedInput!): QuizCompletionFeedback!
+
+
 }
 
 type QuizMutation {
@@ -133,7 +135,79 @@ type QuizMutation {
     Will only be considered if questionPoolingMode is RANDOM.
     """
     setNumberOfRandomlySelectedQuestions(numberOfRandomlySelectedQuestions: Int! @Positive): Quiz!
+
+    """
+    Generate a question using AI. It will append to the end of the quiz questions. If will return the quiz to which the question will be added
+    """
+    aiGenerateQuestionAsync(context: AiGenQuestionContext) :  QuizAIGenAsyncResponse
+
 }
+
+input AiGenQuestionContext{
+
+    """
+    The question is used to fine tune the prompt context
+    """
+    description: String!
+
+    """
+    the media records that are used to give knowledge to the AI about the topic of the question.
+    """
+    mediaRecordIds: [UUID]!
+
+
+    """
+    The maximum number of answers per question if is a multiple choice question.
+    """
+    maxAnswersPerQuestion: Int! = 0 @PositiveOrZero
+
+    """
+    The maximum number of multiple choice questions that can be generated.
+    """
+    maxMultipleChoiceQuestions: Int! = 0 @PositiveOrZero
+
+    """
+    The maximum number of free text questions that can be generated.
+    """
+    maxFreeTextQuestions: Int! = 0 @PositiveOrZero
+
+    """
+    The maximum number of numeric questions that can be generated.
+    """
+    maxNumericQuestions: Int! = 0 @PositiveOrZero
+
+    """
+    The maximum number of exact answer questions that can be generated.
+    """
+    maxExactQuestions: Int! = 0 @PositiveOrZero
+
+    """
+    The minimum number of multiple choice questions that must be generated.
+    """
+    minMultipleChoiceQuestions: Int! = 0 @PositiveOrZero
+    """
+    The minimum number of free text questions that must be generated.
+    """
+    minFreeTextQuestions: Int! = 0 @PositiveOrZero
+    """
+    The minimum number of numeric questions that must be generated.
+    """
+    minNumericQuestions: Int! = 0 @PositiveOrZero
+    """
+    The minimum number of exact answer questions that must be generated.
+    """
+    minExactQuestions: Int! = 0 @PositiveOrZero
+
+
+
+
+
+
+
+
+}
+
+
 
 
 input CreateQuizInput {

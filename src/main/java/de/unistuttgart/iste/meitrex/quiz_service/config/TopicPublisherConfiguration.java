@@ -1,6 +1,7 @@
 package de.unistuttgart.iste.meitrex.quiz_service.config;
 
 import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
+import de.unistuttgart.iste.meitrex.quiz_service.event.EventPublisher;
 import io.dapr.client.DaprClientBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,11 @@ public class TopicPublisherConfiguration {
     @Bean
     public TopicPublisher getTopicPublisher() {
         return new TopicPublisher(new DaprClientBuilder().build());
+    }
+
+    @Bean
+    public EventPublisher getEventPublisher() {
+        return new EventPublisher(new DaprClientBuilder().build());
     }
 
 }
