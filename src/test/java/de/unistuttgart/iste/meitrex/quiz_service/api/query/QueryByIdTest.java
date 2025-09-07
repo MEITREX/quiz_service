@@ -113,6 +113,7 @@ class QueryByIdTest {
                         .setText("What is the answer to life, the universe and everything?")
                         .setHint("hint")
                         .setItemId(quizEntity.getQuestionPool().get(0).getItemId())
+                        .setAiGenerated(false)
                         .setAnswers(List.of(
                                 MultipleChoiceAnswer.builder()
                                         .setAnswerText("42")
@@ -131,6 +132,7 @@ class QueryByIdTest {
                         .setNumber(2)
                         .setText("text")
                         .setHint("hint")
+                        .setAiGenerated(false)
                         .setItemId(quizEntity.getQuestionPool().get(1).getItemId())
                         .setType(QuestionType.ASSOCIATION)
                         .setCorrectAssociations(List.of(
@@ -145,6 +147,7 @@ class QueryByIdTest {
                         .setItemId(quizEntity.getQuestionPool().get(2).getItemId())
                         .setType(QuestionType.CLOZE)
                         .setShowBlanksList(true)
+                        .setAiGenerated(false)
                         .setAdditionalWrongAnswers(List.of("wrong1", "wrong2"))
                         .setClozeElements(List.of(
                                 ClozeTextElement.builder()
@@ -164,6 +167,7 @@ class QueryByIdTest {
                         .setText("question")
                         .setCorrectAnswers(List.of("answer"))
                         .setCaseSensitive(true)
+                        .setAiGenerated(false)
                         .setFeedback("feedback")
                         .build(),
                 NumericQuestion.builder()
@@ -174,6 +178,7 @@ class QueryByIdTest {
                         .setText("question")
                         .setCorrectAnswer(42)
                         .setFeedback("feedback")
+                        .setAiGenerated(false)
                         .setTolerance(1)
                         .build(),
                 SelfAssessmentQuestion.builder()
@@ -182,6 +187,7 @@ class QueryByIdTest {
                         .setItemId(quizEntity.getQuestionPool().get(5).getItemId())
                         .setType(QuestionType.SELF_ASSESSMENT)
                         .setText("question")
+                        .setAiGenerated(false)
                         .setSolutionSuggestion("answer")
                         .build()
         };

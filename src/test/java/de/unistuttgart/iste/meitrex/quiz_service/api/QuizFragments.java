@@ -14,6 +14,7 @@ public class QuizFragments {
                 itemId
                 number
                 type
+                aiGenerated
                 hint
                 ... on MultipleChoiceQuestion {
                     text
