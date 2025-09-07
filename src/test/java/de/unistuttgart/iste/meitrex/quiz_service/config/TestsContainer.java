@@ -9,6 +9,7 @@ import io.dapr.testcontainers.DaprContainer;
 import io.dapr.testcontainers.DaprLogLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +33,11 @@ public class TestsContainer {
     Logger logger = Logger.getLogger(TestsContainer.class.getName());
 
     final static int REDIS_PORT = 6379;
+
+
+    @Value("${server.port}")
+    int serverPort;
+
 
     @Bean
     public Network daprNetwork() {
@@ -79,7 +85,7 @@ public class TestsContainer {
                 .withAppName("quiz_service")
                 .withNetwork(daprNetwork)
                 .withComponent(new Component("meitrex", "pubsub.redis", "v1", redisProperties))
-                .withAppPort(9001)
+                .withAppPort(serverPort)
                 .withDaprLogLevel(DaprLogLevel.INFO)
                 .withLogConsumer(outputFrame -> logger.info(outputFrame.getUtf8String()))
                 .withAppChannelAddress("host.testcontainers.internal")

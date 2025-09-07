@@ -21,6 +21,8 @@ import de.unistuttgart.iste.meitrex.quiz_service.service.model.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
@@ -52,6 +54,8 @@ public class AiQuizGenerationService {
     
     private final ObjectMapper jsonMapper = new ObjectMapper();
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private String getTemplatePath() {
         return this.getClass().getResource("/prompt_templates/quiz_gen_template.txt").getPath();
     }
@@ -62,7 +66,7 @@ public class AiQuizGenerationService {
                 // read the template from the file
                 reloadTemplate();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Failed to load prompt template", e);
             }
         }
         return promptTemplateCache;
@@ -112,7 +116,9 @@ public class AiQuizGenerationService {
      * @return
      */
     protected QuizEntity fillQuiz(QuizEntity quizEntity, AiQuizGenLimits limits, String description, List<String> mediaRecordIds) {
+        logger.debug("Await question generation from LLM");
         List<QuestionEntity> questions = generateQuizQuestions(limits, description, mediaRecordIds);
+        logger.debug("Received {} questions from LLM", questions.size());
         // refresh quiz entity to ensure it is up to date
         QuizEntity qe = quizRepository.findById(quizEntity.getAssessmentId()).orElse(null);
         if (qe == null) {
@@ -134,9 +140,11 @@ public class AiQuizGenerationService {
         quizEntity.getQuestionPool().addAll(questions);
 
         QuizEntity savedEntity = quizRepository.save(quizEntity);
+        logger.debug("Saved quiz {} with {} questions", savedEntity.getAssessmentId(), savedEntity.getQuestionPool().size());
         // publish the quiz change event, block to ensure that the event is actually send,
         // to ensure that the event is actually send, since it is system critical
         eventPublisher.publishUpdateQuizEvent(savedEntity).block();
+        logger.debug("Sent update event for quiz {}", savedEntity.getAssessmentId());
         return savedEntity;
     }
 
@@ -168,9 +176,13 @@ public class AiQuizGenerationService {
         Map<String, Object> jsonSchema = buildJsonSchema(limits);
         OllamaRequest request = new OllamaRequest(quizGenConfig.getModel(), prompt, false, jsonSchema);
         try {
+            logger.debug("Sending request to LLM with prompt: {}", prompt);
+            logger.debug("Using Model: {}", quizGenConfig.getModel());
             OllamaResponse response = ollamaService.queryLLM(request);
+            logger.debug("Received response from LLM: {}", response.getResponse());
             return generateQuestionsFromAiResponse(response).orElse(List.of());
         } catch (IOException | InterruptedException e) {
+            logger.error("Error during LLM query or response parsing", e);
             return List.of();
         }
     }
