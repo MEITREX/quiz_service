@@ -510,6 +510,7 @@ public class QuizService {
                 .hintsUsed(hintsUsed)
                 .success(success)
                 .timeToComplete(null)
+                .contentType(ContentProgressedEvent.ContentType.QUIZ)
                 .correctness(correctness)
                 .responses(responses)
                 .build();
