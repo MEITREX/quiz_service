@@ -106,6 +106,7 @@ public class QuizMapper {
                         .map(this::clozeElementEntityToDto)
                         .toList())
                 .setHint(clozeQuestionEntity.getHint())
+                .setAiGenerated(clozeQuestionEntity.isAiGenerated())
                 .build();
 
         final List<String> allBlanks = new ArrayList<>(result.getAdditionalWrongAnswers());

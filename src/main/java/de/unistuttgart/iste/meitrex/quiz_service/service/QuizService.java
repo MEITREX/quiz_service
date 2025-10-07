@@ -1,6 +1,7 @@
 package de.unistuttgart.iste.meitrex.quiz_service.service;
 
 
+import de.unistuttgart.iste.meitrex.quiz_service.event.EventPublisher;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.*;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.mapper.QuizMapper;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.repository.QuizRepository;
@@ -35,6 +36,7 @@ public class QuizService {
     private final QuizMapper quizMapper;
     private final QuizValidator quizValidator;
     private final TopicPublisher topicPublisher;
+    private final EventPublisher  eventPublisher;
 
     /**
      * Returns all quizzes for the given assessment ids.
@@ -49,6 +51,17 @@ public class QuizService {
                 // map to dto or null if the quiz does not exist
                 .map(optionalQuiz -> optionalQuiz.map(quizMapper::entityToDto).orElse(null))
                 .toList();
+    }
+
+    /**
+     * Returns the quiz with the given id.
+     *
+     * @param quizId the id of the quiz
+     * @return the quiz or an empty optional if the quiz does not exist
+     */
+    public Optional<Quiz> findQuizById(final UUID quizId) {
+        return quizRepository.findById(quizId)
+                .map(quizMapper::entityToDto);
     }
 
     /**
@@ -397,6 +410,9 @@ public class QuizService {
                 generateTaskInformation(savedEntity)
         ));
 
+        // publish the quiz change event
+        eventPublisher.publishUpdateQuizEvent(savedEntity);
+
         return quizMapper.entityToDto(savedEntity);
     }
 
@@ -494,7 +510,6 @@ public class QuizService {
                 .hintsUsed(hintsUsed)
                 .success(success)
                 .timeToComplete(null)
-                .contentType(ContentProgressedEvent.ContentType.QUIZ)
                 .correctness(correctness)
                 .responses(responses)
                 .build();

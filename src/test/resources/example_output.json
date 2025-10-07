@@ -1,0 +1,403 @@
+{
+    "quiz": {
+        "title": "Computers and Technology Quiz",
+        "questions": [
+            {
+                "question": "What was the first electronic general-purpose computer?",
+                "type": "multiple_choice",
+                "type_options": {
+                    "options": [
+                        {
+                            "text": "ENIAC",
+                            "is_correct": true
+                        },
+                        {
+                            "text": "UNIVAC I",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "ARPANET",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "Turing machine",
+                            "is_correct": false
+                        }
+                    ]
+                }
+            },
+            {
+                "question": "What does the term 'computer' originally refer to?",
+                "type": "free_text",
+                "type_options": {
+                    "answer": "A human who performed numerical calculations."
+                }
+            },
+            {
+                "question": "How many bits are in a byte?",
+                "type": "multiple_choice",
+                "type_options": {
+                    "options": [
+                        {
+                            "text": "4",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "8",
+                            "is_correct": true
+                        },
+                        {
+                            "text": "16",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "32",
+                            "is_correct": false
+                        }
+                    ]
+                }
+            },
+            {
+                "question": "Which part of the computer is considered the brain?",
+                "type": "multiple_choice",
+                "type_options": {
+                    "options": [
+                        {
+                            "text": "CPU",
+                            "is_correct": true
+                        },
+                        {
+                            "text": "GPU",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "RAM",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "SSD",
+                            "is_correct": false
+                        }
+                    ]
+                }
+            },
+            {
+                "question": "What type of memory is RAM?",
+                "type": "free_text",
+                "type_options": {
+                    "answer": "Volatile memory that temporarily stores data while a computer is on."
+                }
+            },
+            {
+                "question": "Who invented the first computer mouse?",
+                "type": "multiple_choice",
+                "type_options": {
+                    "options": [
+                        {
+                            "text": "Douglas Engelbart",
+                            "is_correct": true
+                        },
+                        {
+                            "text": "Alan Turing",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "Steve Jobs",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "Bill Gates",
+                            "is_correct": false
+                        }
+                    ]
+                }
+            },
+            {
+                "question": "What code do computers operate using?",
+                "type": "free_text",
+                "type_options": {
+                    "answer": "Binary code, which consists of only 0s and 1s."
+                }
+            },
+            {
+                "question": "What does Moore’s Law state?",
+                "type": "multiple_choice",
+                "type_options": {
+                    "options": [
+                        {
+                            "text": "The number of transistors on a chip doubles about every two years.",
+                            "is_correct": true
+                        },
+                        {
+                            "text": "The speed of computers doubles every year.",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "The cost of computers halves every five years.",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "The size of computers reduces by half every decade.",
+                            "is_correct": false
+                        }
+                    ]
+                }
+            },
+            {
+                "question": "What is an operating system (OS)?",
+                "type": "free_text",
+                "type_options": {
+                    "answer": "Software that manages hardware and software resources on a computer."
+                }
+            },
+            {
+                "question": "What was the first commercially available computer?",
+                "type": "multiple_choice",
+                "type_options": {
+                    "options": [
+                        {
+                            "text": "UNIVAC I",
+                            "is_correct": true
+                        },
+                        {
+                            "text": "ENIAC",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "Apple II",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "IBM PC",
+                            "is_correct": false
+                        }
+                    ]
+                }
+            },
+            {
+                "question": "Which type of drive is faster and more durable than a traditional hard disk drive (HDD)?",
+                "type": "free_text",
+                "type_options": {
+                    "answer": "A solid-state drive (SSD)."
+                }
+            },
+            {
+                "question": "What was the original name of the project that developed into the Internet?",
+                "type": "multiple_choice",
+                "type_options": {
+                    "options": [
+                        {
+                            "text": "ARPANET",
+                            "is_correct": true
+                        },
+                        {
+                            "text": "World Wide Web",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "Internet Explorer",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "Ethernet",
+                            "is_correct": false
+                        }
+                    ]
+                }
+            },
+            {
+                "question": "What is a computer virus?",
+                "type": "free_text",
+                "type_options": {
+                    "answer": "A type of malicious software designed to spread and cause damage."
+                }
+            },
+            {
+                "question": "What units do quantum computers use to perform calculations?",
+                "type": "multiple_choice",
+                "type_options": {
+                    "options": [
+                        {
+                            "text": "Qubits",
+                            "is_correct": true
+                        },
+                        {
+                            "text": "Bits",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "Bytes",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "Transistors",
+                            "is_correct": false
+                        }
+                    ]
+                }
+            },
+            {
+                "question": "Who proposed the Turing machine?",
+                "type": "free_text",
+                "type_options": {
+                    "answer": "Alan Turing."
+                }
+            },
+            {
+                "question": "What does a GPU (Graphics Processing Unit) accelerate?",
+                "type": "multiple_choice",
+                "type_options": {
+                    "options": [
+                        {
+                            "text": "Rendering of images and video",
+                            "is_correct": true
+                        },
+                        {
+                            "text": "Text processing",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "Audio playback",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "Networking",
+                            "is_correct": false
+                        }
+                    ]
+                }
+            },
+            {
+                "question": "What are examples of input and output devices for computers?",
+                "type": "free_text",
+                "type_options": {
+                    "answer": "Input devices: keyboards and mice. Output devices: monitors and printers."
+                }
+            },
+            {
+                "question": "What type of operating system is Linux?",
+                "type": "multiple_choice",
+                "type_options": {
+                    "options": [
+                        {
+                            "text": "Open-source",
+                            "is_correct": true
+                        },
+                        {
+                            "text": "Closed-source",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "Proprietary",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "Commercial",
+                            "is_correct": false
+                        }
+                    ]
+                }
+            },
+            {
+                "question": "What does ASCII stand for?",
+                "type": "free_text",
+                "type_options": {
+                    "answer": "American Standard Code for Information Interchange."
+                }
+            },
+            {
+                "question": "What does 'the cloud' refer to?",
+                "type": "multiple_choice",
+                "type_options": {
+                    "options": [
+                        {
+                            "text": "Remote servers accessed over the Internet to store and process data.",
+                            "is_correct": true
+                        },
+                        {
+                            "text": "A type of local storage device.",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "A network of personal computers.",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "A wireless networking standard.",
+                            "is_correct": false
+                        }
+                    ]
+                }
+            },
+            {
+                "question": "What are firewalls?",
+                "type": "free_text",
+                "type_options": {
+                    "answer": "Security systems that monitor and control incoming and outgoing network traffic."
+                }
+            },
+            {
+                "question": "What is the BIOS (Basic Input/Output System)?",
+                "type": "multiple_choice",
+                "type_options": {
+                    "options": [
+                        {
+                            "text": "Firmware that initializes hardware during the boot process.",
+                            "is_correct": true
+                        },
+                        {
+                            "text": "Software that manages hardware and software resources.",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "A type of malicious software.",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "A programming language.",
+                            "is_correct": false
+                        }
+                    ]
+                }
+            },
+            {
+                "question": "What does a compiler do?",
+                "type": "free_text",
+                "type_options": {
+                    "answer": "Translates code written in high-level programming languages into machine code."
+                }
+            },
+            {
+                "question": "What do virtual machines allow?",
+                "type": "multiple_choice",
+                "type_options": {
+                    "options": [
+                        {
+                            "text": "Multiple operating systems to run on a single physical machine.",
+                            "is_correct": true
+                        },
+                        {
+                            "text": "A single operating system to run on multiple physical machines.",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "Only one operating system to run on a single physical machine.",
+                            "is_correct": false
+                        },
+                        {
+                            "text": "Operating systems to run without hardware.",
+                            "is_correct": false
+                        }
+                    ]
+                }
+            },
+            {
+                "question": "What does CAPTCHA stand for?",
+                "type": "free_text",
+                "type_options": {
+                    "answer": "Completely Automated Public Turing test to tell Computers and Humans Apart."
+                }
+            }
+        ]
+    }
+}

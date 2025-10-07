@@ -2,6 +2,7 @@ package de.unistuttgart.iste.meitrex.quiz_service.service;
 
 
 import de.unistuttgart.iste.meitrex.quiz_service.TestData;
+import de.unistuttgart.iste.meitrex.quiz_service.event.EventPublisher;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.MultipleChoiceQuestionEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuestionEntity;
 import de.unistuttgart.iste.meitrex.quiz_service.persistence.entity.QuizEntity;
@@ -36,7 +37,8 @@ class QuizServiceTest {
     private final QuizMapper quizMapper = new QuizMapper(new ModelMapper());
     private final QuizValidator quizValidator = new QuizValidator();
     private final TopicPublisher topicPublisher = Mockito.mock(TopicPublisher.class);
-    private final QuizService quizService = new QuizService(quizRepository, quizMapper, quizValidator, topicPublisher);
+    private final EventPublisher eventPublisher = Mockito.mock(EventPublisher.class);
+    private final QuizService quizService = new QuizService(quizRepository, quizMapper, quizValidator, topicPublisher, eventPublisher);
 
     @Test
     void removeContentIdsTest() {
