@@ -70,6 +70,19 @@ public class QuizService {
         entity.setCourseId(courseId);
 
         final QuizEntity savedEntity = quizRepository.save(entity);
+        String title = "You have a new Quiz!";
+        String message = "New Quiz!";
+
+        String pageLink = "/courses/" + courseId + "/quiz/" + assessmentId;
+        topicPublisher.notificationEvent(
+                courseId,
+                null,
+                ServerSource.QUIZ,
+                pageLink,
+                title,
+                message
+        );
+        log.info("Published notification for quiz={} to course={}", assessmentId, courseId);
         return quizMapper.entityToDto(savedEntity);
     }
 
